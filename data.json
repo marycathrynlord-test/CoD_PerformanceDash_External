@@ -3,18 +3,6 @@
     "period": "FY2026 · Quarterly Snapshot"
   },
 
-  "kpis": [
-    { "id": "population", "label": "Population", "format": "number", "value": 19684, "deltaText": "1.2%", "deltaDirection": "up", "deltaNote": "vs. last year", "accent": "#006A53" },
-    { "id": "budget", "label": "General Fund Budget", "format": "text", "value": "$58.4M", "deltaText": "3.6%", "deltaDirection": "up", "deltaNote": "vs. FY2025", "accent": "#1B8A79" },
-    { "id": "response", "label": "Avg. Emergency Response", "format": "text", "value": "5.2", "valueSuffix": " min", "deltaText": "0.4 min", "deltaDirection": "up", "deltaNote": "faster than target", "accent": "#7FB4A9" },
-    { "id": "requests", "label": "311 Requests Resolved", "format": "percent", "value": 94, "deltaText": "2 pts", "deltaDirection": "up", "deltaNote": "vs. last quarter", "accent": "#006A53" }
-  ],
-
-  "populationTrend": {
-    "labels": ["2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026"],
-    "data": [18150, 18310, 18560, 18890, 19140, 19390, 19450, 19684]
-  },
-
   "goals": [
     { "id": "g1", "name": "Organizational Stewardship", "color": "#b24d93", "text": "#fff" },
     { "id": "g2", "name": "Innovative Housing and Economic Development", "color": "#d76528", "text": "#fff" },
