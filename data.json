@@ -16,11 +16,12 @@
   },
 
   "goals": [
-    { "id": "g1", "name": "Safe & Resilient Community", "color": "#006A53", "text": "#fff" },
-    { "id": "g2", "name": "Sustainable Infrastructure", "color": "#1B8A79", "text": "#fff" },
-    { "id": "g3", "name": "Thriving Local Economy", "color": "#7FB4A9", "text": "#0D2B24" },
-    { "id": "g4", "name": "Vibrant Neighborhoods & Housing", "color": "#3FA08D", "text": "#fff" },
-    { "id": "g5", "name": "High-Performing Government", "color": "#B7D6CD", "text": "#0D2B24" }
+    { "id": "g1", "name": "Organizational Stewardship", "color": "#b24d93", "text": "#fff" },
+    { "id": "g2", "name": "Innovative Housing and Economic Development", "color": "#d76528", "text": "#fff" },
+    { "id": "g3", "name": "Safety & Quality of Life", "color": "#7FB4A9", "text": "#fff" },
+    { "id": "g4", "name": "Reliable Infrastructure and Community Connectivity", "color": "#476fb5", "text": "#fff" },
+    { "id": "g5", "name": "Engaged and Informed Community", "color": "#d94849", "text": "#fff" },
+    { "id": "g6", "name": "Strategic Workforce Development", "color": "#867971", "text": "#fff" } 
   ],
 
   "objectives": [
