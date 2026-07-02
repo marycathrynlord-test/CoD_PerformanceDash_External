@@ -102,6 +102,50 @@
   .status-legend{display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:14px; font-size:12.5px; color:var(--slate);}
   .status-legend .item{display:flex; align-items:center; gap:7px;}
 
+  .node-header:focus-visible{ outline:2px solid var(--sage); outline-offset:-2px; }
+
+  .detail-btn{
+    font-size:10.5px; font-weight:700; letter-spacing:.03em;
+    border:1px solid var(--line); background:var(--white); color:var(--forest-dark);
+    padding:3px 10px; border-radius:100px; cursor:pointer; flex:none;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .detail-btn:hover{ background:var(--mist); border-color:var(--sage); }
+  .detail-btn:focus-visible{ outline:2px solid var(--sage); outline-offset:1px; }
+
+  /* ---------- Detail modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(13,43,36,0.45);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+    opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:1000;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal-panel{
+    background:var(--white); border-radius:14px; max-width:520px; width:100%;
+    max-height:85vh; overflow-y:auto; padding:28px 28px 26px; position:relative;
+    transform:translateY(8px); transition:transform .2s ease;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  .modal-overlay.open .modal-panel{ transform:translateY(0); }
+  .modal-close{
+    position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%;
+    border:1px solid var(--line); background:var(--white); color:var(--slate); cursor:pointer;
+    font-size:15px; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close:hover{ background:var(--mist); }
+  .modal-head-row{ display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-right:36px; }
+  .modal-title{ margin:0 0 14px; font-size:19px; font-weight:700; color:var(--forest-dark); padding-right:36px; line-height:1.3; }
+  .modal-desc{ margin:0 0 18px; font-size:13.5px; color:var(--slate); line-height:1.6; }
+  .modal-meta{ display:flex; flex-direction:column; gap:8px; margin-bottom:6px; }
+  .modal-meta-row{ display:flex; gap:8px; font-size:12.5px; }
+  .modal-meta-row .mk{ font-weight:700; color:var(--forest-dark); min-width:110px; flex:none; }
+  .modal-metrics{ display:flex; flex-direction:column; gap:9px; border-top:1px solid var(--line); margin-top:14px; padding-top:16px; }
+  .modal-metrics:empty{ display:none; }
+  .modal-metric-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; gap:12px; }
+  .mm-label{ color:var(--slate); }
+  .mm-value{ font-weight:700; color:var(--forest-dark); white-space:nowrap; }
+  .mm-target{ font-weight:500; color:var(--slate); font-size:11.5px; }
+
   /* ---------- At-a-glance stats ---------- */
   .stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:18px;}
   @media (max-width:900px){ .stat-grid{grid-template-columns:repeat(3,1fr);} }
@@ -245,6 +289,21 @@
 
     <div class="drill-col">
       <div class="drill-col-body" id="goal-tree" style="padding-top:8px;"></div>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL (shared by every Key Service / Program "Details" button) -->
+  <div class="modal-overlay" id="modal-overlay" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Close details">✕</button>
+      <div class="modal-head-row">
+        <span class="box-tag" id="modal-tag"></span>
+        <span id="modal-status-slot"></span>
+      </div>
+      <h3 class="modal-title" id="modal-title"></h3>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-metrics" id="modal-metrics"></div>
     </div>
   </div>
 
@@ -456,20 +515,25 @@ function renderWorkSystemTree(){
               <span class="box-tag gold">Program</span>
               <span style="flex:1;">${p.name}</span>
               ${statusBadgeHTML(programStatus(p))}
+              <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
             </div>
           `).join('')
         : `<div class="empty-note">No programs recorded under this Key Service yet.</div>`;
 
       return `
         <div class="node-item ks-node">
-          <button class="node-header">
+          <div class="node-header" role="button" tabindex="0">
             <span class="left">
               <span class="box-tag gold">Key Service</span>
               <span class="name">${ks.name}</span>
               ${statusBadgeHTML(keyServiceStatus(ks))}
             </span>
-            <span class="meta">${progs.length} program${progs.length!==1?'s':''} <span class="chevron">▾</span></span>
-          </button>
+            <span class="meta">
+              ${progs.length} program${progs.length!==1?'s':''}
+              <button class="detail-btn" data-kind="ks" data-id="${ks.id}">Details</button>
+              <span class="chevron">▾</span>
+            </span>
+          </div>
           <div class="node-body">${progHTML}</div>
         </div>
       `;
@@ -477,20 +541,21 @@ function renderWorkSystemTree(){
 
     return `
       <div class="node-item ws-node">
-        <button class="node-header">
+        <div class="node-header" role="button" tabindex="0">
           <span class="left">
             <span class="box-tag">Work System</span>
             <span class="name">${ws.name}</span>
             ${statusBadgeHTML(workSystemStatus(ws))}
           </span>
           <span class="meta">${services.length} key service${services.length!==1?'s':''} <span class="chevron">▾</span></span>
-        </button>
+        </div>
         <div class="node-body">${ksHTML || `<div class="empty-note">No Key Services recorded under this Work System yet.</div>`}</div>
       </div>
     `;
   }).join('');
 
   wireAccordions(root);
+  wireDetailButtons(root);
 }
 
 /* ---------- Strategic Plan reference (Goals → Objectives) ---------- */
@@ -518,6 +583,74 @@ function wireAccordions(scope){
     h.addEventListener('click', ()=>{
       h.closest('.node-item').classList.toggle('open');
     });
+    h.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        h.closest('.node-item').classList.toggle('open');
+      }
+    });
+  });
+}
+
+/* ---------- Detail modal ---------- */
+function wireDetailButtons(scope){
+  scope.querySelectorAll('.detail-btn').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation(); // don't also toggle the parent accordion
+      openDetailModal(btn.dataset.kind, btn.dataset.id);
+    });
+  });
+}
+
+function openDetailModal(kind, id){
+  const item = kind === 'ks'
+    ? DATA.keyServices.find(k=>k.id===id)
+    : DATA.programs.find(p=>p.id===id);
+  if(!item) return;
+
+  const label = kind === 'ks' ? 'Key Service' : 'Program';
+  const status = kind === 'ks' ? keyServiceStatus(item) : programStatus(item);
+  const d = item.details || {};
+
+  const tagEl = document.getElementById('modal-tag');
+  tagEl.textContent = label;
+  tagEl.classList.toggle('gold', kind === 'program');
+
+  document.getElementById('modal-status-slot').innerHTML = statusBadgeHTML(status);
+  document.getElementById('modal-title').textContent = item.name;
+  document.getElementById('modal-desc').textContent = d.description || 'No additional details recorded yet.';
+
+  const metaRows = [];
+  if(d.owner) metaRows.push(`<div class="modal-meta-row"><span class="mk">Owner</span><span>${d.owner}</span></div>`);
+  if(d.lastUpdated) metaRows.push(`<div class="modal-meta-row"><span class="mk">Last updated</span><span>${d.lastUpdated}</span></div>`);
+  document.getElementById('modal-meta').innerHTML = metaRows.join('');
+
+  document.getElementById('modal-metrics').innerHTML = (d.metrics || []).map(m=>`
+    <div class="modal-metric-row">
+      <span class="mm-label">${m.label}</span>
+      <span class="mm-value">${m.value}${m.target ? ` <span class="mm-target">/ target ${m.target}</span>` : ''}</span>
+    </div>
+  `).join('');
+
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.getElementById('modal-close').focus();
+}
+
+function closeDetailModal(){
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function wireModalChrome(){
+  document.getElementById('modal-close').addEventListener('click', closeDetailModal);
+  document.getElementById('modal-overlay').addEventListener('click', e=>{
+    if(e.target.id === 'modal-overlay') closeDetailModal();
+  });
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape') closeDetailModal();
   });
 }
 
@@ -534,6 +667,7 @@ function init(){
   renderStatusLegend();
   renderWorkSystemTree();
   renderGoalTree();
+  wireModalChrome();
 }
 
 loadData();
