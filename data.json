@@ -40,13 +40,13 @@
   ],
 
   "keyServices": [
-    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "status": "on-track" },
-    { "id": "ks2", "name": "City Clerk & Records Management", "workSystem": "ws1", "status": "on-track" },
-    { "id": "ks3", "name": "Public Information & Community Engagement", "workSystem": "ws1", "status": "at-risk" },
-    { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2", "status": "on-track" },
-    { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2", "status": "at-risk" },
-    { "id": "ks6", "name": "Legal Services", "workSystem": "ws2", "status": "on-track" },
-    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "status": "off-track",
+    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "goals": ["g1"], "status": "on-track" },
+    { "id": "ks2", "name": "City Clerk & Records Management", "workSystem": "ws1", "goals": ["g1"], "status": "on-track" },
+    { "id": "ks3", "name": "Public Information & Community Engagement", "workSystem": "ws1", "goals": ["g5", "g1"], "status": "at-risk" },
+    { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2", "goals": ["g1"], "status": "on-track" },
+    { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2", "goals": ["g6", "g1"], "status": "at-risk" },
+    { "id": "ks6", "name": "Legal Services", "workSystem": "ws2", "goals": ["g1"], "status": "on-track" },
+    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "goals": ["g1"], "status": "off-track",
       "details": {
         "description": "Provides IT infrastructure, cybersecurity, and technical support across all City Work Systems.",
         "owner": "IT Director",
@@ -57,29 +57,29 @@
         ]
       }
     },
-    { "id": "ks8", "name": "Community Development & Planning", "workSystem": "ws3", "status": "on-track" },
-    { "id": "ks9", "name": "Economic Prosperity & Business Support", "workSystem": "ws3", "status": "on-track" },
-    { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3", "status": "at-risk" },
-    { "id": "ks11", "name": "Public Safety Services", "workSystem": "ws4", "status": "on-track" },
-    { "id": "ks12", "name": "Municipal Court", "workSystem": "ws4", "status": "on-track" },
-    { "id": "ks13", "name": "Public Works & Municipal Services", "workSystem": "ws5", "status": "on-track" },
-    { "id": "ks14", "name": "Transit Services", "workSystem": "ws5",
+    { "id": "ks8", "name": "Community Development & Planning", "workSystem": "ws3", "goals": ["g2"], "status": "on-track" },
+    { "id": "ks9", "name": "Economic Prosperity & Business Support", "workSystem": "ws3", "goals": ["g2"], "status": "on-track" },
+    { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3", "goals": ["g1", "g4"], "status": "at-risk" },
+    { "id": "ks11", "name": "Public Safety Services", "workSystem": "ws4", "goals": ["g3"], "status": "on-track" },
+    { "id": "ks12", "name": "Municipal Court", "workSystem": "ws4", "goals": ["g3"], "status": "on-track" },
+    { "id": "ks13", "name": "Public Works & Municipal Services", "workSystem": "ws5", "goals": ["g4"], "status": "on-track" },
+    { "id": "ks14", "name": "Transit Services", "workSystem": "ws5", "goals": ["g4"],
       "details": {
         "description": "Oversees fixed-route, paratransit, and micromobility services connecting residents across Durango.",
         "owner": "Transit Manager",
         "lastUpdated": "2026-06-20"
       }
     },
-    { "id": "ks15", "name": "Asset Management", "workSystem": "ws5", "status": "at-risk" },
-    { "id": "ks16", "name": "Airport Operations", "workSystem": "ws5", "status": "on-track" },
-    { "id": "ks17", "name": "Library & Learning Services", "workSystem": "ws6", "status": "on-track" },
-    { "id": "ks18", "name": "Parks & Open Space Management", "workSystem": "ws6", "status": "on-track" },
-    { "id": "ks19", "name": "Municipal Court", "workSystem": "ws6", "status": "on-track" },
-    { "id": "ks20", "name": "Recreation & Open Space Management", "workSystem": "ws6", "status": "at-risk" }
+    { "id": "ks15", "name": "Asset Management", "workSystem": "ws5", "goals": ["g4"], "status": "at-risk" },
+    { "id": "ks16", "name": "Airport Operations", "workSystem": "ws5", "goals": ["g4"], "status": "on-track" },
+    { "id": "ks17", "name": "Library & Learning Services", "workSystem": "ws6", "goals": ["g3"], "status": "on-track" },
+    { "id": "ks18", "name": "Parks & Open Space Management", "workSystem": "ws6", "goals": ["g3"], "status": "on-track" },
+    { "id": "ks19", "name": "Municipal Court", "workSystem": "ws6", "goals": ["g3"], "status": "on-track" },
+    { "id": "ks20", "name": "Recreation & Open Space Management", "workSystem": "ws6", "goals": ["g3"], "status": "at-risk" }
   ],
 
   "programs": [
-    { "id": "p1", "name": "Fixed-Route Service", "keyservice": "ks14", "status": "on-track",
+    { "id": "p1", "name": "Fixed-Route Service", "objectives": ["ob10", "ob11"], "keyservice": "ks14", "status": "on-track",
       "details": {
         "description": "Scheduled bus routes serving core corridors throughout the city.",
         "metrics": [
@@ -88,9 +88,9 @@
         ]
       }
     },
-    { "id": "p2", "name": "Paratransit", "keyservice": "ks14", "status": "at-risk" },
-    { "id": "p3", "name": "Multimodal Programs", "keyservice": "ks14", "status": "on-track" },
-    { "id": "p4", "name": "Microtransit", "keyservice": "ks14", "status": "off-track",
+    { "id": "p2", "name": "Paratransit", "objectives": ["ob10"], "keyservice": "ks14", "status": "at-risk" },
+    { "id": "p3", "name": "Multimodal Programs", "objectives": ["ob10"], "keyservice": "ks14", "status": "on-track" },
+    { "id": "p4", "name": "Microtransit", "objectives": ["ob10"], "keyservice": "ks14", "status": "off-track",
       "details": {
         "description": "On-demand shuttle service piloted in underserved neighborhoods.",
         "owner": "Mobility Program Coordinator",
@@ -101,8 +101,8 @@
         ]
       }
     },
-    { "id": "p5", "name": "Transit Planning", "keyservice": "ks14", "status": "on-track" },
-    { "id": "p6", "name": "Fare Administration", "keyservice": "ks14", "status": "at-risk" },
-    { "id": "p7", "name": "Parking Management", "keyservice": "ks14", "status": "on-track" }
+    { "id": "p5", "name": "Transit Planning", "objectives": ["ob11", "ob10"], "keyservice": "ks14", "status": "on-track" },
+    { "id": "p6", "name": "Fare Administration", "objectives": ["ob11"], "keyservice": "ks14", "status": "at-risk" },
+    { "id": "p7", "name": "Parking Management", "objectives": ["ob11"], "keyservice": "ks14", "status": "on-track" }
   ]
 }

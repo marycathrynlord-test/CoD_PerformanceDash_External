@@ -210,6 +210,13 @@
   }
   .empty-note{margin:0 0 10px 30px; font-size:12px; color:var(--slate); font-style:italic;}
 
+  .align-tag{
+    font-size:10px; font-weight:600; color:var(--fw-purple);
+    background:rgba(155,127,201,0.12); border:1px solid rgba(155,127,201,0.35);
+    border-radius:100px; padding:2px 8px; white-space:nowrap;
+  }
+  .goal-subhead{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--slate); padding:14px 8px 8px;}
+
   /* ---------- Strategic plan reference ---------- */
   .goal-dot{width:12px;height:12px;border-radius:50%;flex:none;}
 
@@ -250,7 +257,7 @@
 <div class="wrap" id="dashboard">
 
   <div class="titleband">
-    <div class="eyebrow" id="period-label">FY2026 · Key Performance Snapshot</div>
+    <div class="eyebrow" id="period-label">FY2026 · Quarterly Snapshot</div>
     <h1>How the City of Durango is Performing</h1>
     <p>Key Performance Indicators (KPIs) show how the City is doing on the things that matter most. 
       <br> They measure progress toward our strategic goals and help ensure accountability to the community.
@@ -275,12 +282,12 @@
     <div class="section-head">
       <div class="eyebrow">Policy and Community Outcomes</div>
       <h2>Strategic Plan: Goals & Objectives</h2>
-      <p>Our program work drives measurable results, and those results advance the Strategic Plan goals and objectives that move our community forward. Expand a Goal to see its Objectives.</p>
+      <p>Two paths lead to every Goal: Key Services roll up to it directly, and Objectives roll up from their Programs. The two paths stay separate — Programs never roll up straight into a Goal or Work System. Expand a Goal to see both.</p>
     </div>
 
     <div class="drill-col">
       <div class="drill-col-head">
-        <h3>Every Strategic Plan Goal, drilled down to its Objectives</h3>
+        <h3>Every Strategic Plan Goal, with both prongs of alignment</h3>
       </div>
       <div class="drill-col-body" id="goal-tree"></div>
     </div>
@@ -293,7 +300,7 @@
       <div class="eyebrow">Operational Structure</div>
       <h2>Work Systems → Key Services → Programs</h2>
       <p>How the City's work is organized, top to bottom, and how it's performing right now.</p>
-      <p>Expand a Work System to see its Key Services, then expand a Key Service to see the Programs delivered underneath it.</p>
+      <p>Expand a Work System to see its Key Services. Each Key Service also shows related Programs for context — but a Program's real reporting line is its Objective (see the Strategic Plan section above), not the Key Service shown here.</p>
     </div>
 
     <div class="drill-col">
@@ -456,14 +463,34 @@ function rollupStatus(statuses){
 
 function programStatus(p){ return p.status || 'no-data'; }
 
+// Key Services carry their OWN distinct status — they are a "yellow box"
+// (distinct measures) in the framework, not an aggregate of Programs.
+// The Programs↔Key Service link is alignment only (dashed arrow), so it
+// intentionally does not feed into this.
 function keyServiceStatus(ks){
-  const progs = DATA.programs.filter(p => p.keyservice === ks.id);
-  if(progs.length > 0) return rollupStatus(progs.map(programStatus));
   return ks.status || 'no-data';
+}
+
+// Objectives DO aggregate from their Programs — this is the one real
+// "solid arrow" on the policy side of the framework. A Program can now
+// belong to more than one Objective, so this checks array membership.
+function objectiveStatus(ob){
+  const progs = DATA.programs.filter(p => Array.isArray(p.objectives) && p.objectives.includes(ob.id));
+  if(progs.length > 0) return rollupStatus(progs.map(programStatus));
+  return 'no-data';
 }
 
 function workSystemStatus(ws){
   const services = DATA.keyServices.filter(k => k.workSystem === ws.id);
+  return rollupStatus(services.map(keyServiceStatus));
+}
+
+// Strategic Plan Goals aggregate directly from Key Services aligned to
+// them (the other "solid arrow" — Key Service → Goal, bypassing
+// Objectives entirely, per the framework). A Key Service can now belong
+// to more than one Goal, so this checks array membership.
+function goalStatus(g){
+  const services = DATA.keyServices.filter(k => Array.isArray(k.goals) && k.goals.includes(g.id));
   return rollupStatus(services.map(keyServiceStatus));
 }
 
@@ -554,8 +581,8 @@ function renderStats(){
     { n: DATA.workSystems.length, l: 'Work Systems', breakdown: statusBreakdownHTML(DATA.workSystems, workSystemStatus) },
     { n: DATA.keyServices.length, l: 'Key Services', breakdown: statusBreakdownHTML(DATA.keyServices, keyServiceStatus) },
     { n: DATA.programs.length, l: 'Programs', breakdown: statusBreakdownHTML(DATA.programs, programStatus) },
-    { n: DATA.goals.length, l: 'Strategic Plan Goals' },
-    { n: DATA.objectives.length, l: 'Objectives' },
+    { n: DATA.goals.length, l: 'Strategic Plan Goals', breakdown: statusBreakdownHTML(DATA.goals, goalStatus) },
+    { n: DATA.objectives.length, l: 'Objectives', breakdown: statusBreakdownHTML(DATA.objectives, objectiveStatus) },
   ];
   document.getElementById('stat-grid').innerHTML = stats.map(s=>`
     <div class="stat-card">
@@ -576,17 +603,25 @@ function renderWorkSystemTree(){
     const services = DATA.keyServices.filter(k=>k.workSystem===ws.id);
 
     const ksHTML = services.map(ks=>{
-      const progs = DATA.programs.filter(p=>p.keyservice===ks.id);
-      const progHTML = progs.length
-        ? progs.map(p=>`
-            <div class="leaf-card">
-              <span class="box-tag gold">Program</span>
-              <span style="flex:1;">${p.name}</span>
-              ${statusBadgeHTML(programStatus(p))}
-              <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
-            </div>
-          `).join('')
-        : `<div class="empty-note">No programs recorded under this Key Service yet.</div>`;
+      const relatedProgs = DATA.programs.filter(p=>p.keyservice===ks.id);
+      const progHTML = relatedProgs.length
+        ? relatedProgs.map(p=>{
+            const obs = (p.objectives||[]).map(oid=>DATA.objectives.find(o=>o.id===oid)).filter(Boolean);
+            const obTags = obs.map(o=>`<span class="align-tag" title="Programs roll up into their Objective(s), not this Key Service">⟵┄ ${o.name}</span>`).join('');
+            return `
+              <div class="leaf-card">
+                <span class="box-tag gold">Program</span>
+                <span style="flex:1;">${p.name}</span>
+                ${obTags}
+                ${statusBadgeHTML(programStatus(p))}
+                <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
+              </div>
+            `;
+          }).join('')
+        : `<div class="empty-note">No related Programs recorded yet.</div>`;
+
+      const goalObjs = (ks.goals||[]).map(gid=>DATA.goals.find(g=>g.id===gid)).filter(Boolean);
+      const goalTags = goalObjs.map(g=>`<span class="align-tag" title="Rolls up into this Strategic Plan Goal">⟶ ${g.name}</span>`).join('');
 
       return `
         <div class="node-item ks-node">
@@ -594,15 +629,19 @@ function renderWorkSystemTree(){
             <span class="left">
               <span class="box-tag gold">Key Service</span>
               <span class="name">${ks.name}</span>
+              ${goalTags}
               ${statusBadgeHTML(keyServiceStatus(ks))}
             </span>
             <span class="meta">
-              ${progs.length} program${progs.length!==1?'s':''}
+              ${relatedProgs.length} related program${relatedProgs.length!==1?'s':''}
               <button class="detail-btn" data-kind="ks" data-id="${ks.id}">Details</button>
               <span class="chevron">▾</span>
             </span>
           </div>
-          <div class="node-body">${progHTML}</div>
+          <div class="node-body">
+            <div class="goal-subhead">Related Programs <span style="text-transform:none;font-weight:500;">(alignment only — see each Program's real Objective(s) above)</span></div>
+            ${progHTML}
+          </div>
         </div>
       `;
     }).join('');
@@ -637,16 +676,52 @@ function renderGoalTree(){
   const root = document.getElementById('goal-tree');
 
   root.innerHTML = DATA.goals.map(g=>{
+    const alignedKS = DATA.keyServices.filter(k=>Array.isArray(k.goals) && k.goals.includes(g.id));
     const objs = DATA.objectives.filter(o=>o.goal===g.id);
 
+    const ksHTML = alignedKS.length
+      ? alignedKS.map(ks=>{
+          const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
+          return `
+            <div class="leaf-card">
+              <span class="box-tag gold">Key Service</span>
+              <span style="flex:1;">${ks.name}</span>
+              ${ws ? `<span class="align-tag">${ws.name}</span>` : ''}
+              ${statusBadgeHTML(keyServiceStatus(ks))}
+            </div>
+          `;
+        }).join('')
+      : `<div class="empty-note">No Key Services directly aligned to this Goal yet.</div>`;
+
     const objHTML = objs.length
-      ? objs.map(o=>`
-          <div class="leaf-card">
-            <span class="box-tag">Objective</span>
-            <span style="flex:1;">${o.name}</span>
-          </div>
-        `).join('')
-      : `<div class="empty-note">No objectives recorded under this Goal yet.</div>`;
+      ? objs.map(o=>{
+          const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(o.id));
+          const progHTML = progs.length
+            ? progs.map(p=>`
+                <div class="leaf-card">
+                  <span class="box-tag gold">Program</span>
+                  <span style="flex:1;">${p.name}</span>
+                  ${statusBadgeHTML(programStatus(p))}
+                  <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
+                </div>
+              `).join('')
+            : `<div class="empty-note">No Programs recorded under this Objective yet.</div>`;
+
+          return `
+            <div class="node-item ks-node">
+              <div class="node-header" role="button" tabindex="0">
+                <span class="left">
+                  <span class="box-tag">Objective</span>
+                  <span class="name">${o.name}</span>
+                  ${statusBadgeHTML(objectiveStatus(o))}
+                </span>
+                <span class="meta">${progs.length} program${progs.length!==1?'s':''} <span class="chevron">▾</span></span>
+              </div>
+              <div class="node-body">${progHTML}</div>
+            </div>
+          `;
+        }).join('')
+      : `<div class="empty-note">No Objectives recorded under this Goal yet.</div>`;
 
     return `
       <div class="node-item ws-node">
@@ -655,15 +730,22 @@ function renderGoalTree(){
             <span class="goal-dot" style="background:${g.color}"></span>
             <span class="box-tag">Goal</span>
             <span class="name">${g.name}</span>
+            ${statusBadgeHTML(goalStatus(g))}
           </span>
-          <span class="meta">${objs.length} objective${objs.length!==1?'s':''} <span class="chevron">▾</span></span>
+          <span class="meta">${alignedKS.length} key service${alignedKS.length!==1?'s':''} · ${objs.length} objective${objs.length!==1?'s':''} <span class="chevron">▾</span></span>
         </div>
-        <div class="node-body">${objHTML}</div>
+        <div class="node-body">
+          <div class="goal-subhead">Key Services aligned directly to this Goal</div>
+          ${ksHTML}
+          <div class="goal-subhead">Objectives under this Goal</div>
+          ${objHTML}
+        </div>
       </div>
     `;
   }).join('');
 
   wireAccordions(root);
+  wireDetailButtons(root);
 }
 
 function wireAccordions(scope){
