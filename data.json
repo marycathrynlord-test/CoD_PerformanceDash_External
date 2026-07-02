@@ -30,43 +30,55 @@
     { "id": "ob15", "name": "6.1 Employee Growth and Retention", "goal": "g6" }
   ],
 
-  "programs": [
-    { "id": "p1", "name": "Wildland-Urban Interface Program", "objective": "ob1",
-      "measures": [ { "label": "Acres treated", "value": "1,240" }, { "label": "Homes assessed", "value": "386" } ] },
-    { "id": "p2", "name": "Water Infrastructure Capital Program", "objective": "ob2",
-      "measures": [ { "label": "Pipe miles replaced", "value": "4.6" }, { "label": "Budget spent", "value": "62%" } ] },
-    { "id": "p3", "name": "Prosperity Business Support Program", "objective": "ob3",
-      "measures": [ { "label": "Businesses assisted", "value": "58" }, { "label": "Jobs supported", "value": "214" } ] },
-    { "id": "p4", "name": "Innovative Housing Program", "objective": "ob4",
-      "measures": [ { "label": "Units in pipeline", "value": "127" }, { "label": "Units completed", "value": "34" } ] },
-    { "id": "p5", "name": "Digital Services Modernization Program", "objective": "ob5",
-      "measures": [ { "label": "Services online", "value": "22" }, { "label": "Avg. form completion", "value": "96%" } ] }
-  ],
+
 
   "workSystems": [
-    { "id": "ws1", "name": "Public Safety" },
-    { "id": "ws2", "name": "Public Works" },
-    { "id": "ws3", "name": "Parks & Recreation" },
-    { "id": "ws4", "name": "Community Development" },
-    { "id": "ws5", "name": "Transportation" }
+    { "id": "ws1", "name": "Leadership and Governance" },
+    { "id": "ws2", "name": "Financial and Internal Services" },
+    { "id": "ws3", "name": "Community Growth and Economic Vitality" },
+    { "id": "ws4", "name": "Public Safety" },
+    { "id": "ws5", "name": "Infrastructure" },
+    { "id": "ws6", "name": "Parks, Recreation and Cultural Services" }
   ],
 
   "keyServices": [
-    { "id": "ks1", "name": "Emergency Response", "workSystem": "ws1", "goal": "g1",
-      "measures": [ { "label": "Avg response time", "value": "5.2 min" }, { "label": "Calls answered <15s", "value": "92%" } ] },
-    { "id": "ks2", "name": "Police Patrol", "workSystem": "ws1", "goal": "g1",
-      "measures": [ { "label": "Priority-1 response", "value": "6.8 min" }, { "label": "Community satisfaction", "value": "81%" } ] },
-    { "id": "ks3", "name": "Streets Maintenance", "workSystem": "ws2", "goal": "g2",
-      "measures": [ { "label": "Potholes repaired (qtr)", "value": "264" }, { "label": "Avg repair time", "value": "3.1 days" } ] },
-    { "id": "ks4", "name": "Water & Utilities", "workSystem": "ws2", "goal": "g2",
-      "measures": [ { "label": "Water quality compliance", "value": "99.8%" }, { "label": "Main breaks (qtr)", "value": "4" } ] },
-    { "id": "ks5", "name": "Parks Maintenance", "workSystem": "ws3", "goal": null,
-      "measures": [ { "label": "Facility visits", "value": "86K" }, { "label": "Turf condition score", "value": "8.4/10" } ] },
-    { "id": "ks6", "name": "Trash & Recycling", "workSystem": "ws2", "goal": null,
-      "measures": [ { "label": "On-time collection", "value": "97%" }, { "label": "Diversion rate", "value": "34%" } ] },
-    { "id": "ks7", "name": "Permitting & Inspections", "workSystem": "ws4", "goal": "g3",
-      "measures": [ { "label": "Permits issued on time", "value": "87%" }, { "label": "Avg review time", "value": "9 days" } ] },
-    { "id": "ks8", "name": "Transit Operations", "workSystem": "ws5", "goal": "g2",
-      "measures": [ { "label": "On-time performance", "value": "91%" }, { "label": "Monthly ridership", "value": "21.3K" } ] }
+    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1" },
+    { "id": "ks2", "name": "City Clerk & Records Management", "workSystem": "ws1" },
+    { "id": "ks3", "name": "Public Information & Community Engagement", "workSystem": "ws1" },
+    { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2" },
+    { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2" },
+    { "id": "ks6", "name": "Legal Services", "workSystem": "ws2" },
+    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2" },
+    { "id": "ks8", "name": "Community Development & Planning ", "workSystem": "ws3" },
+    { "id": "ks9", "name": "Economic Prosperity & Business Support", "workSystem": "ws3" },
+    { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3" },
+    { "id": "ks11", "name": "Public Safety Services", "workSystem": "ws4" },
+    { "id": "ks12", "name": "Municipal Court", "workSystem": "ws4" },
+    { "id": "ks13", "name": "Public Works & Municipal Services ", "workSystem": "ws5" },
+    { "id": "ks14", "name": "Transit Services ", "workSystem": "ws5" },
+    { "id": "ks15", "name": "Asset Management", "workSystem": "ws5" },
+    { "id": "ks16", "name": "Airport Operations", "workSystem": "ws5" },
+    { "id": "ks17", "name": "Library & Learning Services", "workSystem": "ws6" },
+    { "id": "ks18", "name": "Parks & Open Space Management", "workSystem": "ws6" },
+    { "id": "ks19", "name": "Municipal Court", "workSystem": "ws6" },
+    { "id": "ks20", "name": "Recreation & Open Space Management", "workSystem": "ws6" }
+
+  ],
+
+    "programs": [
+    { "id": "p1", "name": "Fixed-Route Service", "keyservice": "ks14"},
+    { "id": "p1", "name": "Paratransit", "keyservice": "ks14"},
+    { "id": "p1", "name": "Multimodal Programs", "keyservice": "ks14"},
+    { "id": "p1", "name": "Microtransit", "keyservice": "ks14"},
+    { "id": "p1", "name": "Transit Planning", "keyservice": "ks14"},
+    { "id": "p1", "name": "Fare Administration", "keyservice": "ks14"},
+    { "id": "p1", "name": "Parking Management", "keyservice": "ks14"}
+
+
+
+
+
+
+
   ]
 }
