@@ -213,9 +213,26 @@
   .align-tag{
     font-size:10px; font-weight:600; color:var(--fw-purple);
     background:rgba(155,127,201,0.12); border:1px solid rgba(155,127,201,0.35);
-    border-radius:100px; padding:2px 8px; white-space:nowrap;
+    border-radius:100px; padding:2px 8px; white-space:nowrap; cursor:help;
   }
   .goal-subhead{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--slate); padding:14px 8px 8px;}
+
+  /* ---------- Goal filter bar ---------- */
+  .goal-bar{display:flex; flex-wrap:wrap; gap:10px;}
+  .goal-chip-btn{
+    display:flex; align-items:center; gap:8px;
+    border:1.5px solid var(--line); background:var(--white); color:var(--ink);
+    padding:8px 14px 8px 10px; border-radius:100px; font-size:12.5px; font-weight:600; cursor:pointer;
+    transition:all .15s ease;
+  }
+  .goal-chip-btn .swatch{width:9px;height:9px;border-radius:50%;flex:none;}
+  .goal-chip-btn .count{color:var(--slate); font-weight:600;}
+  .goal-chip-btn.active{border-color:transparent; color:#fff;}
+  .goal-chip-btn.active .count{color:rgba(255,255,255,0.85);}
+  .goal-chip-btn.reset{font-style:italic;}
+
+  .node-item.dimmed{opacity:.25; transition:opacity .2s ease;}
+  .leaf-card.dimmed{opacity:.25; transition:opacity .2s ease;}
 
   /* ---------- Strategic plan reference ---------- */
   .goal-dot{width:12px;height:12px;border-radius:50%;flex:none;}
@@ -257,7 +274,7 @@
 <div class="wrap" id="dashboard">
 
   <div class="titleband">
-    <div class="eyebrow" id="period-label">FY2026 · Key Performance Snapshot</div>
+    <div class="eyebrow" id="period-label">FY2026 · Quarterly Snapshot</div>
     <h1>How the City of Durango is Performing</h1>
     <p>Key Performance Indicators (KPIs) show how the City is doing on the things that matter most. 
       <br> They measure progress toward our strategic goals and help ensure accountability to the community.
@@ -277,33 +294,18 @@
     <div class="stat-grid" id="stat-grid"></div>
   </div>
 
-   <!-- STRATEGIC PLAN REFERENCE -->
-  <div class="section" id="goals">
-    <div class="section-head">
-      <div class="eyebrow">Policy and Community Outcomes</div>
-      <h2>Strategic Plan: Goals & Objectives</h2>
-      <p>Two paths lead to every Goal: Key Services roll up to it directly, and Objectives roll up from their Programs. The two paths stay separate — Programs never roll up straight into a Goal or Work System. Expand a Goal to see both.</p>
-    </div>
-
-    <div class="drill-col">
-      <div class="drill-col-head">
-        <h3>Every Strategic Plan Goal, with both prongs of alignment</h3>
-      </div>
-      <div class="drill-col-body" id="goal-tree"></div>
-    </div>
-  </div>
-
-
-  <!-- WORK SYSTEM → KEY SERVICE → PROGRAM -->
+  <!-- WORK SYSTEM → KEY SERVICE → PROGRAM (single tree, with Goal/Objective alignment folded in) -->
   <div class="section" id="worksystems">
     <div class="section-head">
-      <div class="eyebrow">Operational Structure</div>
+      <div class="eyebrow">Operational Structure, with Policy Alignment Built In</div>
       <h2>Work Systems → Key Services → Programs</h2>
       <p>How the City's work is organized, top to bottom, and how it's performing right now.</p>
-      <p>Expand a Work System to see its Key Services. Each Key Service also shows related Programs for context — but a Program's real reporting line is its Objective (see the Strategic Plan section above), not the Key Service shown here.</p>
+      <p>Each Key Service shows which Strategic Plan Goal(s) it rolls up to. Each Program shows which Objective(s) it rolls up to (hover an Objective tag to see that Objective's full status). Use the Goal filter below to highlight just the items tied to one Goal — no separate table to jump to.</p>
     </div>
 
-    <div class="drill-col">
+    <div class="goal-bar" id="goal-bar"></div>
+
+    <div class="drill-col" style="margin-top:16px;">
       <div class="drill-col-head">
         <h3>Every Work System, drilled all the way down</h3>
       </div>
@@ -596,6 +598,8 @@ function renderStats(){
 }
 
 /* ---------- Work System → Key Service → Program tree ---------- */
+let activeGoals = new Set();
+
 function renderWorkSystemTree(){
   const root = document.getElementById('ws-tree');
 
@@ -607,9 +611,12 @@ function renderWorkSystemTree(){
       const progHTML = relatedProgs.length
         ? relatedProgs.map(p=>{
             const obs = (p.objectives||[]).map(oid=>DATA.objectives.find(o=>o.id===oid)).filter(Boolean);
-            const obTags = obs.map(o=>`<span class="align-tag" title="Programs roll up into their Objective(s), not this Key Service">⟵┄ ${o.name}</span>`).join('');
+            const obTags = obs.map(o=>`<span class="align-tag" data-obj-tip="${o.id}" title="">⟵┄ ${o.name}</span>`).join('');
+            // A Program is relevant to the active Goal filter if any of its
+            // Objectives roll up to that Goal (the real policy-side path).
+            const progGoals = obs.map(o=>o.goal);
             return `
-              <div class="leaf-card">
+              <div class="leaf-card" data-program-goals="${progGoals.join(',')}">
                 <span class="box-tag gold">Program</span>
                 <span style="flex:1;">${p.name}</span>
                 ${obTags}
@@ -624,7 +631,7 @@ function renderWorkSystemTree(){
       const goalTags = goalObjs.map(g=>`<span class="align-tag" title="Rolls up into this Strategic Plan Goal">⟶ ${g.name}</span>`).join('');
 
       return `
-        <div class="node-item ks-node" id="ksnode-${ks.id}">
+        <div class="node-item ks-node" id="ksnode-${ks.id}" data-ks-goals="${(ks.goals||[]).join(',')}">
           <div class="node-header" role="button" tabindex="0">
             <span class="left">
               <span class="box-tag gold">Key Service</span>
@@ -663,111 +670,116 @@ function renderWorkSystemTree(){
 
   wireAccordions(root);
   wireDetailButtons(root);
+  wireObjectiveTooltips(root);
 }
 
-/* ---------- Strategic Plan reference (Goals → Objectives) ----------
-   Same accordion pattern as Work Systems → Key Services: a Goal is
-   the top-level expandable node (like a Work System), and its
-   Objectives render as leaf cards underneath (like Programs). Both
-   Goals and Objectives use the plain (blue) box-tag rather than gold,
-   since neither carries its own distinct measures — they're aggregate
-   levels, same as Work Systems, per the original framework legend. */
-function renderGoalTree(){
-  const root = document.getElementById('goal-tree');
-
-  root.innerHTML = DATA.goals.map(g=>{
-    const alignedKS = DATA.keyServices.filter(k=>Array.isArray(k.goals) && k.goals.includes(g.id));
-    const objs = DATA.objectives.filter(o=>o.goal===g.id);
-
-    const ksHTML = alignedKS.length
-      ? alignedKS.map(ks=>{
-          const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
-          return `
-            <div class="leaf-card">
-              <span class="box-tag gold">Key Service</span>
-              <span style="flex:1;">${ks.name}</span>
-              ${ws ? `<span class="align-tag">${ws.name}</span>` : ''}
-              ${statusBadgeHTML(keyServiceStatus(ks))}
-              <button class="detail-btn" data-jump-ks="${ks.id}">See its Programs ↓</button>
-            </div>
-          `;
-        }).join('')
-      : `<div class="empty-note">No Key Services directly aligned to this Goal yet.</div>`;
-
-    const objHTML = objs.length
-      ? objs.map(o=>{
-          const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(o.id));
-          const progHTML = progs.length
-            ? progs.map(p=>`
-                <div class="leaf-card">
-                  <span class="box-tag gold">Program</span>
-                  <span style="flex:1;">${p.name}</span>
-                  ${statusBadgeHTML(programStatus(p))}
-                  <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
-                </div>
-              `).join('')
-            : `<div class="empty-note">No Programs recorded under this Objective yet.</div>`;
-
-          return `
-            <div class="node-item ks-node">
-              <div class="node-header" role="button" tabindex="0">
-                <span class="left">
-                  <span class="box-tag">Objective</span>
-                  <span class="name">${o.name}</span>
-                  ${statusBadgeHTML(objectiveStatus(o))}
-                </span>
-                <span class="meta">${progs.length} program${progs.length!==1?'s':''} <span class="chevron">▾</span></span>
-              </div>
-              <div class="node-body">${progHTML}</div>
-            </div>
-          `;
-        }).join('')
-      : `<div class="empty-note">No Objectives recorded under this Goal yet.</div>`;
-
-    return `
-      <div class="node-item ws-node">
-        <div class="node-header" role="button" tabindex="0">
-          <span class="left">
-            <span class="goal-dot" style="background:${g.color}"></span>
-            <span class="box-tag">Goal</span>
-            <span class="name">${g.name}</span>
-            ${statusBadgeHTML(goalStatus(g))}
-          </span>
-          <span class="meta">${alignedKS.length} key service${alignedKS.length!==1?'s':''} · ${objs.length} objective${objs.length!==1?'s':''} <span class="chevron">▾</span></span>
-        </div>
-        <div class="node-body">
-          <div class="goal-subhead">Key Services aligned directly to this Goal</div>
-          ${ksHTML}
-          <div class="goal-subhead">Objectives under this Goal</div>
-          ${objHTML}
-        </div>
-      </div>
-    `;
+/* ---------- Goal filter bar ----------
+   Replaces the old separate Goals/Objectives table. Instead of a second
+   tree to navigate, this filters and highlights the ONE tree above:
+   Key Services dim/undim based on their own Goal alignment; Programs
+   dim/undim based on their Objective's Goal — so both alignment paths
+   (the direct Key Service line and the Program→Objective line) light up
+   together inside the same view. */
+function renderGoalFilterBar(){
+  const bar = document.getElementById('goal-bar');
+  const resetBtn = `<button class="goal-chip-btn reset" data-goal="__all__">Show all</button>`;
+  const chips = DATA.goals.map(g=>{
+    const count = DATA.keyServices.filter(k=>(k.goals||[]).includes(g.id)).length;
+    const dotColor = statusDotColor(goalStatus(g));
+    return `<button class="goal-chip-btn" data-goal="${g.id}" style="--gc:${g.color}">
+      <span class="swatch" style="background:${dotColor}"></span>${g.name}
+      <span class="count">${count}</span>
+    </button>`;
   }).join('');
+  bar.innerHTML = resetBtn + chips;
 
-  wireAccordions(root);
-  wireDetailButtons(root);
-  wireGoalJumps(root);
+  bar.addEventListener('click', e=>{
+    const btn = e.target.closest('.goal-chip-btn');
+    if(!btn) return;
+    const id = btn.dataset.goal;
+    if(id === '__all__'){ activeGoals.clear(); }
+    else { activeGoals.has(id) ? activeGoals.delete(id) : activeGoals.add(id); }
+    updateGoalChipStates();
+    applyGoalFilter();
+  });
+
+  updateGoalChipStates();
 }
 
-/* ---------- Jump from a Goal's Key Service to that Key Service's real
-   location in the Work Systems tree, auto-expanding it along the way ---------- */
-function wireGoalJumps(scope){
-  scope.querySelectorAll('[data-jump-ks]').forEach(btn=>{
-    btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      const target = document.getElementById(`ksnode-${btn.dataset.jumpKs}`);
-      if(!target) return;
+function updateGoalChipStates(){
+  document.querySelectorAll('.goal-chip-btn').forEach(btn=>{
+    const id = btn.dataset.goal;
+    if(id === '__all__'){
+      const on = activeGoals.size === 0;
+      btn.classList.toggle('active', on);
+      btn.style.background = on ? 'var(--forest-dark)' : '';
+      btn.style.borderColor = on ? 'var(--forest-dark)' : '';
+      btn.style.color = on ? '#fff' : '';
+      return;
+    }
+    const on = activeGoals.has(id);
+    btn.classList.toggle('active', on);
+    btn.style.background = on ? btn.style.getPropertyValue('--gc') : '';
+    btn.style.borderColor = on ? btn.style.getPropertyValue('--gc') : '';
+  });
+}
 
-      target.classList.add('open');
-      const parentWs = target.closest('.node-item.ws-node');
-      if(parentWs && parentWs !== target) parentWs.classList.add('open');
+function applyGoalFilter(){
+  const noFilter = activeGoals.size === 0;
 
-      target.scrollIntoView({ behavior:'smooth', block:'center' });
-      target.style.transition = 'box-shadow .3s ease';
-      target.style.boxShadow = '0 0 0 3px var(--sage)';
-      setTimeout(()=>{ target.style.boxShadow = ''; }, 1400);
+  document.querySelectorAll('.ks-node').forEach(node=>{
+    const goals = (node.dataset.ksGoals || '').split(',').filter(Boolean);
+    const match = noFilter || goals.some(g=>activeGoals.has(g));
+    node.classList.toggle('dimmed', !match);
+    if(match && !noFilter) node.classList.add('open');
+  });
+
+  document.querySelectorAll('.leaf-card[data-program-goals]').forEach(card=>{
+    const goals = (card.dataset.programGoals || '').split(',').filter(Boolean);
+    const match = noFilter || goals.some(g=>activeGoals.has(g));
+    card.classList.toggle('dimmed', !match);
+  });
+
+  // Auto-open Work Systems that contain at least one matching Key Service.
+  if(!noFilter){
+    document.querySelectorAll('.node-item.ws-node').forEach(wsNode=>{
+      const hasMatch = [...wsNode.querySelectorAll('.ks-node')].some(k=>!k.classList.contains('dimmed'));
+      if(hasMatch) wsNode.classList.add('open');
     });
+  }
+}
+
+/* ---------- Objective hover tooltip on Program align-tags ----------
+   Reuses the same tooltip element as the status-breakdown cards, so
+   hovering an Objective tag on a Program shows that Objective's real,
+   full rollup (status + every Program under it) without navigating
+   anywhere. */
+function wireObjectiveTooltips(scope){
+  scope.querySelectorAll('[data-obj-tip]').forEach(el=>{
+    const show = ()=>{
+      const ob = DATA.objectives.find(o=>o.id===el.dataset.objTip);
+      if(!ob) return;
+      const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(ob.id));
+      const status = objectiveStatus(ob);
+      const tooltip = document.getElementById('hover-tooltip');
+      tooltip.innerHTML = `
+        <div class="tt-head"><span class="status-dot" style="background:${statusDotColor(status)}"></span>${ob.name}</div>
+        <ul class="tt-list">${progs.map(p=>`<li>${p.name} — ${STATUS_META[programStatus(p)].label}</li>`).join('') || '<li>No Programs recorded yet.</li>'}</ul>
+      `;
+      const rect = el.getBoundingClientRect();
+      tooltip.style.left = `${rect.left}px`;
+      tooltip.style.top = `${rect.bottom + 8}px`;
+      tooltip.classList.add('visible');
+      requestAnimationFrame(()=>{
+        const tRect = tooltip.getBoundingClientRect();
+        if(tRect.right > window.innerWidth - 12){ tooltip.style.left = `${Math.max(12, window.innerWidth - tRect.width - 12)}px`; }
+      });
+    };
+    el.setAttribute('tabindex','0');
+    el.addEventListener('mouseenter', show);
+    el.addEventListener('mouseleave', hideTooltip);
+    el.addEventListener('focus', show);
+    el.addEventListener('blur', hideTooltip);
   });
 }
 
@@ -859,7 +871,7 @@ function init(){
   renderStats();
   renderStatusLegend();
   renderWorkSystemTree();
-  renderGoalTree();
+  renderGoalFilterBar();
   wireModalChrome();
 }
 
