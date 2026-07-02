@@ -102,9 +102,6 @@
   .status-legend{display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:14px; font-size:12.5px; color:var(--slate);}
   .status-legend .item{display:flex; align-items:center; gap:7px;}
 
-  .status-summary{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px;}
-  .status-summary .status-badge{font-size:12px; padding:6px 14px;}
-
   /* ---------- At-a-glance stats ---------- */
   .stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:18px;}
   @media (max-width:900px){ .stat-grid{grid-template-columns:repeat(3,1fr);} }
@@ -112,6 +109,9 @@
   .stat-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-align:center;}
   .stat-card .n{font-size:26px;font-weight:700;color:var(--forest-dark);}
   .stat-card .l{font-size:11.5px;color:var(--slate);margin-top:4px;}
+  .stat-breakdown{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:5px;text-align:left;}
+  .mini-status{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--ink);}
+  .mini-status .status-dot{width:7px;height:7px;flex:none;}
 
   /* ---------- Accordion tree (shared) ---------- */
   .drill-col{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
@@ -215,7 +215,6 @@
       <p>How the City's work is organized, top to bottom, and how it's performing right now.</p>
     </div>
     <div class="stat-grid" id="stat-grid"></div>
-    <div class="status-summary" id="status-summary"></div>
   </div>
 
   <!-- MAIN ASK: WORK SYSTEM → KEY SERVICE → PROGRAM -->
@@ -397,33 +396,48 @@ function statusBadgeHTML(status){
   return `<span class="status-badge status-${status}"><span class="status-dot"></span>${meta.label}</span>`;
 }
 
-function renderStatusSummary(){
+function statusDotColor(status){
+  return status==='on-track' ? '#1B8A79'
+       : status==='at-risk'  ? '#D9A441'
+       : status==='off-track'? '#C1443B'
+       : '#9AA6A2';
+}
+
+function statusBreakdownHTML(items, statusFn){
   const counts = { 'on-track':0, 'at-risk':0, 'off-track':0, 'no-data':0 };
-  DATA.workSystems.forEach(ws => { counts[workSystemStatus(ws)]++; });
-
-  document.getElementById('status-summary').innerHTML = Object.entries(counts)
+  items.forEach(item => counts[statusFn(item)]++);
+  const rows = Object.entries(counts)
     .filter(([,n]) => n > 0)
-    .map(([status,n]) => `<span class="status-badge status-${status}"><span class="status-dot"></span>${n} Work System${n!==1?'s':''} ${STATUS_META[status].label}</span>`)
-    .join('');
+    .map(([status,n]) => `
+      <span class="mini-status">
+        <span class="status-dot" style="background:${statusDotColor(status)}"></span>
+        ${n} ${STATUS_META[status].label}
+      </span>
+    `).join('');
+  return `<div class="stat-breakdown">${rows}</div>`;
+}
 
+function renderStatusLegend(){
   document.getElementById('status-legend').innerHTML = Object.entries(STATUS_META)
-    .map(([status,meta]) => `<span class="item"><span class="status-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${
-      status==='on-track'?'#1B8A79':status==='at-risk'?'#D9A441':status==='off-track'?'#C1443B':'#9AA6A2'
-    }"></span>${meta.label}</span>`)
+    .map(([status,meta]) => `<span class="item"><span class="status-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusDotColor(status)}"></span>${meta.label}</span>`)
     .join('');
 }
 
 /* ---------- At-a-glance stats ---------- */
 function renderStats(){
   const stats = [
-    { n: DATA.workSystems.length, l: 'Work Systems' },
-    { n: DATA.keyServices.length, l: 'Key Services' },
-    { n: DATA.programs.length, l: 'Programs' },
+    { n: DATA.workSystems.length, l: 'Work Systems', breakdown: statusBreakdownHTML(DATA.workSystems, workSystemStatus) },
+    { n: DATA.keyServices.length, l: 'Key Services', breakdown: statusBreakdownHTML(DATA.keyServices, keyServiceStatus) },
+    { n: DATA.programs.length, l: 'Programs', breakdown: statusBreakdownHTML(DATA.programs, programStatus) },
     { n: DATA.goals.length, l: 'Strategic Plan Goals' },
     { n: DATA.objectives.length, l: 'Objectives' },
   ];
   document.getElementById('stat-grid').innerHTML = stats.map(s=>`
-    <div class="stat-card"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>
+    <div class="stat-card">
+      <div class="n">${s.n}</div>
+      <div class="l">${s.l}</div>
+      ${s.breakdown || ''}
+    </div>
   `).join('');
 }
 
@@ -517,7 +531,7 @@ function init(){
 
   renderKPIs();
   renderStats();
-  renderStatusSummary();
+  renderStatusLegend();
   renderWorkSystemTree();
   renderGoalTree();
 }
