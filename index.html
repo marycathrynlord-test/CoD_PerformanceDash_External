@@ -233,6 +233,49 @@
   .modal-trend-label{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--slate); margin-bottom:8px;}
   .modal-trend-summary{font-size:12.5px; color:var(--ink); margin-top:6px;}
 
+  /* ---------- Heatmap drill-down ---------- */
+  .heatmap-breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px;}
+  .heatmap-breadcrumb .crumb{
+    background:none; border:none; font-family:inherit; font-size:13px; font-weight:600;
+    color:var(--teal); cursor:pointer; padding:2px 4px; border-radius:4px;
+  }
+  .heatmap-breadcrumb .crumb:hover{ text-decoration:underline; }
+  .heatmap-breadcrumb .crumb.current{ color:var(--forest-dark); cursor:default; }
+  .heatmap-breadcrumb .crumb.current:hover{ text-decoration:none; }
+  .heatmap-breadcrumb .sep{color:var(--slate); font-size:12px;}
+
+  .heatmap-body{padding:18px 20px 6px;}
+  .heatmap-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px;
+  }
+  .heat-tile{
+    position:relative; border:none; border-radius:8px; padding:12px 12px 10px; text-align:left;
+    min-height:88px; display:flex; flex-direction:column; justify-content:space-between;
+    cursor:pointer; font-family:inherit; color:#fff; transition:transform .12s ease, box-shadow .12s ease;
+    overflow:hidden;
+  }
+  .heat-tile:hover, .heat-tile:focus-visible{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.18); outline:none; }
+  .heat-tile .heat-type{
+    font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+    opacity:.85; margin-bottom:6px;
+  }
+  .heat-tile .heat-name{font-size:12.5px; font-weight:700; line-height:1.3;}
+  .heat-tile .heat-foot{display:flex; align-items:center; justify-content:space-between; margin-top:8px; font-size:10.5px; font-weight:600; opacity:.9;}
+  .heat-tile .heat-trend{font-size:13px;}
+
+  .heat-tile.status-on-track{ background:#1B8A79; }
+  .heat-tile.status-at-risk{ background:#D9A441; color:#3a2c05; }
+  .heat-tile.status-off-track{ background:#C1443B; }
+  .heat-tile.status-no-data{ background:#9AA6A2; }
+
+  .heat-tile.split .heat-split-bg{ position:absolute; inset:0; z-index:0; }
+  .heat-tile.split .heat-split-bg .half{ position:absolute; top:0; bottom:0; width:50%; }
+  .heat-tile.split .heat-split-bg .half.left{ left:0; }
+  .heat-tile.split .heat-split-bg .half.right{ right:0; }
+  .heat-tile.split > *:not(.heat-split-bg){ position:relative; z-index:1; }
+
+  .heatmap-empty{grid-column:1/-1; font-size:13px; color:var(--slate); font-style:italic; padding:20px 0;}
+
   /* ---------- Export toolbar ---------- */
   .export-bar{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;}
   .export-btn{
@@ -385,19 +428,21 @@
     <div class="stat-grid" id="stat-grid"></div>
   </div>
 
-  <!-- STRATEGIC PLAN GOAL → KEY SERVICES & OBJECTIVES → PROGRAMS (single tree, rooted at policy level) -->
+  <!-- STRATEGIC PLAN GOAL → KEY SERVICES & OBJECTIVES → PROGRAMS (heatmap: scan everything, click to drill in) -->
   <div class="section" id="worksystems">
     <div class="section-head">
       <div class="eyebrow">Strategic Plan, With Operational Detail Built In</div>
       <h2>Strategic Plan Goals → Key Services & Objectives → Programs</h2>
-      <p>Start at the Goal level and drill down. Each Goal expands into two groups: the Key Services that roll up to it directly, and the Objectives that roll up from their Programs. Expand either to go one level deeper.</p>
+      <p>Every tile's color is its current status — scan for red and gold first. Click a Goal to see its Key Services and Objectives; click an Objective to see its Programs; click a Key Service or Program to see its full detail.</p>
     </div>
 
     <div class="drill-col">
       <div class="drill-col-head">
-        <h3>Every Strategic Plan Goal, drilled all the way down</h3>
+        <div class="heatmap-breadcrumb" id="heatmap-breadcrumb"></div>
       </div>
-      <div class="drill-col-body" id="ws-tree"></div>
+      <div class="heatmap-body">
+        <div class="heatmap-grid" id="heatmap-grid"></div>
+      </div>
       <div class="status-legend" id="status-legend" style="padding:0 20px 16px;"></div>
       <div class="status-defs" style="margin:0 20px 20px;">
         <div class="def-row"><dt>On Track —</dt> <dd>performance is at or above target, or within an agreed tolerance (e.g. within 5%).</dd></div>
@@ -426,6 +471,7 @@
       <div class="modal-meta" id="modal-meta"></div>
       <div class="modal-metrics" id="modal-metrics"></div>
       <div class="modal-trend" id="modal-trend"></div>
+      <div class="modal-trend" id="modal-related"></div>
     </div>
   </div>
 
@@ -900,13 +946,17 @@ function renderGoalSummary(){
 
   grid.querySelectorAll('[data-goal-jump]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const target = document.getElementById(`goalnode-${btn.dataset.goalJump}`);
+      heatmapView = { level:'goal', goalId: btn.dataset.goalJump };
+      renderHeatmap();
+      const target = document.getElementById('worksystems');
       if(!target) return;
-      target.classList.add('open');
       target.scrollIntoView({ behavior:'smooth', block:'start' });
-      target.style.transition = 'box-shadow .3s ease';
-      target.style.boxShadow = '0 0 0 3px var(--sage)';
-      setTimeout(()=>{ target.style.boxShadow = ''; }, 1400);
+      const panel = document.querySelector('.drill-col');
+      if(panel){
+        panel.style.transition = 'box-shadow .3s ease';
+        panel.style.boxShadow = '0 0 0 3px var(--sage)';
+        setTimeout(()=>{ panel.style.boxShadow = ''; }, 1400);
+      }
     });
   });
 }
@@ -932,15 +982,86 @@ function staleFlagHTML(item){
   return `<span class="stale-flag" title="Status last updated ${item.statusUpdated}">⏱ ${days}d stale</span>`;
 }
 
-function renderStrategicTree(){
-  const root = document.getElementById('ws-tree');
+/* ---------- Heatmap drill-down navigator ----------
+   Replaces the old always-expanded accordion tree. Only one level is
+   ever on screen: a grid of colored tiles you scan for red/gold first,
+   then click to go one level deeper. Breadcrumbs let you jump back up.
+   State lives in `heatmapView`; render/click handlers below just read
+   and update it. */
+let heatmapView = { level: 'goals' };
 
-  const sortedGoals = [...DATA.goals].sort((a,b)=>goalSortWeight(goalOverallStatus(a)) - goalSortWeight(goalOverallStatus(b)));
+function renderHeatmapBreadcrumb(){
+  const bc = document.getElementById('heatmap-breadcrumb');
+  const parts = [`<button class="crumb${heatmapView.level==='goals'?' current':''}" data-crumb="goals">All Goals</button>`];
 
-  root.innerHTML = sortedGoals.map(g=>{
-    const ksViewStatus = goalKeyServiceViewStatus(g);
-    const progViewStatus = goalProgramViewStatus(g);
-    const overallStatus = goalOverallStatus(g);
+  if(heatmapView.level === 'goal' || heatmapView.level === 'objective'){
+    const g = DATA.goals.find(gg=>gg.id===heatmapView.goalId);
+    parts.push(`<span class="sep">›</span>`);
+    parts.push(`<button class="crumb${heatmapView.level==='goal'?' current':''}" data-crumb="goal" data-goal-id="${heatmapView.goalId}">${g ? g.name : 'Goal'}</button>`);
+  }
+  if(heatmapView.level === 'objective'){
+    const o = DATA.objectives.find(oo=>oo.id===heatmapView.objectiveId);
+    parts.push(`<span class="sep">›</span>`);
+    parts.push(`<button class="crumb current" data-crumb="objective">${o ? o.name : 'Objective'}</button>`);
+  }
+  bc.innerHTML = parts.join('');
+
+  bc.querySelectorAll('.crumb').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const level = btn.dataset.crumb;
+      if(level === 'goals') heatmapView = { level:'goals' };
+      else if(level === 'goal') heatmapView = { level:'goal', goalId: btn.dataset.goalId };
+      renderHeatmap();
+    });
+  });
+}
+
+function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAttrs='' }){
+  const trend = trendItem ? computeTrend(trendItem.history) : null;
+  const trendHTML = trend ? `<span class="heat-trend" style="color:${trend==='improving'?'#fff':trend==='declining'?'#fff':'#fff'}">${TREND_META[trend].arrow}</span>` : '';
+  return `
+    <button class="heat-tile status-${status}" ${dataAttrs} tabindex="0">
+      <div class="heat-type">${typeLabel}</div>
+      <div class="heat-name">${name}</div>
+      <div class="heat-foot"><span>${STATUS_META[status].label}</span>${trendHTML}${extraFoot}</div>
+    </button>
+  `;
+}
+
+// Goal tiles get a special two-tone treatment since a Goal genuinely has
+// two separate statuses (Key Service view, Program view) — see the
+// Baldrige fix earlier. Splitting the tile's background keeps both
+// visible at a glance instead of picking one and hiding the other.
+function heatGoalTileHTML(g){
+  const ksStatus = goalKeyServiceViewStatus(g);
+  const progStatus = goalProgramViewStatus(g);
+  return `
+    <button class="heat-tile split" data-drill="goal" data-id="${g.id}" tabindex="0"
+      title="Key Services: ${STATUS_META[ksStatus].label} | Programs: ${STATUS_META[progStatus].label}">
+      <div class="heat-split-bg">
+        <div class="half left status-${ksStatus}" style="background:${statusDotColor(ksStatus)}"></div>
+        <div class="half right status-${progStatus}" style="background:${statusDotColor(progStatus)}"></div>
+      </div>
+      <div class="heat-type">Goal</div>
+      <div class="heat-name">${g.name}</div>
+      <div class="heat-foot"><span>KS: ${STATUS_META[ksStatus].label}</span><span>Prog: ${STATUS_META[progStatus].label}</span></div>
+    </button>
+  `;
+}
+
+function renderHeatmap(){
+  renderHeatmapBreadcrumb();
+  const grid = document.getElementById('heatmap-grid');
+
+  if(heatmapView.level === 'goals'){
+    const sorted = [...DATA.goals].sort((a,b)=>goalSortWeight(goalOverallStatus(a)) - goalSortWeight(goalOverallStatus(b)));
+    grid.innerHTML = sorted.map(g=>heatGoalTileHTML(g)).join('') || `<div class="heatmap-empty">No Strategic Plan Goals recorded yet.</div>`;
+    wireHeatmapTiles(grid);
+    return;
+  }
+
+  if(heatmapView.level === 'goal'){
+    const g = DATA.goals.find(gg=>gg.id===heatmapView.goalId);
     const alignedKS = DATA.keyServices
       .filter(k=>Array.isArray(k.goals) && k.goals.includes(g.id))
       .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
@@ -948,114 +1069,49 @@ function renderStrategicTree(){
       .filter(o=>o.goal===g.id)
       .sort((a,b)=>goalSortWeight(objectiveStatus(a)) - goalSortWeight(objectiveStatus(b)));
 
-    const ksHTML = alignedKS.length
-      ? alignedKS.map(ks=>{
-          const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
-          const relatedProgs = DATA.programs.filter(p=>p.keyservice===ks.id);
-          const progHTML = relatedProgs.length
-            ? relatedProgs.map(p=>{
-                const obs = (p.objectives||[]).map(oid=>DATA.objectives.find(o=>o.id===oid)).filter(Boolean);
-                const obTags = obs.map(o=>`<span class="align-tag" data-obj-tip="${o.id}">⟵┄ ${o.name}</span>`).join('');
-                return `
-                  <div class="leaf-card">
-                    <span class="box-tag gold">Program</span>
-                    <span style="flex:1;">${p.name}</span>
-                    ${obTags}
-                    ${primaryMetricHTML(p)}
-                    ${trendArrowHTML(p, "program", p.id)}
-                    ${statusBadgeHTML(programStatus(p))}
-                    <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
-                  </div>
-                `;
-              }).join('')
-            : `<div class="empty-note">No related Programs recorded yet.</div>`;
+    const ksTiles = alignedKS.map(ks=>heatTileHTML({
+      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
+      dataAttrs:`data-open-detail="ks" data-id="${ks.id}"`,
+    })).join('');
+    const objTiles = objs.map(o=>heatTileHTML({
+      typeLabel:'Objective', name:o.name, status:objectiveStatus(o), trendItem:null,
+      dataAttrs:`data-drill="objective" data-goal-id="${g.id}" data-id="${o.id}"`,
+    })).join('');
 
-          const ksStatus = keyServiceStatus(ks);
-          return `
-            <div class="node-item ks-node${ksStatus==='off-track' ? ' open' : ''}">
-              <div class="node-header" role="button" tabindex="0">
-                <span class="left">
-                  <span class="box-tag gold">Key Service</span>
-                  <span class="name">${ks.name}</span>
-                  ${ws ? `<span class="align-tag">${ws.name}</span>` : ''}
-                  ${primaryMetricHTML(ks)}
-                  ${staleFlagHTML(ks)}
-                  ${trendArrowHTML(ks, "ks", ks.id)}
-                  ${statusBadgeHTML(ksStatus)}
-                </span>
-                <span class="meta">${relatedProgs.length} related program${relatedProgs.length!==1?'s':''}
-                  <button class="detail-btn" data-kind="ks" data-id="${ks.id}">Details</button>
-                  <span class="chevron">▾</span>
-                </span>
-              </div>
-              <div class="node-body">
-                <div class="goal-subhead">Related Programs <span style="text-transform:none;font-weight:500;">(alignment only — see each Program's real Objective(s) above)</span></div>
-                ${progHTML}
-              </div>
-            </div>
-          `;
-        }).join('')
-      : `<div class="empty-note">No Key Services directly aligned to this Goal yet.</div>`;
+    grid.innerHTML = (ksTiles + objTiles) || `<div class="heatmap-empty">Nothing recorded under this Goal yet.</div>`;
+    wireHeatmapTiles(grid);
+    return;
+  }
 
-    const objHTML = objs.length
-      ? objs.map(o=>{
-          const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(o.id));
-          const progHTML = progs.length
-            ? progs.map(p=>`
-                <div class="leaf-card">
-                  <span class="box-tag gold">Program</span>
-                  <span style="flex:1;">${p.name}</span>
-                  ${primaryMetricHTML(p)}
-                  ${trendArrowHTML(p, "program", p.id)}
-                  ${statusBadgeHTML(programStatus(p))}
-                  <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
-                </div>
-              `).join('')
-            : `<div class="empty-note">No Programs recorded under this Objective yet.</div>`;
+  if(heatmapView.level === 'objective'){
+    const o = DATA.objectives.find(oo=>oo.id===heatmapView.objectiveId);
+    const progs = DATA.programs
+      .filter(p=>Array.isArray(p.objectives) && p.objectives.includes(o.id))
+      .sort((a,b)=>goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
 
-          const obStatus = objectiveStatus(o);
-          return `
-            <div class="node-item ks-node${obStatus==='off-track' ? ' open' : ''}">
-              <div class="node-header" role="button" tabindex="0">
-                <span class="left">
-                  <span class="box-tag">Objective</span>
-                  <span class="name">${o.name}</span>
-                  ${statusBadgeHTML(obStatus)}
-                </span>
-                <span class="meta">${progs.length} program${progs.length!==1?'s':''} <span class="chevron">▾</span></span>
-              </div>
-              <div class="node-body">${progHTML}</div>
-            </div>
-          `;
-        }).join('')
-      : `<div class="empty-note">No Objectives recorded under this Goal yet.</div>`;
+    grid.innerHTML = progs.map(p=>heatTileHTML({
+      typeLabel:'Program', name:p.name, status:programStatus(p), trendItem:p,
+      dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
+    })).join('') || `<div class="heatmap-empty">No Programs recorded under this Objective yet.</div>`;
+    wireHeatmapTiles(grid);
+    return;
+  }
+}
 
-    return `
-      <div class="node-item ws-node${overallStatus!=='on-track' ? ' open' : ''}" id="goalnode-${g.id}">
-        <div class="node-header" role="button" tabindex="0">
-          <span class="left">
-            <span class="box-tag">Goal</span>
-            <span class="name">${g.name}</span>
-            <div class="dual-status">
-              <div class="dual-status-item"><span class="dual-label">Key Svcs</span>${statusBadgeHTML(ksViewStatus)}</div>
-              <div class="dual-status-item"><span class="dual-label">Programs</span>${statusBadgeHTML(progViewStatus)}</div>
-            </div>
-          </span>
-          <span class="meta">${alignedKS.length} key service${alignedKS.length!==1?'s':''} · ${objs.length} objective${objs.length!==1?'s':''} <span class="chevron">▾</span></span>
-        </div>
-        <div class="node-body">
-          <div class="goal-subhead">Key Services aligned directly to this Goal</div>
-          ${ksHTML}
-          <div class="goal-subhead">Objectives under this Goal</div>
-          ${objHTML}
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  wireAccordions(root);
-  wireDetailButtons(root);
-  wireObjectiveTooltips(root);
+function wireHeatmapTiles(scope){
+  scope.querySelectorAll('[data-drill]').forEach(tile=>{
+    tile.addEventListener('click', ()=>{
+      const kind = tile.dataset.drill;
+      if(kind === 'goal') heatmapView = { level:'goal', goalId: tile.dataset.id };
+      else if(kind === 'objective') heatmapView = { level:'objective', goalId: tile.dataset.goalId, objectiveId: tile.dataset.id };
+      renderHeatmap();
+    });
+  });
+  scope.querySelectorAll('[data-open-detail]').forEach(tile=>{
+    tile.addEventListener('click', ()=>{
+      openDetailModal(tile.dataset.openDetail, tile.dataset.id);
+    });
+  });
 }
 
 /* ---------- Objective hover tooltip on Program align-tags ----------
@@ -1165,6 +1221,29 @@ function openDetailModal(kind, id){
     `;
   } else {
     trendBox.innerHTML = '';
+  }
+
+  const relatedBox = document.getElementById('modal-related');
+  if(kind === 'ks'){
+    const relatedProgs = DATA.programs.filter(p=>p.keyservice===item.id);
+    if(relatedProgs.length){
+      relatedBox.innerHTML = `
+        <div class="modal-trend-label">Related Programs <span style="text-transform:none;font-weight:500;">(alignment only, not a rollup)</span></div>
+        ${relatedProgs.map(p=>`
+          <div class="modal-meta-row" style="align-items:center; margin-bottom:6px;">
+            <button class="detail-btn" data-related-program="${p.id}" style="text-align:left; flex:1;">${p.name}</button>
+            ${statusBadgeHTML(programStatus(p))}
+          </div>
+        `).join('')}
+      `;
+      relatedBox.querySelectorAll('[data-related-program]').forEach(btn=>{
+        btn.addEventListener('click', ()=> openDetailModal('program', btn.dataset.relatedProgram));
+      });
+    } else {
+      relatedBox.innerHTML = '';
+    }
+  } else {
+    relatedBox.innerHTML = '';
   }
 
   const overlay = document.getElementById('modal-overlay');
@@ -1299,28 +1378,45 @@ function addCanvasPaginated(pdf, canvas, margin){
   }
 }
 
-// Temporarily injects a small inline sparkline next to every trend arrow
-// inside the given scope, so the PDF capture shows the actual trend line,
-// not just the arrow. Returns the list of injected elements so they can
-// be removed afterward — the live page should never keep these.
-function injectExportSparklines(scope){
+// Temporarily injects a small inline sparkline into every Key Service /
+// Program tile that has real history, so the PDF capture shows the
+// actual trend line, not just the color. Removed immediately after
+// capture — the live page never keeps these.
+function injectHeatmapSparklines(scope){
   const inserted = [];
-  scope.querySelectorAll('.trend-arrow[data-trend-kind]').forEach(arrowEl=>{
-    const kind = arrowEl.dataset.trendKind;
-    const id = arrowEl.dataset.trendId;
+  scope.querySelectorAll('[data-open-detail]').forEach(tile=>{
+    const kind = tile.dataset.openDetail;
+    const id = tile.dataset.id;
     const item = kind === 'ks' ? DATA.keyServices.find(k=>k.id===id) : DATA.programs.find(p=>p.id===id);
     if(!item || !Array.isArray(item.history) || item.history.length < 2) return;
+    const foot = tile.querySelector('.heat-foot');
+    if(!foot) return;
     const wrapper = document.createElement('span');
-    wrapper.style.cssText = 'display:inline-block; width:64px; height:18px; vertical-align:middle; margin:0 2px;';
-    wrapper.innerHTML = sparklineSVG(item.history, 64, 18);
-    arrowEl.insertAdjacentElement('afterend', wrapper);
+    wrapper.style.cssText = 'display:inline-block; width:36px; height:14px; vertical-align:middle;';
+    wrapper.innerHTML = sparklineSVG(item.history, 36, 14);
+    foot.appendChild(wrapper);
     inserted.push(wrapper);
   });
   return inserted;
 }
 
-function removeExportSparklines(inserted){
+function removeHeatmapSparklines(inserted){
   inserted.forEach(el => el.remove());
+}
+
+// Drives the heatmap to a specific level, waits for it to render, and
+// captures that level's tile grid as a canvas. This is how the export
+// gets "everything" even though only one level is ever on screen at a
+// time — it walks the same states a person would click through.
+async function captureHeatmapLevel(view, sectionTitle){
+  heatmapView = view;
+  renderHeatmap();
+  await new Promise(r => setTimeout(r, 150));
+  const grid = document.getElementById('heatmap-grid');
+  const injected = injectHeatmapSparklines(grid);
+  const canvas = await html2canvas(grid, { scale:2, backgroundColor:'#FBFCFB' });
+  removeHeatmapSparklines(injected);
+  return { canvas, title: sectionTitle };
 }
 
 async function exportPDF(){
@@ -1333,66 +1429,82 @@ async function exportPDF(){
   }
 
   const scope = getExportScope();
-  let chartTarget, drillTarget, title;
-  if(scope === 'all'){
-    chartTarget = document.getElementById('goal-summary');
-    drillTarget = document.getElementById('ws-tree');
-    title = 'City of Durango — Strategic Plan Goals Snapshot';
-  } else {
-    chartTarget = document.querySelector(`[data-goal-jump="${scope}"]`);
-    drillTarget = document.getElementById(`goalnode-${scope}`);
-    const g = DATA.goals.find(gg=>gg.id===scope);
-    title = `City of Durango — ${g ? g.name : 'Goal'} Snapshot`;
-  }
-  if(!chartTarget || !drillTarget){
-    alert('Could not find that Goal on the page to export. Try refreshing and selecting it again.');
+  if(scope !== 'all' && !DATA.goals.find(g=>g.id===scope)){
+    alert('Could not find that Goal to export. Try refreshing and selecting it again.');
     return;
   }
 
   btn.disabled = true;
   btn.textContent = '⏳ Generating…';
 
-  // Temporarily expand every collapsed node inside the drill-down target
-  // so the capture shows everything, then restore original state after.
-  const nodesTouched = scope === 'all'
-    ? [...drillTarget.querySelectorAll('.node-item')]
-    : [drillTarget, ...drillTarget.querySelectorAll('.node-item')];
-  const wasOpen = nodesTouched.map(n => n.classList.contains('open'));
-  nodesTouched.forEach(n => n.classList.add('open'));
-  const injectedSparklines = injectExportSparklines(drillTarget);
+  // Remember exactly where the person was in the heatmap so we can put
+  // them back after — the export drives the heatmap through every
+  // level it needs, which would otherwise leave the page somewhere
+  // unexpected.
+  const savedView = heatmapView;
 
   try{
-    // Let the CSS max-height transition finish before capturing, or the
-    // screenshot can catch it mid-animation and cut content off.
-    await new Promise(r => setTimeout(r, 400));
-
-    const chartCanvas = await html2canvas(chartTarget, { scale:2, backgroundColor:'#FBFCFB' });
-    const drillCanvas = await html2canvas(drillTarget, { scale:2, backgroundColor:'#FBFCFB' });
-
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation:'landscape', unit:'pt', format:'letter' });
     const margin = 30;
+    let firstPage = true;
 
-    pdf.setFontSize(14);
-    pdf.text(title, margin, margin);
-    pdf.setFontSize(9);
-    pdf.text(`Generated ${new Date().toLocaleString('en-US')}`, margin, margin + 16);
+    function addTitledPage(title){
+      if(!firstPage) pdf.addPage();
+      firstPage = false;
+      pdf.setFontSize(14);
+      pdf.text(title, margin, margin);
+      pdf.setFontSize(9);
+      pdf.text(`Generated ${new Date().toLocaleString('en-US')}`, margin, margin + 16);
+    }
+
+    // Page 1: the Goal comparison chart (bars), same as before.
+    const chartTarget = scope === 'all'
+      ? document.getElementById('goal-summary')
+      : document.querySelector(`[data-goal-jump="${scope}"]`);
+    const chartTitle = scope === 'all'
+      ? 'City of Durango — Strategic Plan Goals Snapshot'
+      : `City of Durango — ${DATA.goals.find(g=>g.id===scope).name} Snapshot`;
+
+    addTitledPage(chartTitle);
+    const chartCanvas = await html2canvas(chartTarget, { scale:2, backgroundColor:'#FBFCFB' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
     pdf.addImage(chartCanvas.toDataURL('image/png'), 'PNG', margin, margin + 30,
-      pdf.internal.pageSize.getWidth() - margin*2,
-      chartCanvas.height * (pdf.internal.pageSize.getWidth() - margin*2) / chartCanvas.width);
+      pageWidth - margin*2, chartCanvas.height * (pageWidth - margin*2) / chartCanvas.width);
 
-    pdf.addPage();
-    pdf.setFontSize(14);
-    pdf.text(`${title} — Drill-Down Detail`, margin, margin);
-    addCanvasPaginated(pdf, drillCanvas, margin + 24);
+    // Drill-down pages: walk the heatmap through every level it has.
+    if(scope === 'all'){
+      const overview = await captureHeatmapLevel({ level:'goals' }, 'All Goals — Heatmap Overview');
+      addTitledPage(overview.title);
+      addCanvasPaginated(pdf, overview.canvas, margin + 24);
+    }
+
+    const goalsToWalk = scope === 'all'
+      ? [...DATA.goals].sort((a,b)=>goalSortWeight(goalOverallStatus(a)) - goalSortWeight(goalOverallStatus(b)))
+      : DATA.goals.filter(g=>g.id===scope);
+
+    for(const g of goalsToWalk){
+      const goalCap = await captureHeatmapLevel({ level:'goal', goalId:g.id }, `${g.name} — Key Services & Objectives`);
+      addTitledPage(goalCap.title);
+      addCanvasPaginated(pdf, goalCap.canvas, margin + 24);
+
+      const objs = DATA.objectives.filter(o=>o.goal===g.id);
+      for(const o of objs){
+        const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(o.id));
+        if(!progs.length) continue; // skip empty Objective pages — nothing to show
+        const objCap = await captureHeatmapLevel({ level:'objective', goalId:g.id, objectiveId:o.id }, `${g.name} → ${o.name} — Programs`);
+        addTitledPage(objCap.title);
+        addCanvasPaginated(pdf, objCap.canvas, margin + 24);
+      }
+    }
 
     const scopeName = scope === 'all' ? 'all-goals' : slugify(DATA.goals.find(g=>g.id===scope).name);
     pdf.save(`durango-${scopeName}-chart-${todayStamp()}.pdf`);
   } catch(err){
     alert('Something went wrong generating the PDF. Try again, or use Export CSV instead.\n\nTechnical detail: ' + err.message);
   } finally {
-    nodesTouched.forEach((n,i) => { if(!wasOpen[i]) n.classList.remove('open'); });
-    removeExportSparklines(injectedSparklines);
+    heatmapView = savedView;
+    renderHeatmap();
     btn.disabled = false;
     btn.textContent = originalText;
   }
@@ -1416,7 +1528,7 @@ function init(){
   renderGoalSummary();
   renderStats();
   renderStatusLegend();
-  renderStrategicTree();
+  renderHeatmap();
   wireExportButtons();
   wireModalChrome();
 }
