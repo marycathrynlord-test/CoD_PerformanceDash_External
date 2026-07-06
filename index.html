@@ -413,7 +413,7 @@
     <div class="section-head">
       <div class="eyebrow">Strategic Plan</div>
       <h2>Goals at a glance, worst first</h2>
-      <p>Each bar shows the mix of On Track / At Risk / Off Track Key Services behind that Goal. Click a card to jump to its full detail below.</p>
+      <p>Each bar shows the mix of On Track / At Risk / Off Track Objectives behind that Goal. Click a card to jump to its full detail below.</p>
     </div>
     <div class="goal-summary-grid" id="goal-summary"></div>
   </div>
@@ -450,8 +450,8 @@
   <div class="section" id="goal-drill">
     <div class="section-head">
       <div class="eyebrow">Strategic Plan — Secondary View</div>
-      <h2>Strategic Plan Goals → Key Services & Objectives → Programs</h2>
-      <p>Everything above, viewed the other way: start at a Goal and see both prongs that feed it — the Key Services aligned to it directly, and the Objectives (and their Programs) that roll up to it through the policy side.</p>
+      <h2>Strategic Plan Goals → Objectives → Programs</h2>
+      <p>The policy side of the same work, viewed top-down: start at a Goal, see its Objectives, and see the Programs each Objective rolls up from. Key Service detail lives in the primary Work Systems view above.</p>
     </div>
 
     <div class="drill-col">
@@ -844,7 +844,7 @@ function renderStats(){
     { n: DATA.workSystems.length, l: 'Work Systems', breakdown: statusBreakdownHTML(DATA.workSystems, workSystemStatus) },
     { n: DATA.keyServices.length, l: 'Key Services', breakdown: statusBreakdownHTML(DATA.keyServices, keyServiceStatus) },
     { n: DATA.programs.length, l: 'Programs', breakdown: statusBreakdownHTML(DATA.programs, programStatus) },
-    { n: DATA.goals.length, l: 'Strategic Plan Goals', breakdown: statusBreakdownHTML(DATA.goals, goalOverallStatus) },
+    { n: DATA.goals.length, l: 'Strategic Plan Goals', breakdown: statusBreakdownHTML(DATA.goals, goalProgramViewStatus) },
     { n: DATA.objectives.length, l: 'Objectives', breakdown: statusBreakdownHTML(DATA.objectives, objectiveStatus) },
   ];
   document.getElementById('stat-grid').innerHTML = stats.map(s=>`
@@ -873,8 +873,8 @@ function renderStats(){
    surfacing what actually needs attention before anyone clicks anything. */
 function renderHeadline(){
   const banner = document.getElementById('headline-banner');
-  const offGoals = DATA.goals.filter(g=>goalOverallStatus(g)==='off-track');
-  const riskGoals = DATA.goals.filter(g=>goalOverallStatus(g)==='at-risk');
+  const offGoals = DATA.goals.filter(g=>goalProgramViewStatus(g)==='off-track');
+  const riskGoals = DATA.goals.filter(g=>goalProgramViewStatus(g)==='at-risk');
   const troubled = offGoals.length + riskGoals.length;
 
   // Find the worst-performing Key Services driving the problem, worst first.
@@ -936,28 +936,20 @@ function goalObjectiveCompositionBar(g){
 }
 
 function renderGoalSummary(){
-  const sorted = [...DATA.goals].sort((a,b)=>goalSortWeight(goalOverallStatus(a)) - goalSortWeight(goalOverallStatus(b)));
+  const sorted = [...DATA.goals].sort((a,b)=>goalSortWeight(goalProgramViewStatus(a)) - goalSortWeight(goalProgramViewStatus(b)));
   const grid = document.getElementById('goal-summary');
 
   grid.innerHTML = sorted.map(g=>{
-    const ksStatus = goalKeyServiceViewStatus(g);
     const progStatus = goalProgramViewStatus(g);
-    const ksCount = DATA.keyServices.filter(k=>Array.isArray(k.goals) && k.goals.includes(g.id)).length;
     const obCount = DATA.objectives.filter(o=>o.goal===g.id).length;
     return `
       <button class="goal-card" data-goal-jump="${g.id}" style="border-top-color:${g.color}">
         <div class="goal-card-top">
           <span class="goal-card-name">${g.name}</span>
-        </div>
-        <div class="dual-status" style="margin-bottom:8px;">
-          <div class="dual-status-item"><span class="dual-label">Key Services</span>${statusBadgeHTML(ksStatus)}</div>
-        </div>
-        ${goalCompositionBar(g)}
-        <div class="dual-status" style="margin:10px 0 8px;">
-          <div class="dual-status-item"><span class="dual-label">Programs</span>${statusBadgeHTML(progStatus)}</div>
+          ${statusBadgeHTML(progStatus)}
         </div>
         ${goalObjectiveCompositionBar(g)}
-        <div class="goal-card-meta" style="margin-top:10px;">${ksCount} key service${ksCount!==1?'s':''} · ${obCount} objective${obCount!==1?'s':''}</div>
+        <div class="goal-card-meta" style="margin-top:10px;">${obCount} objective${obCount!==1?'s':''}</div>
       </button>
     `;
   }).join('');
@@ -1072,31 +1064,25 @@ function renderHeatmap(){
   const grid = document.getElementById('heatmap-grid');
 
   if(heatmapView.level === 'goals'){
-    const sorted = [...DATA.goals].sort((a,b)=>goalSortWeight(goalOverallStatus(a)) - goalSortWeight(goalOverallStatus(b)));
-    grid.innerHTML = sorted.map(g=>heatGoalTileHTML(g)).join('') || `<div class="heatmap-empty">No Strategic Plan Goals recorded yet.</div>`;
+    const sorted = [...DATA.goals].sort((a,b)=>goalSortWeight(goalProgramViewStatus(a)) - goalSortWeight(goalProgramViewStatus(b)));
+    grid.innerHTML = sorted.map(g=>heatTileHTML({
+      typeLabel:'Goal', name:g.name, status:goalProgramViewStatus(g), trendItem:null,
+      dataAttrs:`data-drill="goal" data-id="${g.id}"`,
+    })).join('') || `<div class="heatmap-empty">No Strategic Plan Goals recorded yet.</div>`;
     wireHeatmapTiles(grid);
     return;
   }
 
   if(heatmapView.level === 'goal'){
     const g = DATA.goals.find(gg=>gg.id===heatmapView.goalId);
-    const alignedKS = DATA.keyServices
-      .filter(k=>Array.isArray(k.goals) && k.goals.includes(g.id))
-      .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
     const objs = DATA.objectives
       .filter(o=>o.goal===g.id)
       .sort((a,b)=>goalSortWeight(objectiveStatus(a)) - goalSortWeight(objectiveStatus(b)));
 
-    const ksTiles = alignedKS.map(ks=>heatTileHTML({
-      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
-      dataAttrs:`data-open-detail="ks" data-id="${ks.id}"`,
-    })).join('');
-    const objTiles = objs.map(o=>heatTileHTML({
+    grid.innerHTML = objs.map(o=>heatTileHTML({
       typeLabel:'Objective', name:o.name, status:objectiveStatus(o), trendItem:null,
       dataAttrs:`data-drill="objective" data-goal-id="${g.id}" data-id="${o.id}"`,
-    })).join('');
-
-    grid.innerHTML = (ksTiles + objTiles) || `<div class="heatmap-empty">Nothing recorded under this Goal yet.</div>`;
+    })).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
     wireHeatmapTiles(grid);
     return;
   }
@@ -1407,18 +1393,11 @@ function exportCSV(){
   const scopedGoals = scope === 'all' ? DATA.goals : DATA.goals.filter(g=>g.id===scope);
 
   scopedGoals.forEach(g=>{
-    rows.push(['Goal', g.name, `Key Services: ${goalKeyServiceViewStatus(g)} | Programs: ${goalProgramViewStatus(g)}`, '', '', '', '', '']);
+    rows.push(['Goal', g.name, goalProgramViewStatus(g), '', '', '', '', '']);
 
     const objs = DATA.objectives.filter(o=>o.goal===g.id);
     objs.forEach(o=>{
       rows.push(['Objective', o.name, objectiveStatus(o), '', g.name, '', '', '']);
-    });
-
-    const alignedKS = DATA.keyServices.filter(k=>Array.isArray(k.goals) && k.goals.includes(g.id));
-    alignedKS.forEach(k=>{
-      const goalNames = (k.goals||[]).map(gid=>DATA.goals.find(gg=>gg.id===gid)).filter(Boolean).map(gg=>gg.name).join('; ');
-      const ws = DATA.workSystems.find(w=>w.id===k.workSystem);
-      rows.push(['Key Service', k.name, keyServiceStatus(k), trendLabel(k), goalNames, '', ws ? ws.name : '', k.statusUpdated || '']);
     });
 
     const objIds = objs.map(o=>o.id);
@@ -1569,7 +1548,7 @@ async function exportPDF(){
     }
 
     const goalsToWalk = scope === 'all'
-      ? [...DATA.goals].sort((a,b)=>goalSortWeight(goalOverallStatus(a)) - goalSortWeight(goalOverallStatus(b)))
+      ? [...DATA.goals].sort((a,b)=>goalSortWeight(goalProgramViewStatus(a)) - goalSortWeight(goalProgramViewStatus(b)))
       : DATA.goals.filter(g=>g.id===scope);
 
     for(const g of goalsToWalk){
