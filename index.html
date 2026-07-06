@@ -428,12 +428,30 @@
     <div class="stat-grid" id="stat-grid"></div>
   </div>
 
-  <!-- STRATEGIC PLAN GOAL → KEY SERVICES & OBJECTIVES → PROGRAMS (heatmap: scan everything, click to drill in) -->
+  <!-- WORK SYSTEM → KEY SERVICE (primary internal view — staff's own operational structure) -->
   <div class="section" id="worksystems">
     <div class="section-head">
-      <div class="eyebrow">Strategic Plan, With Operational Detail Built In</div>
+      <div class="eyebrow">Operational Structure — Primary View</div>
+      <h2>Work Systems → Key Services</h2>
+      <p>Start with your own Work System and drill into its Key Services. Click a Key Service to see its full detail, including any Programs related to it.</p>
+    </div>
+
+    <div class="drill-col">
+      <div class="drill-col-head">
+        <div class="heatmap-breadcrumb" id="ws-heatmap-breadcrumb"></div>
+      </div>
+      <div class="heatmap-body">
+        <div class="heatmap-grid" id="ws-heatmap-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRATEGIC PLAN GOAL → KEY SERVICES & OBJECTIVES → PROGRAMS (secondary view — see both prongs converge on a Goal) -->
+  <div class="section" id="goal-drill">
+    <div class="section-head">
+      <div class="eyebrow">Strategic Plan — Secondary View</div>
       <h2>Strategic Plan Goals → Key Services & Objectives → Programs</h2>
-      <p>Every tile's color is its current status — scan for red and gold first. Click a Goal to see its Key Services and Objectives; click an Objective to see its Programs; click a Key Service or Program to see its full detail.</p>
+      <p>Everything above, viewed the other way: start at a Goal and see both prongs that feed it — the Key Services aligned to it directly, and the Objectives (and their Programs) that roll up to it through the policy side.</p>
     </div>
 
     <div class="drill-col">
@@ -1114,6 +1132,77 @@ function wireHeatmapTiles(scope){
   });
 }
 
+/* ---------- Work System heatmap navigator (primary internal view) ----------
+   Same tile/breadcrumb mechanics as the Goal-rooted heatmap, but rooted at
+   Work Systems: Work System -> Key Service, then straight to the Key
+   Service's Detail modal (which already lists its related Programs) —
+   there's no third tile level here, since Key Service -> Program is
+   alignment-only, not a real rollup, same reasoning as why Objectives
+   (a real rollup source) get their own tile level but Key Services don't
+   need one for their related Programs. */
+let wsHeatmapView = { level: 'systems' };
+
+function renderWsHeatmapBreadcrumb(){
+  const bc = document.getElementById('ws-heatmap-breadcrumb');
+  const parts = [`<button class="crumb${wsHeatmapView.level==='systems'?' current':''}" data-ws-crumb="systems">All Work Systems</button>`];
+
+  if(wsHeatmapView.level === 'system'){
+    const ws = DATA.workSystems.find(w=>w.id===wsHeatmapView.workSystemId);
+    parts.push(`<span class="sep">›</span>`);
+    parts.push(`<button class="crumb current" data-ws-crumb="system">${ws ? ws.name : 'Work System'}</button>`);
+  }
+  bc.innerHTML = parts.join('');
+
+  bc.querySelectorAll('.crumb').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.dataset.wsCrumb === 'systems') wsHeatmapView = { level:'systems' };
+      renderWsHeatmap();
+    });
+  });
+}
+
+function renderWsHeatmap(){
+  renderWsHeatmapBreadcrumb();
+  const grid = document.getElementById('ws-heatmap-grid');
+
+  if(wsHeatmapView.level === 'systems'){
+    const sorted = [...DATA.workSystems].sort((a,b)=>goalSortWeight(workSystemStatus(a)) - goalSortWeight(workSystemStatus(b)));
+    grid.innerHTML = sorted.map(ws=>heatTileHTML({
+      typeLabel:'Work System', name:ws.name, status:workSystemStatus(ws), trendItem:null,
+      dataAttrs:`data-ws-drill="system" data-id="${ws.id}"`,
+    })).join('') || `<div class="heatmap-empty">No Work Systems recorded yet.</div>`;
+    wireWsHeatmapTiles(grid);
+    return;
+  }
+
+  if(wsHeatmapView.level === 'system'){
+    const services = DATA.keyServices
+      .filter(k=>k.workSystem===wsHeatmapView.workSystemId)
+      .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
+
+    grid.innerHTML = services.map(ks=>heatTileHTML({
+      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
+      dataAttrs:`data-open-detail="ks" data-id="${ks.id}"`,
+    })).join('') || `<div class="heatmap-empty">No Key Services recorded under this Work System yet.</div>`;
+    wireWsHeatmapTiles(grid);
+    return;
+  }
+}
+
+function wireWsHeatmapTiles(scope){
+  scope.querySelectorAll('[data-ws-drill]').forEach(tile=>{
+    tile.addEventListener('click', ()=>{
+      wsHeatmapView = { level:'system', workSystemId: tile.dataset.id };
+      renderWsHeatmap();
+    });
+  });
+  scope.querySelectorAll('[data-open-detail]').forEach(tile=>{
+    tile.addEventListener('click', ()=>{
+      openDetailModal(tile.dataset.openDetail, tile.dataset.id);
+    });
+  });
+}
+
 /* ---------- Objective hover tooltip on Program align-tags ----------
    Reuses the same tooltip element as the status-breakdown cards, so
    hovering an Objective tag on a Program shows that Objective's real,
@@ -1528,6 +1617,7 @@ function init(){
   renderGoalSummary();
   renderStats();
   renderStatusLegend();
+  renderWsHeatmap();
   renderHeatmap();
   wireExportButtons();
   wireModalChrome();
