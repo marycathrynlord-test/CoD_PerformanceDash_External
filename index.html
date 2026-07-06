@@ -575,19 +575,21 @@ const TREND_META = {
   flat:      { arrow:'▬', color:'#9AA6A2', label:'Flat' },
 };
 
-function trendArrowHTML(item){
+function trendArrowHTML(item, kind, id){
   const trend = computeTrend(item.history);
   if(!trend) return '';
   const m = TREND_META[trend];
-  return `<span class="trend-arrow" style="color:${m.color}" title="Trend: ${m.label} (based on the last two updates)">${m.arrow}</span>`;
+  return `<span class="trend-arrow" data-trend-kind="${kind}" data-trend-id="${id}" style="color:${m.color}" title="Trend: ${m.label} (based on the last two updates)">${m.arrow}</span>`;
 }
 
 // Small hand-rolled SVG sparkline — deliberately not a charting library,
 // since a single line with a handful of points doesn't need one, and it
-// keeps this feature free of any CDN-blocking risk.
-function sparklineSVG(history){
+// keeps this feature free of any CDN-blocking risk. w/h are parameterized
+// so the same function can render full-size in the modal and a compact
+// inline version when temporarily injected for PDF export.
+function sparklineSVG(history, w=240, h=56){
   if(!Array.isArray(history) || history.length < 2) return '';
-  const w = 240, h = 56, padX = 10, padY = 10;
+  const padX = w*0.04, padY = h*0.18;
   const n = history.length;
   const stepX = (w - padX*2) / (n-1);
   const points = history.map((entry,i)=>{
@@ -960,7 +962,7 @@ function renderStrategicTree(){
                     <span style="flex:1;">${p.name}</span>
                     ${obTags}
                     ${primaryMetricHTML(p)}
-                    ${trendArrowHTML(p)}
+                    ${trendArrowHTML(p, "program", p.id)}
                     ${statusBadgeHTML(programStatus(p))}
                     <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
                   </div>
@@ -978,7 +980,7 @@ function renderStrategicTree(){
                   ${ws ? `<span class="align-tag">${ws.name}</span>` : ''}
                   ${primaryMetricHTML(ks)}
                   ${staleFlagHTML(ks)}
-                  ${trendArrowHTML(ks)}
+                  ${trendArrowHTML(ks, "ks", ks.id)}
                   ${statusBadgeHTML(ksStatus)}
                 </span>
                 <span class="meta">${relatedProgs.length} related program${relatedProgs.length!==1?'s':''}
@@ -1004,7 +1006,7 @@ function renderStrategicTree(){
                   <span class="box-tag gold">Program</span>
                   <span style="flex:1;">${p.name}</span>
                   ${primaryMetricHTML(p)}
-                  ${trendArrowHTML(p)}
+                  ${trendArrowHTML(p, "program", p.id)}
                   ${statusBadgeHTML(programStatus(p))}
                   <button class="detail-btn" data-kind="program" data-id="${p.id}">Details</button>
                 </div>
@@ -1297,6 +1299,30 @@ function addCanvasPaginated(pdf, canvas, margin){
   }
 }
 
+// Temporarily injects a small inline sparkline next to every trend arrow
+// inside the given scope, so the PDF capture shows the actual trend line,
+// not just the arrow. Returns the list of injected elements so they can
+// be removed afterward — the live page should never keep these.
+function injectExportSparklines(scope){
+  const inserted = [];
+  scope.querySelectorAll('.trend-arrow[data-trend-kind]').forEach(arrowEl=>{
+    const kind = arrowEl.dataset.trendKind;
+    const id = arrowEl.dataset.trendId;
+    const item = kind === 'ks' ? DATA.keyServices.find(k=>k.id===id) : DATA.programs.find(p=>p.id===id);
+    if(!item || !Array.isArray(item.history) || item.history.length < 2) return;
+    const wrapper = document.createElement('span');
+    wrapper.style.cssText = 'display:inline-block; width:64px; height:18px; vertical-align:middle; margin:0 2px;';
+    wrapper.innerHTML = sparklineSVG(item.history, 64, 18);
+    arrowEl.insertAdjacentElement('afterend', wrapper);
+    inserted.push(wrapper);
+  });
+  return inserted;
+}
+
+function removeExportSparklines(inserted){
+  inserted.forEach(el => el.remove());
+}
+
 async function exportPDF(){
   const btn = document.getElementById('export-pdf-btn');
   const originalText = btn.textContent;
@@ -1333,6 +1359,7 @@ async function exportPDF(){
     : [drillTarget, ...drillTarget.querySelectorAll('.node-item')];
   const wasOpen = nodesTouched.map(n => n.classList.contains('open'));
   nodesTouched.forEach(n => n.classList.add('open'));
+  const injectedSparklines = injectExportSparklines(drillTarget);
 
   try{
     // Let the CSS max-height transition finish before capturing, or the
@@ -1365,6 +1392,7 @@ async function exportPDF(){
     alert('Something went wrong generating the PDF. Try again, or use Export CSV instead.\n\nTechnical detail: ' + err.message);
   } finally {
     nodesTouched.forEach((n,i) => { if(!wasOpen[i]) n.classList.remove('open'); });
+    removeExportSparklines(injectedSparklines);
     btn.disabled = false;
     btn.textContent = originalText;
   }
