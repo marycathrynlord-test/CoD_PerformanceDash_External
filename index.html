@@ -256,28 +256,17 @@
   }
   .heat-tile:hover, .heat-tile:focus-visible{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.18); outline:none; }
 
-  /* ---------- Goal tiles: brand color as base (richer, gradiented for
-     depth), pure brand color as a hover "reveal", status as a highlight
-     chip on top. filter:drop-shadow (not box-shadow) follows the actual
-     clipped mountain silhouette rather than the tile's rectangular box. ---------- */
+  /* ---------- Goal tiles: muted brand color as base, status as a highlight on top ---------- */
   .heatmap-grid.mountain-grid{ grid-template-columns:repeat(6, 1fr); gap:0; }
   .heat-tile.goal-tile{
     min-height:210px; justify-content:flex-end; padding-bottom:14px; border-radius:0;
-    color: var(--ink);
-    background: linear-gradient(180deg,
-      color-mix(in srgb, var(--goal-accent) 35%, white) 0%,
-      color-mix(in srgb, var(--goal-accent) 68%, white) 100%);
-    filter: drop-shadow(0 6px 10px rgba(0,0,0,.3));
-    transition: transform .12s ease, filter .15s ease;
+    color: var(--ink); /* base fill is now a light pastel, not a dark status color */
   }
   .heat-tile.goal-tile:hover, .heat-tile.goal-tile:focus-visible, .heat-tile.goal-tile:active{
-    background: var(--goal-accent);
-    filter: drop-shadow(0 8px 14px rgba(0,0,0,.38));
-    color: #fff;
-    box-shadow: none; /* the generic rectangular hover shadow doesn't follow the clip-path shape */
+    background: color-mix(in srgb, var(--goal-accent) 55%, white);
+    color: var(--ink);
   }
   .heat-tile.goal-tile .tile-export-btn{ top:auto; bottom:8px; right:8px; background:rgba(0,0,0,.10); }
-  .heat-tile.goal-tile:hover .tile-export-btn{ background:rgba(255,255,255,.28); }
   .heat-tile.goal-tile .tile-export-btn:hover{ background:rgba(0,0,0,.18); }
   .heat-status-highlight{
     display:inline-flex; align-items:center; padding:3px 10px; border-radius:100px;
@@ -289,7 +278,7 @@
     .heatmap-grid.mountain-grid{ grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px; }
     .heat-tile.goal-tile{
       clip-path:none !important; min-height:88px; justify-content:space-between;
-      padding-bottom:10px; border-radius:8px; filter:none;
+      padding-bottom:10px; border-radius:8px;
     }
     .heat-tile.goal-tile .tile-export-btn{ top:7px; bottom:auto; }
   }
@@ -1453,7 +1442,7 @@ function renderHeatmap(){
         typeLabel:'Goal', name:g.name, status:goalProgramViewStatus(g), trendItem:null,
         dataAttrs:`data-drill="goal" data-id="${g.id}"`,
         exportKind:'goal', exportId:g.id,
-        tileStyle:`clip-path:${clip}; --goal-accent:${g.color};`,
+        tileStyle:`clip-path:${clip}; --goal-accent:${g.color}; background:color-mix(in srgb, ${g.color} 35%, white);`,
         extraClass:'goal-tile',
         statusAsHighlight:true,
       });
