@@ -290,9 +290,21 @@
   /* ---------- Combined Reference section (System Definitions + Progress Key) ---------- */
   .reference-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:16px;}
   @media (max-width:800px){ .reference-grid{grid-template-columns:1fr;} }
-  .reference-col{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;}
-  .reference-col-title{margin:0 0 12px; font-size:14px; font-weight:700; color:var(--forest-dark);}
-  .reference-col .status-defs{background:none; padding:0;}
+  .reference-col{
+    background:var(--white); border:1px solid var(--line); border-top:4px solid var(--fw-blue);
+    border-radius:var(--radius); padding:20px 22px;
+  }
+  .reference-col.progress{ border-top-color:var(--teal); }
+  .reference-col-title{margin:0 0 4px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--forest-dark);}
+  .reference-col-sub{margin:0 0 16px; font-size:12px; color:var(--slate); line-height:1.5;}
+
+  .ref-row{display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line);}
+  .ref-row:first-child{padding-top:0;}
+  .ref-row:last-child{padding-bottom:0; border-bottom:none;}
+  .ref-icon{flex:none; width:10px; height:10px; border-radius:3px; margin-top:4px;}
+  .ref-icon.dot{border-radius:50%;}
+  .ref-term{font-size:13px; font-weight:700; color:var(--ink); margin-bottom:2px;}
+  .ref-desc{font-size:12.5px; color:var(--slate); line-height:1.5;}
 
   /* ---------- Quick filters ("what matters to you") ---------- */
   .quick-filter-bar{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;}
@@ -504,26 +516,78 @@
     <div class="section-head">
       <div class="eyebrow">Reference</div>
       <h2>How to Read This Dashboard</h2>
+      <p>A quick glossary of the terms and colors used throughout — the color of each icon below carries through everywhere on the page.</p>
     </div>
     <div class="reference-grid">
       <div class="reference-col">
         <h3 class="reference-col-title">System Definitions</h3>
-        <div class="status-defs" style="margin:0;">
-          <div class="def-row"><dt>Strategic Plan —</dt> <dd>High-level community outcomes and priorities.</dd></div>
-          <div class="def-row"><dt>Key Work System —</dt> <dd>Major operational systems that create City value.</dd></div>
-          <div class="def-row"><dt>Key Services —</dt> <dd>Core services delivered to residents and stakeholders.</dd></div>
-          <div class="def-row"><dt>Programs —</dt> <dd>Operational activities and service delivery functions.</dd></div>
+        <p class="reference-col-sub">How the City's work is organized, from policy down to daily operations.</p>
+        <div class="ref-row">
+          <span class="ref-icon" style="background:var(--fw-blue);"></span>
+          <div>
+            <div class="ref-term">Strategic Plan</div>
+            <div class="ref-desc">High-level community outcomes and priorities.</div>
+          </div>
+        </div>
+        <div class="ref-row">
+          <span class="ref-icon" style="background:var(--fw-blue);"></span>
+          <div>
+            <div class="ref-term">Key Work System</div>
+            <div class="ref-desc">Major operational systems that create City value.</div>
+          </div>
+        </div>
+        <div class="ref-row">
+          <span class="ref-icon" style="background:var(--fw-gold);"></span>
+          <div>
+            <div class="ref-term">Key Services</div>
+            <div class="ref-desc">Core services delivered to residents and stakeholders.</div>
+          </div>
+        </div>
+        <div class="ref-row">
+          <span class="ref-icon" style="background:var(--fw-gold);"></span>
+          <div>
+            <div class="ref-term">Programs</div>
+            <div class="ref-desc">Operational activities and service delivery functions.</div>
+          </div>
         </div>
       </div>
-      <div class="reference-col">
+      <div class="reference-col progress">
         <h3 class="reference-col-title">Progress Key</h3>
-        <div class="status-legend" id="status-legend" style="padding:0 0 12px;"></div>
-        <div class="status-defs" style="margin:0;">
-          <div class="def-row"><dt>On Track —</dt> <dd>performance is at or above target, or within an agreed tolerance (e.g. within 5%).</dd></div>
-          <div class="def-row"><dt>At Risk —</dt> <dd>performance is below target but recoverable — within a moderate gap (e.g. 5–15% off target) or trending toward target.</dd></div>
-          <div class="def-row"><dt>Off Track —</dt> <dd>performance is significantly below target (e.g. more than 15% off) or has declined for two or more consecutive reporting periods.</dd></div>
-          <div class="def-row"><dt>No Data —</dt> <dd>no current measure has been recorded for this item.</dd></div>
-          <div class="def-row" style="margin-top:8px;"><dt>⏱ Stale —</dt> <dd>this item's status hasn't been updated in over 45 days; treat the badge as unverified until refreshed.</dd></div>
+        <p class="reference-col-sub">What each status color means, wherever it appears.</p>
+        <div class="ref-row">
+          <span class="ref-icon dot" style="background:#1B8A79;"></span>
+          <div>
+            <div class="ref-term">On Track</div>
+            <div class="ref-desc">Performance is at or above target, or within an agreed tolerance (e.g. within 5%).</div>
+          </div>
+        </div>
+        <div class="ref-row">
+          <span class="ref-icon dot" style="background:#D9A441;"></span>
+          <div>
+            <div class="ref-term">At Risk</div>
+            <div class="ref-desc">Below target but recoverable — within a moderate gap (e.g. 5–15%) or trending toward target.</div>
+          </div>
+        </div>
+        <div class="ref-row">
+          <span class="ref-icon dot" style="background:#C1443B;"></span>
+          <div>
+            <div class="ref-term">Off Track</div>
+            <div class="ref-desc">Significantly below target (e.g. more than 15% off) or declining for 2+ consecutive periods.</div>
+          </div>
+        </div>
+        <div class="ref-row">
+          <span class="ref-icon dot" style="background:#9AA6A2;"></span>
+          <div>
+            <div class="ref-term">No Data</div>
+            <div class="ref-desc">No current measure has been recorded for this item.</div>
+          </div>
+        </div>
+        <div class="ref-row">
+          <span class="ref-icon dot" style="background:var(--fw-purple);"></span>
+          <div>
+            <div class="ref-term">⏱ Stale</div>
+            <div class="ref-desc">Not updated in over 45 days — treat the badge as unverified until refreshed.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2028,7 +2092,6 @@ function init(){
   renderKPIs();
   renderHeadline();
   renderStats();
-  renderStatusLegend();
   renderWsHeatmap();
   renderHeatmap();
   wireExportButtons();
