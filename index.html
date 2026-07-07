@@ -297,6 +297,8 @@
   .reference-col.progress{ border-top-color:var(--teal); }
   .reference-col-title{margin:0 0 4px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--forest-dark);}
   .reference-col-sub{margin:0 0 16px; font-size:12px; color:var(--slate); line-height:1.5;}
+  .goal-logo-banner{display:block; width:100%; max-width:640px; height:auto; margin:8px auto 20px;}
+  .goal-ridge-motif{display:block; width:100%; height:44px; margin:16px 0 4px; border-radius:6px; overflow:hidden;}
 
   .ref-row{display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line);}
   .ref-row:first-child{padding-top:0;}
@@ -518,6 +520,7 @@
       <h2>How to Read This Dashboard</h2>
       <p>A quick glossary of the terms and colors used throughout — the color of each icon below carries through everywhere on the page.</p>
     </div>
+    <img src="assets/durango-community-goals.png" alt="Durango Community — the six Strategic Plan goal areas: Organizational Stewardship, Innovative Housing & Economic Development, Safety & Quality of Life, Reliable Infrastructure & Community Connectivity, Engaged & Informed Community, Strategic Workforce Development" class="goal-logo-banner">
     <div class="reference-grid">
       <div class="reference-col">
         <h3 class="reference-col-title">System Definitions</h3>
@@ -616,6 +619,15 @@
       <h2>Strategic Plan Goals → Objectives → Programs</h2>
       <p>The policy side of the same work, viewed top-down: start at a Goal, see its Objectives, and see the Programs each Objective rolls up from. </p>
     </div>
+
+    <svg class="goal-ridge-motif" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+      <polygon points="0,90 0,55 100,30 200,50 200,90" fill="#b24d93"/>
+      <polygon points="200,90 200,50 300,35 400,45 400,90" fill="#d76528"/>
+      <polygon points="400,90 400,45 500,15 600,25 600,90" fill="#7FB4A9"/>
+      <polygon points="600,90 600,25 700,2 800,35 800,90" fill="#476fb5"/>
+      <polygon points="800,90 800,35 900,40 1000,55 1000,90" fill="#d94849"/>
+      <polygon points="1000,90 1000,55 1100,60 1200,70 1200,90" fill="#867971"/>
+    </svg>
 
     <div class="drill-col">
       <div class="drill-col-head" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
@@ -1084,12 +1096,14 @@ function renderHeadline(){
 }
 
 // Strategic Plan Goals are always shown in this fixed order, regardless
-// of status — Organizational Stewardship, Safety & Quality of Life,
-// Innovative Housing & Economic Development, Reliable Infrastructure &
-// Community Connectivity, Engaged & Informed Community, Strategic
-// Workforce Development. This is a leadership-defined ordering, not a
-// data-driven one, so it's a hardcoded id sequence rather than computed.
-const GOAL_DISPLAY_ORDER = ['g1', 'g3', 'g2', 'g4', 'g5', 'g6'];
+// of status — matching the official "Durango Community" mountain-range
+// logo left to right: Organizational Stewardship, Innovative Housing &
+// Economic Development, Safety & Quality of Life, Reliable
+// Infrastructure & Community Connectivity, Engaged & Informed
+// Community, Strategic Workforce Development. This is a leadership /
+// brand-defined ordering, not a data-driven one, so it's a hardcoded
+// id sequence rather than computed.
+const GOAL_DISPLAY_ORDER = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'];
 function sortGoalsCanonical(goals){
   return [...goals].sort((a,b)=>{
     const ai = GOAL_DISPLAY_ORDER.indexOf(a.id);
