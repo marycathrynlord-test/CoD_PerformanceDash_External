@@ -308,6 +308,26 @@
   }
   .tour-restart-btn:hover{ background:rgba(255,255,255,.2); }
 
+  /* ---------- Header export dropdown ---------- */
+  .header-export{ position:relative; }
+  .export-dropdown{
+    position:absolute; top:calc(100% + 8px); right:0; width:250px;
+    background:var(--white); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 12px 32px rgba(0,0,0,.18); padding:14px; z-index:300;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .export-dropdown[hidden]{ display:none; }
+  .export-dropdown-label{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--slate); }
+  .export-dropdown-item{
+    display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600;
+    border:1px solid var(--line); background:var(--white); color:var(--forest-dark);
+    padding:8px 12px; border-radius:8px; cursor:pointer; font-family:inherit; text-align:left;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .export-dropdown-item:hover{ background:var(--mist); border-color:var(--sage); }
+  .export-dropdown-item:disabled{ opacity:.55; cursor:progress; }
+  .export-dropdown-item:focus-visible{ outline:2px solid var(--sage); outline-offset:2px; }
+
   .tour-highlight{
     outline:3px solid var(--sage); outline-offset:4px; border-radius:10px;
     animation:tourPulse 1.4s ease-in-out infinite;
@@ -444,6 +464,15 @@
     </div>
   </div>
   <div class="header-right">
+    <div class="header-export" id="header-export">
+      <button class="tour-restart-btn" id="export-menu-btn" aria-haspopup="true" aria-expanded="false">⬇ Export ▾</button>
+      <div class="export-dropdown" id="export-dropdown" hidden>
+        <label class="export-dropdown-label" for="export-scope-select">Scope</label>
+        <select id="export-scope-select" class="export-select" style="width:100%;"></select>
+        <button class="export-dropdown-item" id="export-csv-btn">⬇ Export as CSV</button>
+        <button class="export-dropdown-item" id="export-pdf-btn">⬇ Export as PDF</button>
+      </div>
+    </div>
     <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour">❓ Take the tour</button>
     <span class="datepill" id="today-pill">Loading date…</span>
     <span class="livepill"><span class="dot"></span>Sample Data</span>
@@ -461,14 +490,6 @@
     <p>Key Performance Indicators (KPIs) show how the City is doing on the things that matter most. 
       <br> They measure progress toward our strategic goals and help ensure accountability to the community.
       <br>Ultimately, KPIs help answer the question: Are we moving in the right direction?</p>
-    <div class="export-bar">
-      <label for="export-scope-select" style="font-size:12.5px; color:var(--slate); display:flex; align-items:center; gap:8px;">
-        Export scope:
-        <select id="export-scope-select" class="export-select"></select>
-      </label>
-      <button class="export-btn" id="export-csv-btn">⬇ Export CSV</button>
-      <button class="export-btn" id="export-pdf-btn">⬇ Export PDF (Goals Chart)</button>
-    </div>
   </div>
 
   <!-- CITY SNAPSHOT (renders only if data.json includes a kpis array) -->
@@ -1855,6 +1876,36 @@ function wireExportButtons(){
   document.getElementById('export-pdf-btn').addEventListener('click', exportPDF);
 }
 
+// Opens/closes the header export dropdown — click the button to
+// toggle, click outside or press Escape to close, and close
+// automatically once CSV/PDF export is actually triggered.
+function wireExportMenu(){
+  const btn = document.getElementById('export-menu-btn');
+  const dropdown = document.getElementById('export-dropdown');
+
+  function closeMenu(){
+    dropdown.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  }
+  function openMenu(){
+    dropdown.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  }
+
+  btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    if(dropdown.hidden) openMenu(); else closeMenu();
+  });
+  document.addEventListener('click', e=>{
+    if(!dropdown.hidden && !dropdown.contains(e.target) && e.target !== btn){ closeMenu(); }
+  });
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape') closeMenu();
+  });
+  document.getElementById('export-csv-btn').addEventListener('click', closeMenu);
+  document.getElementById('export-pdf-btn').addEventListener('click', closeMenu);
+}
+
 /* ---------- Quick filters ("what matters to you") ----------
    Friendly, resident-facing shortcuts straight into a Work System —
    reuses the exact same jump-and-highlight pattern already used
@@ -1910,7 +1961,7 @@ const TOUR_STEPS = [
   { target: '#stat-grid', title: 'At a glance', body: 'These cards break down everything the City tracks. Hover any status line to see exactly which items make it up.' },
   { target: '#worksystems', title: 'Browse by department', body: 'Start with a Work System (like Public Safety or Parks), drill into its Key Services, then click any tile for full detail.' },
   { target: '#goal-drill', title: 'See the policy side', body: 'Same work, viewed differently: Strategic Plan Goals → Objectives → the Programs that support them.' },
-  { target: '.export-bar', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal.' },
+  { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
 ];
 
 let tourStep = 0;
@@ -1986,6 +2037,7 @@ function init(){
   renderWsHeatmap();
   renderHeatmap();
   wireExportButtons();
+  wireExportMenu();
   wireModalChrome();
   wireTour();
 }
