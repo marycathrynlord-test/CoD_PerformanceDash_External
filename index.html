@@ -255,6 +255,10 @@
     overflow:hidden;
   }
   .heat-tile:hover, .heat-tile:focus-visible{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.18); outline:none; }
+  .heat-tile.goal-tile:hover, .heat-tile.goal-tile:focus-visible, .heat-tile.goal-tile:active{
+    background: color-mix(in srgb, var(--goal-accent) 32%, white);
+    color: var(--ink);
+  }
   .heat-tile .heat-type{
     font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
     opacity:.85; margin-bottom:6px;
@@ -291,10 +295,9 @@
   .reference-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:16px;}
   @media (max-width:800px){ .reference-grid{grid-template-columns:1fr;} }
   .reference-col{
-    background:var(--white); border:1px solid var(--line); border-top:4px solid var(--fw-blue);
+    background:var(--white); border:1px solid var(--line); border-top:4px solid var(--teal);
     border-radius:var(--radius); padding:20px 22px;
   }
-  .reference-col.progress{ border-top-color:var(--teal); }
   .reference-col-title{margin:0 0 4px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--forest-dark);}
   .reference-col-sub{margin:0 0 16px; font-size:12px; color:var(--slate); line-height:1.5;}
   .goal-logo-banner{display:block; width:100%; max-width:640px; height:auto; margin:8px auto 20px;}
@@ -506,7 +509,7 @@
 <div class="wrap" id="dashboard">
 
   <div class="titleband">
-    <div class="eyebrow" id="period-label">FY2026 · Quarterly Snapshot</div>
+    <div class="eyebrow" id="period-label">FY2026 · Performance Snapshot</div>
     <h1>How the City of Durango is Performing</h1>
     <p>Key Performance Indicators (KPIs) show how the City is doing on the things that matter most. 
       <br> They measure progress toward our strategic goals and help ensure accountability to the community.
@@ -514,10 +517,10 @@
   </div>
 
   <!-- REFERENCE: System Definitions + Progress Key, side by side -->
-  <div class="section">
+  <div class="section" style="margin-top:20px;">
     <div class="section-head">
       <div class="eyebrow">Reference</div>
-      <h2>How to Read This Dashboard</h2>
+      <h2>Definitions &amp; Indicators</h2>
       <p>A quick glossary of the terms and colors used throughout — the color of each icon below carries through everywhere on the page.</p>
     </div>
     <img src="assets/durango-community-goals.png" alt="Durango Community — the six Strategic Plan goal areas: Organizational Stewardship, Innovative Housing & Economic Development, Safety & Quality of Life, Reliable Infrastructure & Community Connectivity, Engaged & Informed Community, Strategic Workforce Development" class="goal-logo-banner">
@@ -1234,15 +1237,16 @@ function renderHeatmapBreadcrumb(){
   });
 }
 
-function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAttrs='', subtitle='', exportKind='', exportId='', tileStyle='' }){
+function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAttrs='', subtitle='', exportKind='', exportId='', tileStyle='', extraClass='' }){
   const trend = trendItem ? computeTrend(trendItem.history) : null;
   const trendHTML = trend ? `<span class="heat-trend" style="color:${trend==='improving'?'#fff':trend==='declining'?'#fff':'#fff'}">${TREND_META[trend].arrow}</span>` : '';
   const exportBtnHTML = exportKind
     ? `<span class="tile-export-btn" role="button" tabindex="0" data-export-kind="${exportKind}" data-export-id="${exportId}" title="Export this ${typeLabel}" aria-label="Export ${name}">⬇</span>`
     : '';
   const styleAttr = tileStyle ? ` style="${tileStyle}"` : '';
+  const classAttr = `heat-tile status-${status}${extraClass ? ' ' + extraClass : ''}`;
   return `
-    <div class="heat-tile status-${status}"${styleAttr} role="button" tabindex="0" ${dataAttrs}>
+    <div class="${classAttr}"${styleAttr} role="button" tabindex="0" ${dataAttrs}>
       ${exportBtnHTML}
       <div class="heat-type">${typeLabel}</div>
       <div class="heat-name">${name}</div>
@@ -1339,7 +1343,8 @@ function renderHeatmap(){
       typeLabel:'Goal', name:g.name, status:goalProgramViewStatus(g), trendItem:null,
       dataAttrs:`data-drill="goal" data-id="${g.id}"`,
       exportKind:'goal', exportId:g.id,
-      tileStyle:`border-top:4px solid ${g.color};`,
+      tileStyle:`border-top:4px solid ${g.color}; --goal-accent:${g.color};`,
+      extraClass:'goal-tile',
     })).join('') || `<div class="heatmap-empty">No Strategic Plan Goals recorded yet.</div>`;
     wireHeatmapTiles(grid);
     return;
