@@ -256,35 +256,32 @@
   }
   .heat-tile:hover, .heat-tile:focus-visible{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.18); outline:none; }
 
-  /* ---------- Goal tiles: brand color as base (richer, gradiented for
-     depth), pure brand color as a hover "reveal", status as a highlight
-     chip on top. filter:drop-shadow (not box-shadow) follows the actual
-     clipped mountain silhouette rather than the tile's rectangular box. ---------- */
+  /* ---------- Goal tiles: pure brand color for the mountain, a status-
+     colored "meadow" band at the base (set per-tile via inline style,
+     since both colors are data-driven). filter:drop-shadow (not
+     box-shadow) follows the actual clipped mountain silhouette rather
+     than the tile's rectangular box. ---------- */
   .heatmap-grid.mountain-grid{ grid-template-columns:repeat(6, 1fr); gap:0; }
   .heat-tile.goal-tile{
     min-height:210px; justify-content:flex-end; padding-bottom:14px; border-radius:0;
-    color: var(--ink);
-    background: linear-gradient(180deg,
-      color-mix(in srgb, var(--goal-accent) 35%, white) 0%,
-      color-mix(in srgb, var(--goal-accent) 68%, white) 100%);
     filter: drop-shadow(0 6px 10px rgba(0,0,0,.3));
     transition: transform .12s ease, filter .15s ease;
   }
   .heat-tile.goal-tile:hover, .heat-tile.goal-tile:focus-visible, .heat-tile.goal-tile:active{
-    background: var(--goal-accent);
-    filter: drop-shadow(0 8px 14px rgba(0,0,0,.38));
-    color: #fff;
+    filter: drop-shadow(0 9px 16px rgba(0,0,0,.4));
     box-shadow: none; /* the generic rectangular hover shadow doesn't follow the clip-path shape */
   }
-  .heat-tile.goal-tile .tile-export-btn{ top:auto; bottom:8px; right:8px; background:rgba(0,0,0,.10); }
-  .heat-tile.goal-tile:hover .tile-export-btn{ background:rgba(255,255,255,.28); }
-  .heat-tile.goal-tile .tile-export-btn:hover{ background:rgba(0,0,0,.18); }
+  .heat-tile.goal-tile .tile-export-btn{ top:auto; bottom:8px; right:8px; background:rgba(255,255,255,.25); }
+  .heat-tile.goal-tile .tile-export-btn:hover{ background:rgba(255,255,255,.4); }
+  .heat-tile.goal-tile.status-at-risk .tile-export-btn{ background:rgba(0,0,0,.12); }
+  .heat-tile.goal-tile.status-at-risk .tile-export-btn:hover{ background:rgba(0,0,0,.2); }
   .heat-status-highlight{
     display:inline-flex; align-items:center; padding:3px 10px; border-radius:100px;
     font-size:10.5px; font-weight:700;
   }
   /* Below this width, six zero-gap jagged slivers get unreadable — fall
-     back to the normal rectangular tile grid instead. */
+     back to the normal rectangular tile grid instead (the brand/meadow
+     split still shows, just as a flat two-tone rectangle). */
   @media (max-width:820px){
     .heatmap-grid.mountain-grid{ grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px; }
     .heat-tile.goal-tile{
@@ -323,6 +320,7 @@
   }
   .root-mode-btn.active{ background:var(--forest); border-color:var(--forest); color:#fff; }
   .root-mode-btn:hover:not(.active){ border-color:var(--sage); background:var(--mist); }
+  #selected-goal-banner{ margin-bottom:12px; }
 
   .view-details-link{
     font-size:12.5px; font-weight:600; color:var(--teal); background:none; border:none;
@@ -675,6 +673,7 @@
     </div>
 
     <div class="root-mode-toggle" id="root-mode-toggle"></div>
+    <div id="selected-goal-banner" style="display:none;"></div>
 
     <div class="drill-col">
       <div class="drill-col-head" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
@@ -1374,9 +1373,48 @@ function renderDashboardBreadcrumb(){
   }
 }
 
+// Shared between the main Goal tile grid and the "selected Goal"
+// banner: pure brand color for the mountain (matching the logo exactly),
+// a hard color-stop into the status color for a "meadow" band at the
+// base. Text color follows the same at-risk exception used everywhere
+// else, since the meadow is what the text now sits on top of.
+function goalMountainStyle(g, status){
+  const meadow = statusDotColor(status);
+  const textColor = status === 'at-risk' ? '#3a2c05' : '#fff';
+  return `background:linear-gradient(180deg, ${g.color} 0%, ${g.color} 68%, ${meadow} 68%, ${meadow} 100%); color:${textColor};`;
+}
+
+// Shows the currently-selected Goal's own mountain segment, pinned
+// above the breadcrumb, whenever you're inside that Goal (Key Service
+// or Program level) — so there's always a visual "you are here"
+// anchor in that Goal's actual brand color, not just breadcrumb text.
+function renderSelectedGoalBanner(){
+  const container = document.getElementById('selected-goal-banner');
+  if(!container) return;
+
+  if(dashboardView.rootMode !== 'goal' || dashboardView.level === 'roots'){
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+  const g = DATA.goals.find(gg=>gg.id===dashboardView.rootId);
+  if(!g){ container.innerHTML = ''; container.style.display = 'none'; return; }
+
+  const status = goalKeyServiceViewStatus(g);
+  container.style.display = 'block';
+  // Reuses heatTileHTML with no dataAttrs/exportKind, so it renders
+  // purely as a decorative, non-interactive "context" tile.
+  container.innerHTML = heatTileHTML({
+    typeLabel:'Goal', name:g.name, status, trendItem:null,
+    tileStyle:`clip-path:polygon(0% 100%, 0% 55%, 50% 15%, 100% 55%, 100% 100%); width:260px; ${goalMountainStyle(g, status)}`,
+    extraClass:'goal-tile',
+  });
+}
+
 function renderDashboardHeatmap(){
   renderRootModeToggle();
   renderDashboardBreadcrumb();
+  renderSelectedGoalBanner();
   const grid = document.getElementById('heatmap-grid');
   grid.classList.remove('mountain-grid');
 
@@ -1393,13 +1431,13 @@ function renderDashboardHeatmap(){
       grid.innerHTML = roots.map((g,i)=>{
         const left = boundaries[i] ?? 40, peak = peaks[i] ?? 30, right = boundaries[i+1] ?? 40;
         const clip = `polygon(0% 100%, 0% ${left}%, 50% ${peak}%, 100% ${right}%, 100% 100%)`;
+        const status = goalKeyServiceViewStatus(g);
         return heatTileHTML({
-          typeLabel:'Goal', name:g.name, status:goalKeyServiceViewStatus(g), trendItem:null,
+          typeLabel:'Goal', name:g.name, status, trendItem:null,
           dataAttrs:`data-drill-root="${g.id}"`,
           exportKind:'goal', exportId:g.id,
-          tileStyle:`clip-path:${clip}; --goal-accent:${g.color};`,
+          tileStyle:`clip-path:${clip}; ${goalMountainStyle(g, status)}`,
           extraClass:'goal-tile',
-          statusAsHighlight:true,
         });
       }).join('') || `<div class="heatmap-empty">No Strategic Plan Goals recorded yet.</div>`;
     } else {
