@@ -1,6 +1,6 @@
 {
   "meta": {
-    "period": "FY2026 · Performance Snapshot"
+    "period": "FY2026 · Quarterly Snapshot"
   },
 
   "goals": [
@@ -40,26 +40,13 @@
   ],
 
   "keyServices": [
-    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "goals": ["g1"], "status": "on-track", "statusUpdated": "2026-06-25" },
+    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "goals": ["g1"], "status": "on-track" },
     { "id": "ks2", "name": "City Clerk & Records Management", "workSystem": "ws1", "goals": ["g1"], "status": "on-track" },
     { "id": "ks3", "name": "Public Information & Community Engagement", "workSystem": "ws1", "goals": ["g5", "g1"], "status": "at-risk" },
     { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2", "goals": ["g1"], "status": "on-track" },
-    { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2", "goals": ["g6", "g1"], "status": "at-risk",
-      "history": [
-        { "date": "2026-03-01", "status": "on-track" },
-        { "date": "2026-04-01", "status": "on-track" },
-        { "date": "2026-05-01", "status": "on-track" },
-        { "date": "2026-06-01", "status": "at-risk" }
-      ]
-    },
+    { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2", "goals": ["g6", "g1"], "status": "at-risk" },
     { "id": "ks6", "name": "Legal Services", "workSystem": "ws2", "goals": ["g1"], "status": "on-track" },
-    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "goals": ["g1"], "status": "off-track", "statusUpdated": "2026-03-02",
-      "history": [
-        { "date": "2026-03-01", "status": "on-track" },
-        { "date": "2026-04-01", "status": "at-risk" },
-        { "date": "2026-05-01", "status": "at-risk" },
-        { "date": "2026-06-01", "status": "off-track" }
-      ],
+    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "goals": ["g1"], "status": "off-track",
       "details": {
         "description": "Provides IT infrastructure, cybersecurity, and technical support across all City Work Systems.",
         "owner": "IT Director",
@@ -72,14 +59,7 @@
     },
     { "id": "ks8", "name": "Community Development & Planning", "workSystem": "ws3", "goals": ["g2"], "status": "on-track" },
     { "id": "ks9", "name": "Economic Prosperity & Business Support", "workSystem": "ws3", "goals": ["g2"], "status": "on-track" },
-    { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3", "goals": ["g1", "g4"], "status": "at-risk",
-      "history": [
-        { "date": "2026-03-01", "status": "at-risk" },
-        { "date": "2026-04-01", "status": "at-risk" },
-        { "date": "2026-05-01", "status": "at-risk" },
-        { "date": "2026-06-01", "status": "at-risk" }
-      ]
-    },
+    { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3", "goals": ["g1", "g4"], "status": "at-risk" },
     { "id": "ks11", "name": "Public Safety Services", "workSystem": "ws4", "goals": ["g3"], "status": "on-track" },
     { "id": "ks12", "name": "Municipal Court", "workSystem": "ws4", "goals": ["g3"], "status": "on-track" },
     { "id": "ks13", "name": "Public Works & Municipal Services", "workSystem": "ws5", "goals": ["g4"], "status": "on-track" },
@@ -100,12 +80,6 @@
 
   "programs": [
     { "id": "p1", "name": "Fixed-Route Service", "objectives": ["ob10", "ob11"], "keyservice": "ks14", "status": "on-track",
-      "history": [
-        { "date": "2026-03-01", "status": "at-risk" },
-        { "date": "2026-04-01", "status": "at-risk" },
-        { "date": "2026-05-01", "status": "at-risk" },
-        { "date": "2026-06-01", "status": "on-track" }
-      ],
       "details": {
         "description": "Scheduled bus routes serving core corridors throughout the city.",
         "metrics": [
@@ -117,12 +91,6 @@
     { "id": "p2", "name": "Paratransit", "objectives": ["ob10"], "keyservice": "ks14", "status": "at-risk" },
     { "id": "p3", "name": "Multimodal Programs", "objectives": ["ob10"], "keyservice": "ks14", "status": "on-track" },
     { "id": "p4", "name": "Microtransit", "objectives": ["ob10"], "keyservice": "ks14", "status": "off-track",
-      "history": [
-        { "date": "2026-03-01", "status": "at-risk" },
-        { "date": "2026-04-01", "status": "at-risk" },
-        { "date": "2026-05-01", "status": "at-risk" },
-        { "date": "2026-06-01", "status": "off-track" }
-      ],
       "details": {
         "description": "On-demand shuttle service piloted in underserved neighborhoods.",
         "owner": "Mobility Program Coordinator",

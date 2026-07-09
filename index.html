@@ -1402,7 +1402,7 @@ function renderDashboardBreadcrumb(){
 // zone — two separately-positioned regions, since they now live in two
 // differently-colored parts of the same tile. `selected`/`dimmed` drive
 // the persistent-row highlight-vs-grey-out behavior.
-function goalMountainTileHTML(g, status, clip, { selected=false, dimmed=false, width=null } = {}){
+function goalMountainTileHTML(g, status, clip, peak, { selected=false, dimmed=false, width=null } = {}){
   const meadow = statusDotColor(status);
   const textColor = status === 'at-risk' ? '#3a2c05' : '#fff';
   const cls = `goal-tile${selected ? ' goal-tile-selected' : ''}${dimmed ? ' goal-tile-dimmed' : ''}`;
@@ -1412,7 +1412,14 @@ function goalMountainTileHTML(g, status, clip, { selected=false, dimmed=false, w
   // so it always wins over the generic .status-X{background:...}
   // rules — inline style beats any non-!important stylesheet rule
   // unconditionally, with no specificity math involved.
-  const bg = `linear-gradient(180deg, ${g.color} 0%, ${g.color} 68%, ${meadow} 68%, ${meadow} 100%)`;
+  //
+  // A thin status "ridge line" sits right at this tile's own peak — a
+  // fixed 6-percentage-point band starting exactly where the peak is,
+  // so it naturally tapers to nothing toward the tile's edges (where
+  // the slope is lower and never reaches that height range at all).
+  // Everything below the ridge is pure brand color.
+  const stripeEnd = peak + 6;
+  const bg = `linear-gradient(180deg, ${meadow} ${peak}%, ${meadow} ${stripeEnd}%, ${g.color} ${stripeEnd}%, ${g.color} 100%)`;
   return `
     <div class="heat-tile status-${status} ${cls}"
          style="clip-path:${clip}; background:${bg}; color:${textColor}; ${widthStyle}"
@@ -1449,7 +1456,7 @@ function renderGoalMountainRow(){
     const left = boundaries[i] ?? 40, peak = peaks[i] ?? 30, right = boundaries[i+1] ?? 40;
     const clip = `polygon(0% 100%, 0% ${left}%, 50% ${peak}%, 100% ${right}%, 100% 100%)`;
     const status = goalKeyServiceViewStatus(g);
-    return goalMountainTileHTML(g, status, clip, {
+    return goalMountainTileHTML(g, status, clip, peak, {
       selected: selectedId === g.id,
       dimmed: selectedId !== null && selectedId !== g.id,
     });
@@ -1475,7 +1482,7 @@ function renderSelectedGoalBanner(){
   const status = goalKeyServiceViewStatus(g);
   container.classList.add('has-selection');
   container.innerHTML = goalMountainTileHTML(
-    g, status, 'polygon(0% 100%, 0% 55%, 50% 15%, 100% 55%, 100% 100%)',
+    g, status, 'polygon(0% 100%, 0% 55%, 50% 15%, 100% 55%, 100% 100%)', 15,
     { selected:true, width:260 }
   );
   // Decorative context card — not part of the click-driven grid, so
