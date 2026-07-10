@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>City of Durango — Performance Dashboard - Organization View</title>
+<title>City of Durango — Performance Dashboard - Community View</title>
 <!-- Used only for "Export PDF" — captures the Goal comparison bars as an
      image and drops it into a generated PDF. If either fails to load
      (e.g. blocked by an ad blocker), the Export PDF button degrades
@@ -553,7 +553,7 @@
     </svg>
     <div class="brand-text">
       <div class="eyebrow">City of Durango</div>
-      <div class="title">Performance Dashboard - Organization View</div>
+      <div class="title">Performance Dashboard - Community View</div>
     </div>
   </div>
   <div class="header-right">
@@ -568,6 +568,7 @@
     </div>
     <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour">❓ Take the tour</button>
     <span class="datepill" id="today-pill">Loading date…</span>
+    <span class="livepill"><span class="dot"></span>Sample Data</span>
   </div>
 </header>
 
@@ -596,7 +597,7 @@
         <h3 class="reference-col-title">System Definitions</h3>
         <p class="reference-col-sub">How the City's work is organized, from policy down to daily operations.</p>
         <div class="ref-row">
-          <span class="ref-icon" style="background:var(--fw-purple);"></span>
+          <span class="ref-icon" style="background:var(--fw-blue);"></span>
           <div>
             <div class="ref-term">Strategic Plan</div>
             <div class="ref-desc">High-level community outcomes and priorities.</div>
@@ -617,7 +618,7 @@
           </div>
         </div>
         <div class="ref-row">
-          <span class="ref-icon" style="background:#9AA6A2;"></span>
+          <span class="ref-icon" style="background:var(--fw-gold);"></span>
           <div>
             <div class="ref-term">Programs</div>
             <div class="ref-desc">Operational activities and service delivery functions.</div>
@@ -686,8 +687,8 @@
   <div class="section" id="goal-drill">
     <div class="section-head">
       <div class="eyebrow">Explore the City's Work</div>
-      <h2 id="explorer-heading">Strategic Plan Goals → Objectives → Key Services</h2>
-      <p id="explorer-subhead">Start at a Goal, drill into its objectives, and then see supporting Key Services.</p>
+      <h2 id="explorer-heading">Strategic Plan Goals → Key Services → Programs</h2>
+      <p id="explorer-subhead">Start at a Goal, drill into its Key Services, then into the Programs each one runs.</p>
     </div>
 
     <div class="root-mode-toggle" id="root-mode-toggle"></div>
@@ -747,7 +748,7 @@
       <div class="footer-inner">
         <div>
           <h3>City of Durango</h3>
-          <p>Organizational Excellence, Office of tCity Managerhe  · 949 E. 2nd Avenue, Durango, CO 81301</p>
+          <p>Organizational Excellence · 949 E. 2nd Avenue, Durango, CO 81301</p>
         </div>
         <div class="contact-grid">
           <div><span>Phone</span>(970) XXX-XXXX</div>
@@ -1327,6 +1328,30 @@ function programsUnderKeyService(ksId){
   return DATA.programs.filter(p=>p.keyservice===ksId);
 }
 
+// Objectives under a Goal — the real, existing o.goal relationship.
+function objectivesUnderGoal(goalId){
+  return DATA.objectives.filter(o=>o.goal===goalId);
+}
+// There's no direct Objective->KeyService link in the data (Key
+// Services connect to Goals directly; Objectives connect to Programs
+// directly) — so this is a DERIVED relationship, computed by finding
+// this Objective's own Programs, then collecting whichever Key
+// Services those specific Programs are tagged with. Worth knowing:
+// this means the Key Services shown can differ objective-to-objective
+// even under the same Goal, since it's based on each Objective's own
+// Programs, not a blanket "all Key Services under this Goal" list.
+function keyServicesUnderObjective(objectiveId){
+  const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(objectiveId));
+  const ksIds = [...new Set(progs.map(p=>p.keyservice).filter(Boolean))];
+  return DATA.keyServices.filter(ks=>ksIds.includes(ks.id));
+}
+// Programs scoped to BOTH the Objective and the Key Service — respects
+// the Objective context you drilled through, rather than jumping back
+// to every Program that Key Service has ever been tagged with.
+function programsUnderObjectiveAndKeyService(objectiveId, ksId){
+  return DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(objectiveId) && p.keyservice===ksId);
+}
+
 function renderRootModeToggle(){
   const el = document.getElementById('root-mode-toggle');
   if(!el) return;
@@ -1350,11 +1375,11 @@ function updateExplorerHeading(){
   const sub = document.getElementById('explorer-subhead');
   if(!heading || !sub) return;
   if(dashboardView.rootMode === 'goal'){
-    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services';
-    sub.textContent = "Start with the Strategic Plan Goal Area, drill into its Objectives, then into the Key Services aligned with each one.";
+    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services → Programs';
+    sub.textContent = "Start at a Goal, drill into its Objectives, then into the Key Services and Programs each one connects to.";
   } else {
     heading.textContent = 'Work Systems → Key Services → Programs';
-    sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs aligned with each one.";
+    sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs.";
   }
 }
 
@@ -1363,10 +1388,17 @@ function renderDashboardBreadcrumb(){
   const rootLabel = dashboardView.rootMode === 'goal' ? 'All Goals' : 'All Work Systems';
   const parts = [`<button class="crumb${dashboardView.level==='roots'?' current':''}" data-crumb="roots">${rootLabel}</button>`];
 
-  if(dashboardView.level === 'root' || dashboardView.level === 'keyservice'){
+  if(dashboardView.level !== 'roots'){
     parts.push(`<span class="sep">›</span>`);
     parts.push(`<button class="crumb${dashboardView.level==='root'?' current':''}" data-crumb="root">${rootName(dashboardView.rootMode, dashboardView.rootId)}</button>`);
   }
+
+  if(dashboardView.rootMode === 'goal' && (dashboardView.level === 'objective' || dashboardView.level === 'keyservice')){
+    const o = DATA.objectives.find(oo=>oo.id===dashboardView.objectiveId);
+    parts.push(`<span class="sep">›</span>`);
+    parts.push(`<button class="crumb${dashboardView.level==='objective'?' current':''}" data-crumb="objective">${o ? o.name : 'Objective'}</button>`);
+  }
+
   if(dashboardView.level === 'keyservice'){
     const ks = DATA.keyServices.find(k=>k.id===dashboardView.ksId);
     parts.push(`<span class="sep">›</span>`);
@@ -1379,6 +1411,7 @@ function renderDashboardBreadcrumb(){
       const level = btn.dataset.crumb;
       if(level === 'roots') dashboardView = { rootMode: dashboardView.rootMode, level:'roots' };
       else if(level === 'root') dashboardView = { rootMode: dashboardView.rootMode, level:'root', rootId: dashboardView.rootId };
+      else if(level === 'objective') dashboardView = { rootMode: dashboardView.rootMode, level:'objective', rootId: dashboardView.rootId, objectiveId: dashboardView.objectiveId };
       renderDashboardHeatmap();
     });
   });
@@ -1445,7 +1478,7 @@ function renderGoalMountainRow(){
 
   container.innerHTML = goals.map((g,i)=>{
     const left = boundaries[i] ?? 40, peak = peaks[i] ?? 30, right = boundaries[i+1] ?? 40;
-    const status = goalKeyServiceViewStatus(g);
+    const status = goalProgramViewStatus(g);
     return goalMountainTileHTML(g, status, { left, peak, right }, {
       selected: selectedId === g.id,
       dimmed: selectedId !== null && selectedId !== g.id,
@@ -1469,7 +1502,7 @@ function renderSelectedGoalBanner(){
   const g = DATA.goals.find(gg=>gg.id===dashboardView.rootId);
   if(!g){ container.innerHTML = ''; container.classList.remove('has-selection'); return; }
 
-  const status = goalKeyServiceViewStatus(g);
+  const status = goalProgramViewStatus(g);
   container.classList.add('has-selection');
   container.innerHTML = goalMountainTileHTML(
     g, status, { left:55, peak:15, right:55 },
@@ -1509,6 +1542,19 @@ function renderDashboardHeatmap(){
   }
 
   if(dashboardView.level === 'root'){
+    if(dashboardView.rootMode === 'goal'){
+      // Strategic Plan View: this level is Objectives, not Key Services.
+      const objs = objectivesUnderGoal(dashboardView.rootId)
+        .sort((a,b)=>goalSortWeight(objectiveStatus(a)) - goalSortWeight(objectiveStatus(b)));
+      grid.innerHTML = objs.map(o=>heatTileHTML({
+        typeLabel:'Objective', name:o.name, status:objectiveStatus(o), trendItem:null,
+        dataAttrs:`data-drill-objective="${o.id}"`,
+        exportKind:'objective', exportId:o.id,
+      })).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
+      wireDashboardTiles(grid);
+      return;
+    }
+    // Work System View: unchanged — this level is Key Services.
     const services = keyServicesUnderRoot(dashboardView.rootMode, dashboardView.rootId)
       .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
     grid.innerHTML = services.map(ks=>heatTileHTML({
@@ -1520,9 +1566,26 @@ function renderDashboardHeatmap(){
     return;
   }
 
+  if(dashboardView.level === 'objective'){
+    // Goal View only: Key Services derived from this Objective's own
+    // Programs (see keyServicesUnderObjective — there's no direct
+    // Objective->KeyService link in the data, so this is computed).
+    const services = keyServicesUnderObjective(dashboardView.objectiveId)
+      .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
+    grid.innerHTML = services.map(ks=>heatTileHTML({
+      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
+      dataAttrs:`data-drill-ks="${ks.id}"`,
+      exportKind:'ks', exportId:ks.id,
+    })).join('') || `<div class="heatmap-empty">No Key Services found through this Objective's Programs yet.</div>`;
+    wireDashboardTiles(grid);
+    return;
+  }
+
   if(dashboardView.level === 'keyservice'){
-    const progs = programsUnderKeyService(dashboardView.ksId)
-      .sort((a,b)=>goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
+    const progs = (dashboardView.rootMode === 'goal'
+      ? programsUnderObjectiveAndKeyService(dashboardView.objectiveId, dashboardView.ksId)
+      : programsUnderKeyService(dashboardView.ksId)
+    ).sort((a,b)=>goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
     grid.innerHTML = progs.map(p=>heatTileHTML({
       typeLabel:'Program', name:p.name, status:programStatus(p), trendItem:p,
       dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
@@ -1534,6 +1597,16 @@ function renderDashboardHeatmap(){
 }
 
 function wireDashboardTiles(scope){
+  scope.querySelectorAll('[data-drill-objective]').forEach(tile=>{
+    const activate = ()=>{
+      dashboardView = { rootMode: dashboardView.rootMode, level:'objective', rootId: dashboardView.rootId, objectiveId: tile.dataset.drillObjective };
+      renderDashboardHeatmap();
+    };
+    tile.addEventListener('click', activate);
+    tile.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
+    });
+  });
   scope.querySelectorAll('[data-drill-root]').forEach(tile=>{
     const activate = ()=>{
       dashboardView = { rootMode: dashboardView.rootMode, level:'root', rootId: tile.dataset.drillRoot };
@@ -1546,7 +1619,7 @@ function wireDashboardTiles(scope){
   });
   scope.querySelectorAll('[data-drill-ks]').forEach(tile=>{
     const activate = ()=>{
-      dashboardView = { rootMode: dashboardView.rootMode, level:'keyservice', rootId: dashboardView.rootId, ksId: tile.dataset.drillKs };
+      dashboardView = { rootMode: dashboardView.rootMode, level:'keyservice', rootId: dashboardView.rootId, objectiveId: dashboardView.objectiveId, ksId: tile.dataset.drillKs };
       renderDashboardHeatmap();
     };
     tile.addEventListener('click', activate);
@@ -1780,7 +1853,13 @@ function buildSingleItemRow(kind, id){
   if(kind === 'goal'){
     const g = DATA.goals.find(gg=>gg.id===id);
     if(!g) return null;
-    return ['Goal', g.name, goalKeyServiceViewStatus(g), '', '', '', ''];
+    return ['Goal', g.name, goalProgramViewStatus(g), '', '', '', ''];
+  }
+  if(kind === 'objective'){
+    const o = DATA.objectives.find(oo=>oo.id===id);
+    if(!o) return null;
+    const g = DATA.goals.find(gg=>gg.id===o.goal);
+    return ['Objective', o.name, objectiveStatus(o), '', g ? g.name : '', '', ''];
   }
   if(kind === 'program'){
     const p = DATA.programs.find(pp=>pp.id===id);
@@ -1824,17 +1903,22 @@ function exportCSV(){
   const scopedGoals = scope === 'all' ? sortGoalsCanonical(DATA.goals) : DATA.goals.filter(g=>g.id===scope);
 
   scopedGoals.forEach(g=>{
-    rows.push(['Goal', g.name, goalKeyServiceViewStatus(g), '', '', '', '']);
+    rows.push(['Goal', g.name, goalProgramViewStatus(g), '', '', '', '']);
 
-    const services = keyServicesUnderRoot('goal', g.id);
-    services.forEach(ks=>{
-      const goalNames = (ks.goals||[]).map(gid=>DATA.goals.find(gg=>gg.id===gid)).filter(Boolean).map(gg=>gg.name).join('; ');
-      const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
-      rows.push(['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), goalNames, ws ? ws.name : '', ks.statusUpdated || '']);
+    const objs = objectivesUnderGoal(g.id);
+    objs.forEach(o=>{
+      rows.push(['Objective', o.name, objectiveStatus(o), '', g.name, '', '']);
 
-      const progs = programsUnderKeyService(ks.id);
-      progs.forEach(p=>{
-        rows.push(['Program', p.name, programStatus(p), trendLabel(p), '', '', '']);
+      const services = keyServicesUnderObjective(o.id);
+      services.forEach(ks=>{
+        const goalNames = (ks.goals||[]).map(gid=>DATA.goals.find(gg=>gg.id===gid)).filter(Boolean).map(gg=>gg.name).join('; ');
+        const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
+        rows.push(['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), goalNames, ws ? ws.name : '', ks.statusUpdated || '']);
+
+        const progs = programsUnderObjectiveAndKeyService(o.id, ks.id);
+        progs.forEach(p=>{
+          rows.push(['Program', p.name, programStatus(p), trendLabel(p), '', '', '']);
+        });
       });
     });
   });
@@ -1970,17 +2054,25 @@ async function exportPDF(){
       : DATA.goals.filter(g=>g.id===scope);
 
     for(const g of goalsToWalk){
-      const goalCap = await captureHeatmapLevel({ rootMode:'goal', level:'root', rootId:g.id }, `${g.name} — Key Services`);
+      const goalCap = await captureHeatmapLevel({ rootMode:'goal', level:'root', rootId:g.id }, `${g.name} — Objectives`);
       addTitledPage(goalCap.title);
       addCanvasPaginated(pdf, goalCap.canvas, margin + 24);
 
-      const services = keyServicesUnderRoot('goal', g.id);
-      for(const ks of services){
-        const progs = programsUnderKeyService(ks.id);
-        if(!progs.length) continue; // skip empty Key Service pages — nothing to show
-        const ksCap = await captureHeatmapLevel({ rootMode:'goal', level:'keyservice', rootId:g.id, ksId:ks.id }, `${g.name} → ${ks.name} — Programs`);
-        addTitledPage(ksCap.title);
-        addCanvasPaginated(pdf, ksCap.canvas, margin + 24);
+      const objs = objectivesUnderGoal(g.id);
+      for(const o of objs){
+        const services = keyServicesUnderObjective(o.id);
+        if(!services.length) continue; // skip empty Objective pages — nothing to show
+        const objCap = await captureHeatmapLevel({ rootMode:'goal', level:'objective', rootId:g.id, objectiveId:o.id }, `${g.name} → ${o.name} — Key Services`);
+        addTitledPage(objCap.title);
+        addCanvasPaginated(pdf, objCap.canvas, margin + 24);
+
+        for(const ks of services){
+          const progs = programsUnderObjectiveAndKeyService(o.id, ks.id);
+          if(!progs.length) continue; // skip empty Key Service pages — nothing to show
+          const ksCap = await captureHeatmapLevel({ rootMode:'goal', level:'keyservice', rootId:g.id, objectiveId:o.id, ksId:ks.id }, `${g.name} → ${o.name} → ${ks.name} — Programs`);
+          addTitledPage(ksCap.title);
+          addCanvasPaginated(pdf, ksCap.canvas, margin + 24);
+        }
       }
     }
 
@@ -2042,7 +2134,7 @@ const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
   { target: '#headline-banner', title: 'Start with the headline', body: 'One computed sentence tells you what needs attention right now, generated from the data below — not hand-typed.' },
   { target: '#stat-grid', title: 'At a glance', body: 'These cards break down everything the City tracks. Hover any status line to see exactly which items make it up.' },
-  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Toggle between the Strategic Plan Goal View and the Work System View — both drill from there into Key Services, then into Programs.' },
+  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Toggle between the Strategic Plan Goal View (Goals → Objectives → Key Services → Programs) and the Work System View (Work Systems → Key Services → Programs).' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
 ];
 
