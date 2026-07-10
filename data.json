@@ -40,7 +40,7 @@
   ],
 
   "keyServices": [
-    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "goals": ["g1"], "status": "on-track" },
+    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "goals": ["g1"], "objectives": ["ob1, ob2, ob3"], "status": "on-track" },
     { "id": "ks2", "name": "City Clerk & Records Management", "workSystem": "ws1", "goals": ["g1"], "status": "on-track" },
     { "id": "ks3", "name": "Public Information & Community Engagement", "workSystem": "ws1", "goals": ["g5", "g1"], "status": "at-risk" },
     { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2", "goals": ["g1"], "status": "on-track" },
