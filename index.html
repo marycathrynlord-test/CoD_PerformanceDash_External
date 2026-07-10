@@ -335,7 +335,14 @@
   }
   .heat-tile.river-tile.river-tile-dimmed{ filter: grayscale(.82) brightness(.95) drop-shadow(0 2px 5px rgba(0,0,0,.12)); }
   .heat-tile.river-tile.river-tile-dimmed:hover{ filter: grayscale(.4) brightness(1) drop-shadow(0 5px 9px rgba(0,0,0,.2)); }
-  .river-channel{ position:absolute; inset:0; }
+  .river-channel{
+    position:absolute; inset:0;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,.35));
+  }
+  .river-ripple{
+    position:absolute; inset:0; z-index:0;
+    background: rgba(255,255,255,.28);
+  }
   .heat-tile.river-tile .heat-type,
   .heat-tile.river-tile .heat-name,
   .heat-tile.river-tile .heat-foot{
@@ -1597,11 +1604,22 @@ function workSystemRiverTileHTML(ws, status, { left, mid, right }, { selected=fa
   const lightShade = mixHex(base, '#ffffff', 0.4);
   const darkShade = mixHex(base, '#000000', 0.25);
   const waterGradient = `linear-gradient(180deg, ${lightShade} 0%, ${base} 55%, ${darkShade} 100%)`;
+
+  // Two thin ripple bands, offset above/below the channel's own
+  // centerline — same curve-generation function as the channel itself,
+  // just much thinner, so they follow the exact same bend and read as
+  // ripples running with the current rather than a separate texture.
+  const rippleHalf = 1.3;
+  const rippleClipA = riverChannelClip(left-13, mid-13, right-13, rippleHalf);
+  const rippleClipB = riverChannelClip(left+13, mid+13, right+13, rippleHalf);
+
   return `
     <div class="heat-tile status-${status} ${cls}"
          style="background:transparent; ${widthStyle}"
          role="button" tabindex="0" data-drill-root="${ws.id}">
       <div class="river-channel" style="clip-path:${clip}; background:${waterGradient};"></div>
+      <div class="river-ripple" style="clip-path:${rippleClipA};"></div>
+      <div class="river-ripple" style="clip-path:${rippleClipB};"></div>
       <span class="tile-export-btn" role="button" tabindex="0" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${ws.name}">⬇</span>
       <div class="heat-type">Work System</div>
       <div class="heat-name">${ws.name}</div>
