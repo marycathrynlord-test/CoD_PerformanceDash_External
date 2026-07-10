@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>City of Durango — Performance Dashboard - Organizational View</title>
-<!-- Used only for "Export PDF" — captures the Goal comparison bars as an
-     image and drops it into a generated PDF. If either fails to load
-     (e.g. blocked by an ad blocker), the Export PDF button degrades
-     gracefully with a clear message rather than breaking anything else. -->
+
+<!-- Used only for "Export PDF" -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -300,15 +299,53 @@
     font-size:10.5px; font-weight:700;
   }
   /* Below this width, six zero-gap jagged slivers plus greyed-out
-     neighbors get unreadable — hide the persistent mountain row
-     entirely and fall back to the single standalone "selected Goal"
-     card above the breadcrumb instead. */
-  #goal-mountain-row-wrap{ display:block; }
-  #selected-goal-banner{ display:none; margin-bottom:12px; }
+     neighbors get unreadable — hide the persistent mountain row (and
+     the river row) entirely and fall back to the single standalone
+     "selected" card above the breadcrumb instead. */
+  #goal-mountain-row-wrap, #worksystem-river-row-wrap{ display:block; }
+  #selected-goal-banner, #selected-worksystem-banner{ display:none; margin-bottom:12px; }
   @media (max-width:820px){
-    #goal-mountain-row-wrap{ display:none; }
-    #selected-goal-banner.has-selection{ display:block; }
+    #goal-mountain-row-wrap, #worksystem-river-row-wrap{ display:none; }
+    #selected-goal-banner.has-selection, #selected-worksystem-banner.has-selection{ display:block; }
   }
+
+  /* ---------- Work System tiles: a meandering river channel, the
+     Work-System-View analog of the Goal mountain row — same "solid
+     neutral shape, status shown via the badge below" pattern the
+     mountains now use, not color-on-the-shape. Each tile is a segment
+     of ONE continuous river: the channel's edge values are shared
+     between adjacent tiles (this tile's right edge = the next tile's
+     left edge), so the water visually keeps flowing across the zero-
+     gap row exactly like the mountain range's peaks do. Sandy banks
+     fill the rest of the tile (a plain background, not clipped); the
+     water itself is a separate child element, clipped to the
+     channel shape, since a single element can only have one
+     clip-path/background — a channel-shaped cutout plus a full-tile
+     bank color needs two layered pieces. ---------- */
+  .heatmap-grid.river-grid{ grid-template-columns:repeat(6, 1fr); gap:0; }
+  .heat-tile.river-tile{
+    min-height:210px; border-radius:0; padding:0;
+    background:#D9C9A8;
+    display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:14px;
+    color:var(--ink);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.18));
+    transition: transform .12s ease, filter .15s ease;
+  }
+  .heat-tile.river-tile:hover, .heat-tile.river-tile:focus-visible, .heat-tile.river-tile:active{
+    filter: drop-shadow(0 7px 13px rgba(0,0,0,.25));
+    box-shadow: none;
+  }
+  .heat-tile.river-tile.river-tile-dimmed{ filter: grayscale(.82) brightness(.95) drop-shadow(0 2px 5px rgba(0,0,0,.12)); }
+  .heat-tile.river-tile.river-tile-dimmed:hover{ filter: grayscale(.4) brightness(1) drop-shadow(0 5px 9px rgba(0,0,0,.2)); }
+  .river-channel{ position:absolute; inset:0; background:#3E7C93; }
+  .heat-tile.river-tile .heat-type,
+  .heat-tile.river-tile .heat-name,
+  .heat-tile.river-tile .heat-foot{
+    position:relative; z-index:1; margin-left:12px; margin-right:12px;
+  }
+  .heat-tile.river-tile .heat-foot{ justify-content:flex-start; gap:8px; }
+  .heat-tile.river-tile .tile-export-btn{ top:auto; bottom:8px; right:8px; z-index:2; background:rgba(0,0,0,.14); }
+  .heat-tile.river-tile .tile-export-btn:hover{ background:rgba(0,0,0,.24); }
   .heat-tile .heat-type{
     font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
     opacity:.85; margin-bottom:6px;
@@ -328,9 +365,7 @@
   .view-toggle-btn.active{ background:var(--forest); border-color:var(--forest); color:#fff; }
   .view-toggle-btn:hover:not(.active){ border-color:var(--sage); }
 
-  /* ---------- Root-mode toggle (Goal View vs Work System View) — the
-     primary switch for the unified explorer, so it reads with more
-     visual weight than the smaller secondary toggles elsewhere. ---------- */
+  /* ---------- Root-mode toggle (Goal View vs Work System View) */
   .root-mode-toggle{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 16px;}
   .root-mode-btn{
     font-size:13.5px; font-weight:700; padding:10px 20px; border-radius:100px; cursor:pointer;
@@ -463,7 +498,7 @@
   }
   .export-select:focus-visible{ outline:2px solid var(--sage); outline-offset:2px; }
 
-  /* ---------- Per-tile export (small, subtle, corner of each heat tile) ---------- */
+  /* ---------- Per-tile export */
   .tile-export-btn{
     position:absolute; top:7px; right:7px; width:20px; height:20px; border-radius:50%;
     display:flex; align-items:center; justify-content:center; font-size:11px; line-height:1;
@@ -525,11 +560,6 @@
   .status-defs dt{font-weight:700; color:var(--ink); display:inline;}
   .status-defs dd{margin:0 0 6px; display:inline;}
   .status-defs .def-row{margin-bottom:4px;}
-
-  /* ---------- Strategic plan reference ---------- */
-  /* goal-dot removed from the tree intentionally — goal branding color now
-     lives only in the summary cards below, so status color stays the one
-     dominant signal inside the detail tree. */
 
   /* ---------- Footer ---------- */
   footer{margin-top:44px; position:relative;}
@@ -693,10 +723,14 @@
 
     <div class="root-mode-toggle" id="root-mode-toggle"></div>
     <div id="selected-goal-banner"></div>
+    <div id="selected-worksystem-banner"></div>
 
     <div class="drill-col">
       <div class="heatmap-body" id="goal-mountain-row-wrap">
         <div class="heatmap-grid mountain-grid" id="goal-mountain-row"></div>
+      </div>
+      <div class="heatmap-body" id="worksystem-river-row-wrap">
+        <div class="heatmap-grid river-grid" id="worksystem-river-row"></div>
       </div>
       <div class="drill-col-head" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <div class="heatmap-breadcrumb" id="heatmap-breadcrumb"></div>
@@ -1332,14 +1366,6 @@ function programsUnderKeyService(ksId){
 function objectivesUnderGoal(goalId){
   return DATA.objectives.filter(o=>o.goal===goalId);
 }
-// There's no direct Objective->KeyService link in the data (Key
-// Services connect to Goals directly; Objectives connect to Programs
-// directly) — so this is a DERIVED relationship, computed by finding
-// this Objective's own Programs, then collecting whichever Key
-// Services those specific Programs are tagged with. Worth knowing:
-// this means the Key Services shown can differ objective-to-objective
-// even under the same Goal, since it's based on each Objective's own
-// Programs, not a blanket "all Key Services under this Goal" list.
 // Handles both a properly-formed array of IDs (["ob1","ob2","ob3"]) and
 // a single comma-joined string inside one array slot (["ob1, ob2, ob3"])
 // — splits every element on commas and trims whitespace, so either
@@ -1348,15 +1374,17 @@ function normalizeIdList(raw){
   if(!Array.isArray(raw)) return [];
   return raw.flatMap(item => String(item).split(',').map(s=>s.trim())).filter(Boolean);
 }
-
+// Key Services now carry a direct `objectives` field (added by hand in
+// data.json), so this reads that directly rather than deriving the
+// relationship through Programs.
 function keyServicesUnderObjective(objectiveId){
   return DATA.keyServices.filter(ks => normalizeIdList(ks.objectives).includes(objectiveId));
 }
-// Programs scoped to BOTH the Objective and the Key Service — respects
-// the Objective context you drilled through, rather than jumping back
-// to every Program that Key Service has ever been tagged with.
+// Programs under a Key Service, full stop — the Objective->KeyService
+// link is now direct and independent of Programs, so a Program doesn't
+// need to separately confirm that exact Objective tag to show up here.
 function programsUnderObjectiveAndKeyService(objectiveId, ksId){
-  return DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(objectiveId) && p.keyservice===ksId);
+  return programsUnderKeyService(ksId);
 }
 
 function renderRootModeToggle(){
@@ -1382,8 +1410,8 @@ function updateExplorerHeading(){
   const sub = document.getElementById('explorer-subhead');
   if(!heading || !sub) return;
   if(dashboardView.rootMode === 'goal'){
-    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services → Programs';
-    sub.textContent = "Start at a Goal, drill into its Objectives, then into the Key Services and Programs each one connects to.";
+    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services';
+    sub.textContent = "Start at a Goal, drill into its Objectives, then into the Key Services each Objective connects to."
   } else {
     heading.textContent = 'Work Systems → Key Services → Programs';
     sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs.";
@@ -1521,30 +1549,98 @@ function renderSelectedGoalBanner(){
   wireTileExportButtons(container);
 }
 
+// One continuous river, segmented across the 6 Work System tiles: each
+// tile's channel edges (left/mid/right, as % from top) are chosen so
+// this tile's right-edge value matches the next tile's left-edge value
+// — same trick the mountain range uses to look continuous across
+// separate zero-gap DOM elements. The water itself is a child element
+// (clipped to the channel shape) layered over the tile's own sandy-
+// bank background, since one element can't have two different fills.
+function workSystemRiverTileHTML(ws, status, { left, mid, right }, { selected=false, dimmed=false, width=null } = {}){
+  const half = 11; // channel half-width, in % of tile height
+  const clip = `polygon(0% ${left-half}%, 50% ${mid-half}%, 100% ${right-half}%, 100% ${right+half}%, 50% ${mid+half}%, 0% ${left+half}%)`;
+  const cls = `river-tile${selected ? ' river-tile-selected' : ''}${dimmed ? ' river-tile-dimmed' : ''}`;
+  const widthStyle = width ? `width:${width}px;` : '';
+  return `
+    <div class="heat-tile status-${status} ${cls}"
+         style="${widthStyle}"
+         role="button" tabindex="0" data-drill-root="${ws.id}">
+      <div class="river-channel" style="clip-path:${clip};"></div>
+      <span class="tile-export-btn" role="button" tabindex="0" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${ws.name}">⬇</span>
+      <div class="heat-type">Work System</div>
+      <div class="heat-name">${ws.name}</div>
+      <div class="heat-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span></div>
+    </div>
+  `;
+}
+
+// The persistent river row: always shows all 6 Work Systems (desktop),
+// greying out every one except whichever is currently selected — the
+// Work-System-View analog of the Goal mountain row.
+function renderWorkSystemRiverRow(){
+  const container = document.getElementById('worksystem-river-row');
+  if(!container) return;
+
+  if(dashboardView.rootMode !== 'workSystem'){
+    container.innerHTML = '';
+    return;
+  }
+
+  const sorted = [...DATA.workSystems].sort((a,b)=>goalSortWeight(workSystemStatus(a)) - goalSortWeight(workSystemStatus(b)));
+  // 7 boundary points for 6 segments, and 6 mid-bend points — chosen to
+  // meander noticeably without ever bringing the channel's edge within
+  // less than ~20% of the tile's own top/bottom, so there's always a
+  // clear bank strip for text.
+  const centers = [42, 58, 38, 62, 35, 65, 48];
+  const midBends = [50, 46, 64, 40, 60, 42];
+  const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
+
+  container.innerHTML = sorted.map((ws,i)=>{
+    const left = centers[i] ?? 50, mid = midBends[i] ?? 50, right = centers[i+1] ?? 50;
+    const status = workSystemStatus(ws);
+    return workSystemRiverTileHTML(ws, status, { left, mid, right }, {
+      selected: selectedId === ws.id,
+      dimmed: selectedId !== null && selectedId !== ws.id,
+    });
+  }).join('');
+  wireDashboardTiles(container);
+}
+
+// Mobile-only fallback: a single standalone river card for the
+// selected Work System, same role as the Goal banner above.
+function renderSelectedWorkSystemBanner(){
+  const container = document.getElementById('selected-worksystem-banner');
+  if(!container) return;
+
+  if(dashboardView.rootMode !== 'workSystem' || dashboardView.level === 'roots'){
+    container.innerHTML = '';
+    container.classList.remove('has-selection');
+    return;
+  }
+  const ws = DATA.workSystems.find(w=>w.id===dashboardView.rootId);
+  if(!ws){ container.innerHTML = ''; container.classList.remove('has-selection'); return; }
+
+  const status = workSystemStatus(ws);
+  container.classList.add('has-selection');
+  container.innerHTML = workSystemRiverTileHTML(ws, status, { left:50, mid:44, right:50 }, { selected:true, width:260 });
+  wireTileExportButtons(container);
+}
+
 function renderDashboardHeatmap(){
   renderRootModeToggle();
   renderDashboardBreadcrumb();
   renderGoalMountainRow();
   renderSelectedGoalBanner();
+  renderWorkSystemRiverRow();
+  renderSelectedWorkSystemBanner();
   const grid = document.getElementById('heatmap-grid');
   grid.classList.remove('mountain-grid');
 
   if(dashboardView.level === 'roots'){
-    if(dashboardView.rootMode === 'goal'){
-      // Nothing to show here — the persistent mountain row above IS
-      // the Goal-roots view now; the secondary grid stays empty until
-      // a Goal is actually selected.
-      grid.innerHTML = '';
-      return;
-    }
-    const roots = rootsList(dashboardView.rootMode);
-    const sorted = [...roots].sort((a,b)=>goalSortWeight(workSystemStatus(a)) - goalSortWeight(workSystemStatus(b)));
-    grid.innerHTML = sorted.map(ws=>heatTileHTML({
-      typeLabel:'Work System', name:ws.name, status:workSystemStatus(ws), trendItem:null,
-      dataAttrs:`data-drill-root="${ws.id}"`,
-      exportKind:'workSystem', exportId:ws.id,
-    })).join('') || `<div class="heatmap-empty">No Work Systems recorded yet.</div>`;
-    wireDashboardTiles(grid);
+    // Nothing to show here for either mode — the persistent row above
+    // (mountain range or river) IS the roots-level content now; the
+    // secondary grid stays empty until something is actually selected.
+    grid.innerHTML = '';
     return;
   }
 
@@ -1574,31 +1670,46 @@ function renderDashboardHeatmap(){
   }
 
   if(dashboardView.level === 'objective'){
-    // Goal View only: Key Services derived from this Objective's own
-    // Programs (see keyServicesUnderObjective — there's no direct
-    // Objective->KeyService link in the data, so this is computed).
+    // Goal View only: Key Services matched via each Key Service's own
+    // direct `objectives` field (see keyServicesUnderObjective).
     const services = keyServicesUnderObjective(dashboardView.objectiveId)
       .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
     grid.innerHTML = services.map(ks=>heatTileHTML({
       typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
       dataAttrs:`data-drill-ks="${ks.id}"`,
       exportKind:'ks', exportId:ks.id,
-    })).join('') || `<div class="heatmap-empty">No Key Services found through this Objective's Programs yet.</div>`;
+    })).join('') || `<div class="heatmap-empty">No Key Services associated with this Objective yet.</div>`;
     wireDashboardTiles(grid);
     return;
   }
 
-  if(dashboardView.level === 'keyservice'){
-    const progs = programsUnderKeyService(dashboardView.ksId)
-      .sort((a,b)=>goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
-    grid.innerHTML = progs.map(p=>heatTileHTML({
-      typeLabel:'Program', name:p.name, status:programStatus(p), trendItem:p,
-      dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
-      exportKind:'program', exportId:p.id,
-    })).join('') || `<div class="heatmap-empty">No Programs recorded under this Key Service yet.</div>`;
-    wireDashboardTiles(grid);
+ 
+if(dashboardView.level === 'keyservice') {
+
+  // GOAL VIEW: stop drill-down at Key Service
+  if (dashboardView.rootMode === 'goal') {
+    grid.innerHTML = `<div class="heatmap-empty">Key Service selected — no further drill-down in Goal View.</div>`;
     return;
   }
+
+  // WORK SYSTEM VIEW: continue to Programs
+  const progs = programsUnderKeyService(dashboardView.ksId)
+    .sort((a,b)=>goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
+
+  grid.innerHTML = progs.map(p => heatTileHTML({
+    typeLabel:'Program',
+    name:p.name,
+    status:programStatus(p),
+    trendItem:p,
+    dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
+    exportKind:'program',
+    exportId:p.id
+  })).join('') || `<div class="heatmap-empty">No Programs recorded under this Key Service yet.</div>`;
+
+  wireDashboardTiles(grid);
+  return;
+}
+
 }
 
 function wireDashboardTiles(scope){
@@ -1632,13 +1743,7 @@ function wireDashboardTiles(scope){
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
     });
   });
-  scope.querySelectorAll('[data-open-detail]').forEach(tile=>{
-    const activate = ()=> openDetailModal(tile.dataset.openDetail, tile.dataset.id);
-    tile.addEventListener('click', activate);
-    tile.addEventListener('keydown', e=>{
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
-    });
-  });
+  
   wireTileExportButtons(scope);
 }
 
@@ -1919,11 +2024,6 @@ function exportCSV(){
         const goalNames = (ks.goals||[]).map(gid=>DATA.goals.find(gg=>gg.id===gid)).filter(Boolean).map(gg=>gg.name).join('; ');
         const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
         rows.push(['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), goalNames, ws ? ws.name : '', ks.statusUpdated || '']);
-
-        const progs = programsUnderKeyService(ks.id);
-        progs.forEach(p=>{
-          rows.push(['Program', p.name, programStatus(p), trendLabel(p), '', '', '']);
-        });
       });
     });
   });
@@ -1935,11 +2035,11 @@ function exportCSV(){
 
 /* ---------- Export: PDF ----------
    Captures the Goal comparison chart AND the full drill-down tree below
-   it (Key Services, Objectives, Programs) — whichever Goal is scoped,
-   or everything if "All Goals" is selected. Whatever's currently
-   collapsed gets temporarily expanded so nothing is cut off, then
-   restored to exactly how it was once the PDF is generated. Degrades
-   gracefully if html2canvas/jsPDF failed to load from the CDN. */
+   it (Key Services, Objectives) — whichever Goal is scoped, or
+   everything if "All Goals" is selected. Goal View stops at Key
+   Service (matching the on-page drill-down), so no Program-level pages
+   are generated for this path. Degrades gracefully if
+   html2canvas/jsPDF failed to load from the CDN. */
 
 // Adds a canvas image to the PDF, slicing it across as many pages as
 // needed when it's taller than one page (the standard html2canvas +
@@ -2046,8 +2146,9 @@ async function exportPDF(){
     }
 
     // Drill-down pages: walk the Goal View through every level it has
-    // (Goal -> Key Service -> Program). PDF export currently covers the
-    // Goal View only, matching the scope selector's Goal-based options.
+    // (Goal -> Objective -> Key Service). Goal View stops at Key
+    // Service, matching the on-page drill-down, so no Program pages
+    // are generated here.
     if(scope === 'all'){
       const overview = await captureHeatmapLevel({ rootMode:'goal', level:'roots' }, 'All Goals — Heatmap Overview', 'goal-mountain-row');
       addTitledPage(overview.title);
@@ -2070,14 +2171,6 @@ async function exportPDF(){
         const objCap = await captureHeatmapLevel({ rootMode:'goal', level:'objective', rootId:g.id, objectiveId:o.id }, `${g.name} → ${o.name} — Key Services`);
         addTitledPage(objCap.title);
         addCanvasPaginated(pdf, objCap.canvas, margin + 24);
-
-        for(const ks of services){
-          const progs = programsUnderKeyService(ks.id);
-          if(!progs.length) continue; // skip empty Key Service pages — nothing to show
-          const ksCap = await captureHeatmapLevel({ rootMode:'goal', level:'keyservice', rootId:g.id, objectiveId:o.id, ksId:ks.id }, `${g.name} → ${o.name} → ${ks.name} — Programs`);
-          addTitledPage(ksCap.title);
-          addCanvasPaginated(pdf, ksCap.canvas, margin + 24);
-        }
       }
     }
 
@@ -2139,7 +2232,7 @@ const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
   { target: '#headline-banner', title: 'Start with the headline', body: 'One computed sentence tells you what needs attention right now, generated from the data below — not hand-typed.' },
   { target: '#stat-grid', title: 'At a glance', body: 'These cards break down everything the City tracks. Hover any status line to see exactly which items make it up.' },
-  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Toggle between the Strategic Plan Goal View (Goals → Objectives → Key Services → Programs) and the Work System View (Work Systems → Key Services → Programs).' },
+  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Toggle between the Strategic Plan Goal View (Goals → Objectives → Key Services) and the Work System View (Work Systems → Key Services → Programs).' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
 ];
 
