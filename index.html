@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>City of Durango — Performance Dashboard - Organizational View</title>
-
-<!-- Used only for "Export PDF" -->
-
+<!-- Used only for "Export PDF" — captures the Goal comparison bars as an
+     image and drops it into a generated PDF. If either fails to load
+     (e.g. blocked by an ad blocker), the Export PDF button degrades
+     gracefully with a clear message rather than breaking anything else. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -327,7 +328,9 @@
   .view-toggle-btn.active{ background:var(--forest); border-color:var(--forest); color:#fff; }
   .view-toggle-btn:hover:not(.active){ border-color:var(--sage); }
 
-  /* ---------- Root-mode toggle (Goal View vs Work System View) */
+  /* ---------- Root-mode toggle (Goal View vs Work System View) — the
+     primary switch for the unified explorer, so it reads with more
+     visual weight than the smaller secondary toggles elsewhere. ---------- */
   .root-mode-toggle{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 16px;}
   .root-mode-btn{
     font-size:13.5px; font-weight:700; padding:10px 20px; border-radius:100px; cursor:pointer;
@@ -460,7 +463,7 @@
   }
   .export-select:focus-visible{ outline:2px solid var(--sage); outline-offset:2px; }
 
-  /* ---------- Per-tile export */
+  /* ---------- Per-tile export (small, subtle, corner of each heat tile) ---------- */
   .tile-export-btn{
     position:absolute; top:7px; right:7px; width:20px; height:20px; border-radius:50%;
     display:flex; align-items:center; justify-content:center; font-size:11px; line-height:1;
@@ -522,6 +525,11 @@
   .status-defs dt{font-weight:700; color:var(--ink); display:inline;}
   .status-defs dd{margin:0 0 6px; display:inline;}
   .status-defs .def-row{margin-bottom:4px;}
+
+  /* ---------- Strategic plan reference ---------- */
+  /* goal-dot removed from the tree intentionally — goal branding color now
+     lives only in the summary cards below, so status color stays the one
+     dominant signal inside the detail tree. */
 
   /* ---------- Footer ---------- */
   footer{margin-top:44px; position:relative;}
@@ -1332,10 +1340,17 @@ function objectivesUnderGoal(goalId){
 // this means the Key Services shown can differ objective-to-objective
 // even under the same Goal, since it's based on each Objective's own
 // Programs, not a blanket "all Key Services under this Goal" list.
+// Handles both a properly-formed array of IDs (["ob1","ob2","ob3"]) and
+// a single comma-joined string inside one array slot (["ob1, ob2, ob3"])
+// — splits every element on commas and trims whitespace, so either
+// format normalizes to the same clean list of individual IDs.
+function normalizeIdList(raw){
+  if(!Array.isArray(raw)) return [];
+  return raw.flatMap(item => String(item).split(',').map(s=>s.trim())).filter(Boolean);
+}
+
 function keyServicesUnderObjective(objectiveId){
-  const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(objectiveId));
-  const ksIds = [...new Set(progs.map(p=>p.keyservice).filter(Boolean))];
-  return DATA.keyServices.filter(ks=>ksIds.includes(ks.id));
+  return DATA.keyServices.filter(ks => normalizeIdList(ks.objectives).includes(objectiveId));
 }
 // Programs scoped to BOTH the Objective and the Key Service — respects
 // the Objective context you drilled through, rather than jumping back
@@ -1367,8 +1382,8 @@ function updateExplorerHeading(){
   const sub = document.getElementById('explorer-subhead');
   if(!heading || !sub) return;
   if(dashboardView.rootMode === 'goal'){
-    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services';
-    sub.textContent = "Start at a Goal, drill into its Objectives, then into the Key Services each Objective connects to."
+    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services → Programs';
+    sub.textContent = "Start at a Goal, drill into its Objectives, then into the Key Services and Programs each one connects to.";
   } else {
     heading.textContent = 'Work Systems → Key Services → Programs';
     sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs.";
@@ -1568,38 +1583,22 @@ function renderDashboardHeatmap(){
       typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
       dataAttrs:`data-drill-ks="${ks.id}"`,
       exportKind:'ks', exportId:ks.id,
-    })).join('') || `<div class="heatmap-empty">"There a no Key Services associated with this Objective yet.".</div>`;
+    })).join('') || `<div class="heatmap-empty">No Key Services found through this Objective's Programs yet.</div>`;
     wireDashboardTiles(grid);
     return;
   }
 
- 
-if(dashboardView.level === 'keyservice') {
-
-  // GOAL VIEW: stop drill-down at Key Service
-  if (dashboardView.rootMode === 'goal') {
-    grid.innerHTML = `<div class="heatmap-empty">Key Service selected — no further drill-down in Goal View.</div>`;
+  if(dashboardView.level === 'keyservice'){
+    const progs = programsUnderKeyService(dashboardView.ksId)
+      .sort((a,b)=>goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
+    grid.innerHTML = progs.map(p=>heatTileHTML({
+      typeLabel:'Program', name:p.name, status:programStatus(p), trendItem:p,
+      dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
+      exportKind:'program', exportId:p.id,
+    })).join('') || `<div class="heatmap-empty">No Programs recorded under this Key Service yet.</div>`;
+    wireDashboardTiles(grid);
     return;
   }
-
-  // WORK SYSTEM VIEW: continue to Programs
-  const progs = programsUnderKeyService(dashboardView.ksId)
-    .sort((a,b)=>goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
-
-  grid.innerHTML = progs.map(p => heatTileHTML({
-    typeLabel:'Program',
-    name:p.name,
-    status:programStatus(p),
-    trendItem:p,
-    dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
-    exportKind:'program',
-    exportId:p.id
-  })).join('') || `<div class="heatmap-empty">No Programs recorded under this Key Service yet.</div>`;
-
-  wireDashboardTiles(grid);
-  return;
-}
-
 }
 
 function wireDashboardTiles(scope){
@@ -1633,7 +1632,13 @@ function wireDashboardTiles(scope){
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
     });
   });
-  
+  scope.querySelectorAll('[data-open-detail]').forEach(tile=>{
+    const activate = ()=> openDetailModal(tile.dataset.openDetail, tile.dataset.id);
+    tile.addEventListener('click', activate);
+    tile.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
+    });
+  });
   wireTileExportButtons(scope);
 }
 
@@ -1915,7 +1920,7 @@ function exportCSV(){
         const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
         rows.push(['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), goalNames, ws ? ws.name : '', ks.statusUpdated || '']);
 
-        const progs = programsUnderObjectiveAndKeyService(o.id, ks.id);
+        const progs = programsUnderKeyService(ks.id);
         progs.forEach(p=>{
           rows.push(['Program', p.name, programStatus(p), trendLabel(p), '', '', '']);
         });
@@ -2067,7 +2072,7 @@ async function exportPDF(){
         addCanvasPaginated(pdf, objCap.canvas, margin + 24);
 
         for(const ks of services){
-          const progs = programsUnderObjectiveAndKeyService(o.id, ks.id);
+          const progs = programsUnderKeyService(ks.id);
           if(!progs.length) continue; // skip empty Key Service pages — nothing to show
           const ksCap = await captureHeatmapLevel({ rootMode:'goal', level:'keyservice', rootId:g.id, objectiveId:o.id, ksId:ks.id }, `${g.name} → ${o.name} → ${ks.name} — Programs`);
           addTitledPage(ksCap.title);
