@@ -53,17 +53,7 @@
     { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1, ob2"], "status": "on-track" },
     { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2", "goals": ["g6", "g1"], "objectives": ["ob18, ob19, ob20"], "status": "at-risk" },
     { "id": "ks6", "name": "Legal Services", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1, ob7"], "status": "on-track" },
-    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1, ob14, ob17, ob10, ob11, ob15"],  "status": "off-track",
-      "details": {
-        "description": "Provides IT infrastructure, cybersecurity, and technical support across all City Work Systems.",
-        "owner": "IT Director",
-        "lastUpdated": "2026-06-15",
-        "metrics": [
-          { "label": "Help desk tickets resolved <24h", "value": "78%", "target": "90%" },
-          { "label": "System uptime", "value": "99.2%", "target": "99.9%" }
-        ]
-      }
-    },
+    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1, ob14, ob17, ob10, ob11, ob15"],  "status": "off-track" },
     { "id": "ks8", "name": "Community Development & Planning", "workSystem": "ws3", "goals": ["g2"],  "objectives": ["ob4, ob6, ob9"], "status": "on-track" },
     { "id": "ks9", "name": "Economic Prosperity & Business Support", "workSystem": "ws3", "goals": ["g2"],  "objectives": ["ob5, ob6"],  "status": "on-track" },
     { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3", "goals": ["g1", "g4"],  "objectives": ["ob3, ob9, ob12"], "status": "at-risk" },

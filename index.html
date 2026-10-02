@@ -375,21 +375,44 @@
     #selected-goal-banner.has-selection{ display:block; }
   }
 
-  /* ---------- Work System cards: a plain row of rectangular cards, one
-     per Work System, each in that Work System's own color (set in
-     data.json) with its status shown as a chip. The row stays in place
-     while drilling in: the selected card gets a ring and the others
-     fade back. Rectangles wrap cleanly, so unlike the mountain row this
-     one is shown at every screen width. ---------- */
-  .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(6, 1fr); gap:10px; }
-  @media (max-width:1000px){ .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(3, 1fr); } }
+  /* ---------- Work System buttons: one large button per Work System in
+     the City's brand greens, each with its own icon and its status shown
+     as a chip. They are deliberately NOT filled with a status color, so
+     they can't be mistaken for the status-colored tiles underneath. The
+     row stays in place while drilling in; the selected button turns solid
+     forest green. Shown at every screen width. ---------- */
+  .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(6, 1fr); gap:12px; }
+  @media (max-width:1100px){ .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(3, 1fr); } }
   @media (max-width:560px){ .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(2, 1fr); } }
-  .heat-tile.ws-card{ min-height:118px; }
-  .heat-tile.ws-card .heat-name{ font-size:13px; padding-right:4px; }
-  .heat-tile.ws-card .heat-foot{ opacity:1; justify-content:flex-start; margin-top:12px; }
-  .heat-tile.ws-card.ws-card-selected{ box-shadow:0 0 0 2px var(--white), 0 0 0 4px var(--forest-dark); }
-  .heat-tile.ws-card.ws-card-dimmed{ filter:grayscale(.9) brightness(.92); }
-  .heat-tile.ws-card.ws-card-dimmed:hover, .heat-tile.ws-card.ws-card-dimmed:focus-visible{ filter:grayscale(.3); }
+  .heatmap-grid .heat-tile.ws-card{
+    min-height:172px; padding:16px 16px 14px; border-radius:12px;
+    background:var(--mist); color:var(--forest-dark); border:1.5px solid var(--line);
+    justify-content:flex-start; align-items:center; text-align:center;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .heatmap-grid .heat-tile.ws-card:hover{ border-color:var(--sage); box-shadow:0 8px 20px rgba(0,106,83,.16); }
+  .heatmap-grid .heat-tile.ws-card:focus-visible{ outline:2px solid var(--forest-dark); outline-offset:2px; box-shadow:none; }
+  .ws-icon{
+    width:48px; height:48px; border-radius:50%; flex:none; margin-bottom:12px;
+    background:var(--forest); color:var(--white);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ws-icon svg{ width:27px; height:27px; display:block; }
+  .ws-name{ font-size:15px; font-weight:700; line-height:1.25; }
+  .ws-kpis{ font-size:11.5px; font-weight:600; color:var(--slate); margin-top:4px; }
+  .ws-foot{ margin-top:auto; padding-top:12px; }
+  .ws-foot .heat-status-highlight{ font-size:11.5px; padding:4px 11px; }
+  .heatmap-grid .heat-tile.ws-card .tile-export-btn{ background:rgba(0,78,61,.08); color:var(--forest-dark); }
+  .heatmap-grid .heat-tile.ws-card .tile-export-btn:hover{ background:rgba(0,78,61,.18); }
+  .heatmap-grid .heat-tile.ws-card.ws-card-selected{ background:var(--forest); border-color:var(--forest-dark); color:var(--white); }
+  .heat-tile.ws-card.ws-card-selected .ws-icon{ background:var(--white); color:var(--forest); }
+  .heat-tile.ws-card.ws-card-selected .ws-kpis{ color:var(--mist); }
+  .heatmap-grid .heat-tile.ws-card.ws-card-selected .tile-export-btn{ background:rgba(255,255,255,.2); color:var(--white); }
+  @media (max-width:560px){
+    .heatmap-grid .heat-tile.ws-card{ min-height:150px; padding:14px 12px 12px; }
+    .ws-icon{ width:42px; height:42px; margin-bottom:10px; } .ws-icon svg{ width:24px; height:24px; }
+    .ws-name{ font-size:14px; }
+  }
   .heat-tile .heat-type{
     font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
     opacity:.85; margin-bottom:6px;
@@ -1588,28 +1611,42 @@ function renderSelectedGoalBanner(){
   wireTileExportButtons(container);
 }
 
-// One plain rectangular card per Work System, in that Work System's own
-// color (ws.color in data.json), with its status shown as a chip.
-function workSystemCardHTML(ws, status, { selected=false, dimmed=false } = {}){
-  const cls = `ws-card${selected ? ' ws-card-selected' : ''}${dimmed ? ' ws-card-dimmed' : ''}`;
+// Line icons for the Work System buttons (24x24, drawn with the current
+// text color). Each Work System gets one by its id; a Work System can
+// also name one in data.json with "icon": "shield" (any key below), and
+// anything unrecognised falls back to the generic grid.
+const WS_ICON_PATHS = {
+  governance: '<path d="M3 9l9-5 9 5H3z"/><path d="M6 12v5M10 12v5M14 12v5M18 12v5"/><path d="M4 20h16"/>',
+  finance:    '<circle cx="12" cy="12" r="8.5"/><path d="M14.6 9.3c-.5-.8-1.4-1.3-2.6-1.3-1.5 0-2.6.8-2.6 2 0 1.1 1 1.7 2.6 2 1.7.3 2.7.9 2.7 2.1 0 1.2-1.2 2-2.7 2-1.2 0-2.2-.5-2.7-1.4"/><path d="M12 6.2v11.6"/>',
+  storefront: '<path d="M4 9l1.6-4h12.8L20 9"/><path d="M4 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M5.5 12v7.5h13V12"/><path d="M10 19.5V15h4v4.5"/>',
+  shield:     '<path d="M12 3.5l7 2.5v5.5c0 4.2-2.9 7.6-7 9-4.1-1.400-7-4.8-7-9V6l7-2.5z"/><path d="M9 12l2.2 2.200 4-4.200"/>',
+  bridge:     '<path d="M2.500 16.500h19"/><path d="M7 6.500v13M17 6.500v13"/><path d="M2.500 13c2.500 0 4.500-2.500 4.500-6.500 0 4 2.300 6.500 5 6.500s5-2.500 5-6.500c0 4 2 6.500 4.500 6.500"/>',
+  tree:       '<path d="M12 3l4 5.500h-2.200l3.700 4.500H15l3.500 4.500h-13L9 13H6.500l3.700-4.500H8L12 3z"/><path d="M12 17.500V21"/>',
+  grid:       '<rect x="4" y="4" width="6.500" height="6.500" rx="1"/><rect x="13.500" y="4" width="6.500" height="6.500" rx="1"/><rect x="4" y="13.500" width="6.500" height="6.500" rx="1"/><rect x="13.500" y="13.500" width="6.500" height="6.500" rx="1"/>',
+};
+const WS_ICON_BY_ID = { ws1:'governance', ws2:'finance', ws3:'storefront', ws4:'shield', ws5:'bridge', ws6:'tree' };
+function workSystemIconSVG(ws){
+  const key = WS_ICON_PATHS[ws.icon] ? ws.icon : (WS_ICON_BY_ID[ws.id] || 'grid');
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${WS_ICON_PATHS[key]}</svg>`;
+}
+
+// One large button per Work System: icon, name, KPI count and status chip.
+function workSystemCardHTML(ws, status, { selected=false } = {}){
   const kpiLabel = kpiCountLabel(ws.id);
   return `
-    <div class="heat-tile status-${status} ${cls}"
-         style="background:${ws.color || '#4A7D8C'}; color:#fff;"
+    <div class="heat-tile ws-card${selected ? ' ws-card-selected' : ''}"
          role="button" tabindex="0" data-drill-root="${ws.id}"${selected ? ' aria-current="true"' : ''}>
       <span class="tile-export-btn" role="button" tabindex="0" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${ws.name}">⬇</span>
-      <div>
-        <div class="heat-type">Work System</div>
-        <div class="heat-name">${ws.name}</div>
-        ${kpiLabel ? `<div class="heat-subtitle" style="margin:4px 0 0;">${kpiLabel}</div>` : ''}
-      </div>
-      <div class="heat-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span></div>
+      <span class="ws-icon">${workSystemIconSVG(ws)}</span>
+      <div class="ws-name">${ws.name}</div>
+      ${kpiLabel ? `<div class="ws-kpis">${kpiLabel}</div>` : ''}
+      <div class="ws-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span></div>
     </div>
   `;
 }
 
-// The persistent Work System row: always shows every Work System, and
-// fades back all but the one currently selected — the Work-System-View
+// The persistent Work System row: always shows every Work System, with
+// the one currently selected filled in solid — the Work-System-View
 // counterpart of the Goal mountain row.
 function renderWorkSystemCardRow(){
   const container = document.getElementById('worksystem-card-row');
@@ -1625,7 +1662,6 @@ function renderWorkSystemCardRow(){
 
   container.innerHTML = sorted.map(ws=> workSystemCardHTML(ws, workSystemStatus(ws), {
     selected: selectedId === ws.id,
-    dimmed: selectedId !== null && selectedId !== ws.id,
   })).join('');
   wireDashboardTiles(container);
 }
