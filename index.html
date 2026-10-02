@@ -232,6 +232,28 @@
   .modal-trend-label{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--slate); margin-bottom:8px;}
   .modal-trend-summary{font-size:12.5px; color:var(--ink); margin-top:6px;}
 
+  /* ---------- KPI block in the detail modal (numbers come from kpi-data.json,
+     which scripts/build_kpi_data.py generates from the KPI spreadsheet) ---------- */
+  .kpi-block + .kpi-block{margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);}
+  .kpi-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .kpi-name{font-size:14.5px; font-weight:700; color:var(--forest-dark);}
+  .kpi-desc{font-size:12.5px; color:var(--slate); line-height:1.5; margin:4px 0 0;}
+  .kpi-figure{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-top:10px;}
+  .kpi-big{font-size:30px; font-weight:700; color:var(--ink); letter-spacing:-.01em; line-height:1;}
+  .kpi-context{font-size:12.5px; color:var(--slate);}
+  .kpi-context strong{color:var(--ink); font-weight:700;}
+  .kpi-chart{display:block; width:100%; height:auto; margin-top:12px;}
+  .kpi-legend{display:flex; gap:16px; font-size:11.5px; color:var(--slate); margin-top:2px;}
+  .kpi-legend span{display:inline-flex; align-items:center; gap:6px;}
+  .kpi-table{width:100%; border-collapse:collapse; margin-top:12px; font-size:12.5px;}
+  .kpi-table th{font-size:11px; font-weight:700; color:var(--slate); text-align:right; padding:0 0 6px; border-bottom:1px solid var(--line);}
+  .kpi-table td{text-align:right; padding:6px 0; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums;}
+  .kpi-table th:first-child, .kpi-table td:first-child{text-align:left;}
+  .kpi-table td.kpi-up{color:#00543F; font-weight:700;}
+  .kpi-table td.kpi-down{color:#8A2E26; font-weight:700;}
+  .kpi-segments{display:flex; flex-direction:column; gap:7px; margin-top:14px;}
+  .kpi-notes{font-size:11.5px; color:var(--slate); line-height:1.5; margin:12px 0 0;}
+
   /* ---------- Heatmap drill-down ---------- */
   .heatmap-breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px;}
   .heatmap-breadcrumb .crumb{
@@ -777,6 +799,7 @@
       <p class="modal-desc" id="modal-desc"></p>
       <div class="modal-meta" id="modal-meta"></div>
       <div class="modal-metrics" id="modal-metrics"></div>
+      <div class="modal-trend" id="modal-kpis"></div>
       <div class="modal-trend" id="modal-trend"></div>
       <div class="modal-trend" id="modal-related"></div>
     </div>
@@ -835,6 +858,7 @@ async function loadData(){
   }
 
   DATA = raw;
+  await loadKpiData();
   document.getElementById('load-state').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   try{
@@ -847,6 +871,44 @@ async function loadData(){
       <em>Technical detail: ${err.message}</em>
     `);
   }
+}
+
+/* ---------- KPI numbers (kpi-data.json) ----------
+   data.json holds the structure of the dashboard (Goals, Objectives,
+   Key Services, Programs) and is maintained by hand. kpi-data.json
+   holds the measured numbers and is generated from the KPI spreadsheet
+   by scripts/build_kpi_data.py — it is never typed by hand. Each KPI
+   names the Key Service or Program it belongs to (attachTo). The file
+   is optional: without it the dashboard behaves exactly as before. */
+let KPI_BY_ITEM = {};
+
+async function loadKpiData(){
+  KPI_BY_ITEM = {};
+  try{
+    const res = await fetch('kpi-data.json', { cache: 'no-store' });
+    if(!res.ok) return;
+    const file = await res.json();
+    (file.kpis || []).forEach(k=>{
+      if(!k || !k.attachTo || !Array.isArray(k.series) || !k.series.length) return;
+      (KPI_BY_ITEM[k.attachTo] = KPI_BY_ITEM[k.attachTo] || []).push(k);
+    });
+  } catch(err){
+    console.warn('kpi-data.json could not be loaded; showing the dashboard without KPI numbers.', err);
+  }
+}
+
+function kpisFor(id){ return KPI_BY_ITEM[id] || []; }
+
+// A KPI marked "Drives Status = Yes" in the spreadsheet sets the status
+// of its Key Service / Program (the worst one wins if there are several).
+// Otherwise the hand-entered status in data.json is used.
+function kpiDrivenStatus(id){
+  const driving = kpisFor(id).filter(k => k.drivesStatus && k.status);
+  return driving.length ? rollupStatus(driving.map(k => k.status)) : null;
+}
+
+function escHTML(val){
+  return String(val ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
 
 function showError(html){
@@ -976,14 +1038,14 @@ function rollupStatus(statuses){
   return 'on-track';
 }
 
-function programStatus(p){ return p.status || 'no-data'; }
+function programStatus(p){ return kpiDrivenStatus(p.id) || p.status || 'no-data'; }
 
 // Key Services carry their OWN distinct status — they are a "yellow box"
 // (distinct measures) in the framework, not an aggregate of Programs.
 // The Programs↔Key Service link is alignment only (dashed arrow), so it
 // intentionally does not feed into this.
 function keyServiceStatus(ks){
-  return ks.status || 'no-data';
+  return kpiDrivenStatus(ks.id) || ks.status || 'no-data';
 }
 
 // Objectives DO aggregate from their Programs — this is the one real
@@ -1797,7 +1859,16 @@ function wireDashboardTiles(scope){
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
     });
   });
-  
+  // Program tiles open the detail window (this click handler was missing,
+  // so Program tiles did nothing when clicked).
+  scope.querySelectorAll('[data-open-detail]').forEach(tile=>{
+    const activate = ()=> openDetailModal(tile.dataset.openDetail, tile.dataset.id);
+    tile.addEventListener('click', activate);
+    tile.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
+    });
+  });
+
   wireTileExportButtons(scope);
 }
 
@@ -1883,7 +1954,10 @@ function openDetailModal(kind, id){
 
   document.getElementById('modal-status-slot').innerHTML = statusBadgeHTML(status);
   document.getElementById('modal-title').textContent = item.name;
-  document.getElementById('modal-desc').textContent = d.description || 'No additional details recorded yet.';
+  const itemKpis = kpisFor(item.id);
+  const descEl = document.getElementById('modal-desc');
+  descEl.textContent = d.description || (itemKpis.length ? '' : 'No additional details recorded yet.');
+  descEl.style.display = descEl.textContent ? '' : 'none';
 
   const metaRows = [];
   if(d.owner) metaRows.push(`<div class="modal-meta-row"><span class="mk">Owner</span><span>${d.owner}</span></div>`);
@@ -1896,6 +1970,11 @@ function openDetailModal(kind, id){
       <span class="mm-value">${m.value}${m.target ? ` <span class="mm-target">/ target ${m.target}</span>` : ''}</span>
     </div>
   `).join('');
+
+  document.getElementById('modal-kpis').innerHTML = itemKpis.length
+    ? `<div class="modal-trend-label">${itemKpis.length === 1 ? 'Key performance indicator' : 'Key performance indicators'}</div>`
+      + itemKpis.map(kpiBlockHTML).join('')
+    : '';
 
   const trendBox = document.getElementById('modal-trend');
   const trend = computeTrend(item.history);
@@ -1937,6 +2016,126 @@ function openDetailModal(kind, id){
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   document.getElementById('modal-close').focus();
+}
+
+/* ---------- KPI block: headline number, chart, table ---------- */
+function fmtKpiNumber(v, k){
+  const d = Number.isInteger(k.decimals) ? k.decimals : 0;
+  return Number(v).toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
+}
+function fmtKpiValue(v, k){
+  const n = fmtKpiNumber(v, k);
+  if(k.unit === 'percent') return n + '%';
+  if(k.unit === 'currency') return (v < 0 ? '-$' : '$') + fmtKpiNumber(Math.abs(v), k);
+  if(!k.unit || k.unit === 'number') return n;
+  return n + ' ' + k.unit;
+}
+// Difference from the target/benchmark. Percent KPIs are compared in
+// percentage points ("2.7 pts"), everything else in its own unit.
+function kpiDiff(point, k){
+  if(point.target === undefined || point.target === null) return null;
+  const diff = point.value - point.target;
+  const rounded = Number(fmtKpiNumber(Math.abs(diff), k).replace(/,/g,''));
+  const amount = k.unit === 'percent' ? fmtKpiNumber(Math.abs(diff), k) + ' pts' : fmtKpiValue(Math.abs(diff), k);
+  const good = k.higherIsBetter === false ? diff <= 0 : diff >= 0;
+  if(rounded === 0) return { text:'0', sentence:'level with', sign:'', good:true, amount };
+  return { text:(diff > 0 ? '+' : '−') + amount, sentence:`${amount} ${diff > 0 ? 'above' : 'below'}`, good, amount };
+}
+
+// Hand-rolled SVG like the status sparkline above: the result as a solid
+// line (each point colored by that period's status), the target or
+// benchmark as a dashed line. Skipped when there is only one period.
+function kpiChartSVG(k){
+  const pts = k.series;
+  if(pts.length < 2) return '';
+  // Drawn at the width it will actually be shown (the modal is narrower
+  // on phones), so the labels stay a readable size instead of shrinking.
+  const W = Math.max(240, Math.min(464, window.innerWidth - 104));
+  const H = 190, padL = 30, padR = 30, padT = 28, padB = 50;
+  const hasTargets = pts.some(p => p.target !== undefined && p.target !== null);
+  const all = pts.flatMap(p => (p.target !== undefined && p.target !== null) ? [p.value, p.target] : [p.value]);
+  let lo = Math.min(...all), hi = Math.max(...all);
+  if(hi === lo){ hi += 1; lo -= 1; }
+  const x = i => padL + i * (W - padL - padR) / (pts.length - 1);
+  const y = v => padT + (hi - v) / (hi - lo) * (H - padT - padB);
+  const path = (vals) => vals.map((v,i)=> v === null ? null : `${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean).map((c,i)=>(i?'L':'M')+c).join(' ');
+  const targetVals = pts.map(p => (p.target !== undefined && p.target !== null) ? p.target : null);
+  const label = k.compareLabel || 'Target';
+
+  const targetLayer = hasTargets ? `
+    <path d="${path(targetVals)}" fill="none" stroke="#5B6B67" stroke-width="1.5" stroke-dasharray="5 4"/>
+    ${pts.map((p,i)=> targetVals[i] === null ? '' : `<circle cx="${x(i).toFixed(1)}" cy="${y(p.target).toFixed(1)}" r="2.5" fill="#5B6B67"><title>${escHTML(p.period)} ${escHTML(label.toLowerCase())}: ${escHTML(fmtKpiValue(p.target, k))}</title></circle>`).join('')}` : '';
+
+  const valueLayer = `
+    <path d="${path(pts.map(p=>p.value))}" fill="none" stroke="#006A53" stroke-width="2"/>
+    ${pts.map((p,i)=>{
+      // Put the number on the side of the point that is clear of the dashed line.
+      const below = targetVals[i] !== null && p.value < targetVals[i];
+      const ly = y(p.value) + (below ? 18 : -10);
+      return `<circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="5" fill="${p.status ? statusDotColor(p.status) : '#006A53'}" stroke="#fff" stroke-width="2"><title>${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>
+      <text x="${x(i).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1E1E1E">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>`;
+    }).join('')}`;
+
+  const xLabels = pts.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#5B6B67">${escHTML(p.period)}</text>`).join('');
+  const summary = pts.map(p => `${p.period}: ${fmtKpiValue(p.value, k)}`).join(', ');
+
+  return `
+    <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHTML(k.name)} over time. ${escHTML(summary)}." font-family="inherit">
+      <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#DCE6E2" stroke-width="1"/>
+      ${targetLayer}${valueLayer}${xLabels}
+    </svg>
+    <div class="kpi-legend">
+      <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>Result</span>
+      ${hasTargets ? `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#5B6B67" stroke-width="1.5" stroke-dasharray="5 4"/></svg>${escHTML(label)}</span>` : ''}
+    </div>`;
+}
+
+function kpiBlockHTML(k){
+  const latest = k.series[k.series.length - 1];
+  const label = k.compareLabel || 'Target';
+  const diff = kpiDiff(latest, k);
+  const hasTargets = k.series.some(p => p.target !== undefined && p.target !== null);
+  const context = diff
+    ? `${escHTML(latest.period)} · <strong>${escHTML(diff.sentence)}</strong> the ${escHTML(label.toLowerCase())} of ${escHTML(fmtKpiValue(latest.target, k))}`
+    : escHTML(latest.period);
+
+  const tableHTML = `
+    <table class="kpi-table">
+      <thead><tr><th scope="col">Period</th><th scope="col">Result</th>${hasTargets ? `<th scope="col">${escHTML(label)}</th><th scope="col">Difference</th>` : ''}</tr></thead>
+      <tbody>${[...k.series].reverse().map(p=>{
+        const d = kpiDiff(p, k);
+        return `<tr><td>${escHTML(p.period)}${p.note ? '*' : ''}</td><td>${escHTML(fmtKpiValue(p.value, k))}</td>${hasTargets
+          ? `<td>${d ? escHTML(fmtKpiValue(p.target, k)) : '—'}</td><td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}">${d ? escHTML(d.text) : '—'}</td>` : ''}</tr>`;
+      }).join('')}</tbody>
+    </table>`;
+
+  const segmentsHTML = (k.segments && k.segments.length) ? `
+    <div class="kpi-segments">
+      <div class="modal-trend-label" style="margin-bottom:0;">${escHTML(latest.period)} breakdown</div>
+      ${k.segments.map(sg=>`<div class="modal-metric-row"><span class="mm-label">${escHTML(sg.label)}</span><span class="mm-value">${escHTML(fmtKpiValue(sg.value, k))}</span></div>`).join('')}
+    </div>` : '';
+
+  // Group periods that share the same note into one footnote line.
+  const noteGroups = {};
+  k.series.forEach(p=>{ if(p.note){ (noteGroups[p.note] = noteGroups[p.note] || []).push(p.period); } });
+  const noteLines = Object.entries(noteGroups).map(([note, periods]) => `* ${escHTML(periods.length > 2 ? periods.slice(0,-1).join(', ') + ' and ' + periods[periods.length-1] : periods.join(' and '))}: ${escHTML(note)}.`.replace(/\.\.$/, '.'));
+  if(k.footnote) noteLines.push(escHTML(k.footnote));
+  const facts = [k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
+  if(facts.length) noteLines.push(facts.join(' · '));
+
+  return `
+    <div class="kpi-block">
+      <div class="kpi-head">
+        <span class="kpi-name">${escHTML(k.name)}</span>
+        ${k.status ? statusBadgeHTML(k.status) : ''}
+      </div>
+      ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
+      <div class="kpi-figure"><span class="kpi-big">${escHTML(fmtKpiValue(latest.value, k))}</span><span class="kpi-context">${context}</span></div>
+      ${kpiChartSVG(k)}
+      ${tableHTML}
+      ${segmentsHTML}
+      ${noteLines.length ? `<p class="kpi-notes">${noteLines.join('<br>')}</p>` : ''}
+    </div>`;
 }
 
 function closeDetailModal(){
