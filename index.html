@@ -233,7 +233,7 @@
   .modal-trend-summary{font-size:12.5px; color:var(--ink); margin-top:6px;}
 
   /* ---------- KPI block in the detail modal (numbers come from kpi-data.json,
-     which scripts/build_kpi_data.py generates from the KPI spreadsheet) ---------- */
+     which build_kpi_data.py generates from the KPI spreadsheet) ---------- */
   .kpi-block + .kpi-block{margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);}
   .kpi-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
   .kpi-name{font-size:14.5px; font-weight:700; color:var(--forest-dark);}
@@ -877,8 +877,9 @@ async function loadData(){
    data.json holds the structure of the dashboard (Goals, Objectives,
    Key Services, Programs) and is maintained by hand. kpi-data.json
    holds the measured numbers and is generated from the KPI spreadsheet
-   by scripts/build_kpi_data.py — it is never typed by hand. Each KPI
-   names the Key Service or Program it belongs to (attachTo). The file
+   by build_kpi_data.py — it is never typed by hand. Each KPI names the
+   Work System, Key Service or Program it belongs to (attachTo), and is
+   shown in that item's details window. The file
    is optional: without it the dashboard behaves exactly as before. */
 let KPI_BY_ITEM = {};
 
@@ -898,6 +899,12 @@ async function loadKpiData(){
 }
 
 function kpisFor(id){ return KPI_BY_ITEM[id] || []; }
+
+// Small "2 KPIs" line on a tile, so it's visible which items have measured numbers behind them.
+function kpiCountLabel(id){
+  const n = kpisFor(id).length;
+  return n ? `${n} KPI${n === 1 ? '' : 's'}` : '';
+}
 
 // A KPI marked "Drives Status = Yes" in the spreadsheet sets the status
 // of its Key Service / Program (the worst one wins if there are several).
@@ -1522,7 +1529,13 @@ function renderDashboardBreadcrumb(){
   if(detailsBtn){
     if(dashboardView.level === 'keyservice'){
       detailsBtn.style.display = 'inline-block';
+      detailsBtn.textContent = 'View Key Service details →';
       detailsBtn.onclick = () => openDetailModal('ks', dashboardView.ksId);
+    } else if(dashboardView.rootMode === 'workSystem' && dashboardView.level === 'root'){
+      // Work System KPIs live in the Work System's own details window.
+      detailsBtn.style.display = 'inline-block';
+      detailsBtn.textContent = 'View Work System details →';
+      detailsBtn.onclick = () => openDetailModal('ws', dashboardView.rootId);
     } else {
       detailsBtn.style.display = 'none';
     }
@@ -1685,6 +1698,7 @@ function workSystemRiverTileHTML(ws, status, { left, mid, right }, { selected=fa
       <span class="tile-export-btn" role="button" tabindex="0" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${ws.name}">⬇</span>
       <div class="heat-type">Work System</div>
       <div class="heat-name">${ws.name}</div>
+      ${kpiCountLabel(ws.id) ? `<div class="heat-subtitle" style="position:relative; z-index:1; margin:4px 12px 0;">${kpiCountLabel(ws.id)}</div>` : ''}
       <div class="heat-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span></div>
     </div>
   `;
@@ -1777,7 +1791,7 @@ function renderDashboardHeatmap(){
     const services = keyServicesUnderRoot(dashboardView.rootMode, dashboardView.rootId)
       .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
     grid.innerHTML = services.map(ks=>heatTileHTML({
-      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
+      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks, subtitle:kpiCountLabel(ks.id),
       dataAttrs:`data-drill-ks="${ks.id}"`,
       exportKind:'ks', exportId:ks.id,
     })).join('') || `<div class="heatmap-empty">No Key Services recorded here yet.</div>`;
@@ -1791,7 +1805,7 @@ function renderDashboardHeatmap(){
     const services = keyServicesUnderObjective(dashboardView.objectiveId)
       .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
     grid.innerHTML = services.map(ks=>heatTileHTML({
-      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks,
+      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks, subtitle:kpiCountLabel(ks.id),
       dataAttrs:`data-drill-ks="${ks.id}"`,
       exportKind:'ks', exportId:ks.id,
     })).join('') || `<div class="heatmap-empty">No Key Services associated with this Objective yet.</div>`;
@@ -1815,6 +1829,7 @@ if(dashboardView.level === 'keyservice') {
   grid.innerHTML = progs.map(p => heatTileHTML({
     typeLabel:'Program',
     name:p.name,
+    subtitle:kpiCountLabel(p.id),
     status:programStatus(p),
     trendItem:p,
     dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
@@ -1939,18 +1954,19 @@ function wireDetailButtons(scope){
 }
 
 function openDetailModal(kind, id){
-  const item = kind === 'ks'
-    ? DATA.keyServices.find(k=>k.id===id)
+  const item = kind === 'ws' ? DATA.workSystems.find(w=>w.id===id)
+    : kind === 'ks' ? DATA.keyServices.find(k=>k.id===id)
     : DATA.programs.find(p=>p.id===id);
   if(!item) return;
 
-  const label = kind === 'ks' ? 'Key Service' : 'Program';
-  const status = kind === 'ks' ? keyServiceStatus(item) : programStatus(item);
+  const label = kind === 'ws' ? 'Work System' : kind === 'ks' ? 'Key Service' : 'Program';
+  const status = kind === 'ws' ? workSystemStatus(item) : kind === 'ks' ? keyServiceStatus(item) : programStatus(item);
   const d = item.details || {};
 
   const tagEl = document.getElementById('modal-tag');
   tagEl.textContent = label;
   tagEl.classList.toggle('gold', kind === 'program');
+  tagEl.style.borderColor = tagEl.style.color = kind === 'ws' ? 'var(--fw-purple)' : '';
 
   document.getElementById('modal-status-slot').innerHTML = statusBadgeHTML(status);
   document.getElementById('modal-title').textContent = item.name;
@@ -2008,6 +2024,21 @@ function openDetailModal(kind, id){
     } else {
       relatedBox.innerHTML = '';
     }
+  } else if(kind === 'ws'){
+    // A Work System's status IS a rollup of these Key Services.
+    const services = DATA.keyServices.filter(k=>k.workSystem===item.id);
+    relatedBox.innerHTML = services.length ? `
+      <div class="modal-trend-label">Key Services in this Work System</div>
+      ${services.map(k=>`
+        <div class="modal-meta-row" style="align-items:center; margin-bottom:6px;">
+          <button class="detail-btn" data-related-ks="${k.id}" style="text-align:left; flex:1;">${k.name}</button>
+          ${statusBadgeHTML(keyServiceStatus(k))}
+        </div>
+      `).join('')}
+    ` : '';
+    relatedBox.querySelectorAll('[data-related-ks]').forEach(btn=>{
+      btn.addEventListener('click', ()=> openDetailModal('ks', btn.dataset.relatedKs));
+    });
   } else {
     relatedBox.innerHTML = '';
   }
