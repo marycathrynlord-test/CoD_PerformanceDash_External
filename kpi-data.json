@@ -13,7 +13,7 @@
       "decimals": 1,
       "higherIsBetter": true,
       "compareLabel": "Benchmark",
-      "drivesStatus": false,
+      "drivesStatus": true,
       "frequency": "Every 2 years",
       "source": "Employee Survey",
       "description": "Overall engagement score from the City employee survey, compared with the survey benchmark.",
