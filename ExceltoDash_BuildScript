@@ -1,0 +1,39 @@
+name: Build KPI data
+
+# Rebuilds kpi-data.json whenever the KPI spreadsheet (or anything the
+# build depends on) changes on the main branch, and commits the result.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'KPI_Tracking.xlsx'
+      - 'data.json'
+      - 'build_kpi_data.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-kpi-data
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build kpi-data.json from the spreadsheet
+        run: python3 build_kpi_data.py
+
+      - name: Commit kpi-data.json if it changed
+        run: |
+          git add kpi-data.json
+          if git diff --cached --quiet; then
+            echo "kpi-data.json is already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Rebuild kpi-data.json from KPI_Tracking.xlsx"
+          git push
