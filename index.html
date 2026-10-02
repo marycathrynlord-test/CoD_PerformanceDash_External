@@ -901,8 +901,8 @@ async function loadKpiData(){
       if(!k || !k.attachTo || !Array.isArray(k.series) || !k.series.length) return;
       (KPI_BY_ITEM[k.attachTo] = KPI_BY_ITEM[k.attachTo] || []).push(k);
       // "Also Show Under Objective" in the spreadsheet: the same KPI is
-      // listed under those Strategic Plan Objectives too. (It never
-      // changes an Objective's status — that still comes from Programs.)
+      // listed under those Strategic Plan Objectives too, and its status
+      // counts toward each of those Objectives (see objectiveStatus).
       (Array.isArray(k.objectives) ? k.objectives : []).forEach(obId=>{
         (KPI_BY_ITEM[obId] = KPI_BY_ITEM[obId] || []).push(k);
       });
@@ -1072,10 +1072,16 @@ function keyServiceStatus(ks){
 // Objectives DO aggregate from their Programs — this is the one real
 // "solid arrow" on the policy side of the framework. A Program can now
 // belong to more than one Objective, so this checks array membership.
+//
+// KPIs shown under an Objective ("Also Show Under Objective" in the
+// spreadsheet) count too: the Objective takes the worst status among its
+// tagged Programs and those KPIs. Without this, an Objective with real
+// KPI results would still read "No Data".
 function objectiveStatus(ob){
   const progs = DATA.programs.filter(p => Array.isArray(p.objectives) && p.objectives.includes(ob.id));
-  if(progs.length > 0) return rollupStatus(progs.map(programStatus));
-  return 'no-data';
+  const kpiStatuses = kpisFor(ob.id).map(k => k.status).filter(Boolean);
+  const all = [...progs.map(programStatus), ...kpiStatuses];
+  return all.length ? rollupStatus(all) : 'no-data';
 }
 
 function workSystemStatus(ws){
