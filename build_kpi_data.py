@@ -197,7 +197,7 @@ def status_for(value, target, higher_is_better, on_within, off_beyond):
 # Build
 # --------------------------------------------------------------------------
 def build():
-    problems, warnings = [], []
+    problems, warnings, notes = [], [], []
 
     if not WORKBOOK.exists():
         sys.exit(f"Can't find the workbook at {WORKBOOK}")
@@ -274,7 +274,7 @@ def build():
             "unit": unit,
             "decimals": 1 if unit == "percent" else 0,
             "higherIsBetter": True,
-            "compareLabel": clean(row.get("compare against")) or "Target",
+            "compareTo": "target",
             "drivesStatus": False,
             "frequency": clean(row.get("update frequency")),
             "owner": clean(row.get("owner")),
@@ -282,6 +282,13 @@ def build():
             "description": clean(row.get("description")),
             "footnote": clean(row.get("footnote")),
         }
+        # Which number decides the status: the Target (default) or the Benchmark.
+        # ("Compare Against" is the older name for this column.)
+        basis = clean(row.get("status based on") or row.get("compare against")).lower()
+        if basis in ("", "target", "benchmark"):
+            entry["compareTo"] = basis or "target"
+        else:
+            problems.append(f'{where}: "Status Based On" must be Target or Benchmark.')
         on_within, off_beyond = DEFAULT_ON_TRACK_WITHIN_PCT, DEFAULT_OFF_TRACK_BEYOND_PCT
         try:
             if not is_blank(row.get("decimals")):
@@ -343,10 +350,26 @@ def build():
         except ValueError:
             problems.append(f'{where}: Value "{clean(row.get("value"))}" is not a number.')
             continue
-        try:
-            target = to_number(row.get("target or benchmark"))
-        except ValueError:
-            problems.append(f'{where}: Target or Benchmark "{clean(row.get("target or benchmark"))}" is not a number.')
+        comparisons = {}
+        bad = False
+        for column in ("target", "benchmark"):
+            try:
+                comparisons[column] = to_number(row.get(column))
+            except ValueError:
+                problems.append(f'{where}: {column.title()} "{clean(row.get(column))}" is not a number.')
+                bad = True
+        # Older workbooks had one combined "Target or Benchmark" column; it
+        # fills whichever of the two this KPI's status is based on.
+        if "target or benchmark" in row and not bad:
+            try:
+                legacy = to_number(row.get("target or benchmark"))
+                basis = catalog[kpi_id]["compareTo"]
+                if legacy is not None and comparisons[basis] is None:
+                    comparisons[basis] = legacy
+            except ValueError:
+                problems.append(f'{where}: Target or Benchmark "{clean(row.get("target or benchmark"))}" is not a number.')
+                bad = True
+        if bad:
             continue
         if value is None:
             continue  # blank or N/A: nothing to publish for this row
@@ -356,7 +379,8 @@ def build():
                 "Percent KPIs are typed as 79.3, not 0.793."
             )
         catalog[kpi_id]["_rows"].append(
-            {"period": period, "segment": segment, "value": value, "target": target,
+            {"period": period, "segment": segment, "value": value,
+             "target": comparisons["target"], "benchmark": comparisons["benchmark"],
              "note": clean(row.get("note"))}
         )
 
@@ -378,14 +402,23 @@ def build():
         series = []
         for r in headline:
             point = {"period": r["period"], "value": tidy(r["value"])}
-            if r["target"] is not None:
-                point["target"] = tidy(r["target"])
-            point["status"] = status_for(r["value"], r["target"], entry["higherIsBetter"], on_within, off_beyond)
+            for column in ("target", "benchmark"):
+                if r[column] is not None:
+                    point[column] = tidy(r[column])
+            # Status is judged against the Target or the Benchmark, whichever
+            # the catalog names. If that number is missing there is no status.
+            point["status"] = status_for(r["value"], r[entry["compareTo"]], entry["higherIsBetter"], on_within, off_beyond)
             if r["note"]:
                 point["note"] = r["note"]
             series.append(point)
 
         latest = series[-1]
+        for column in ("target", "benchmark"):
+            if column not in latest:
+                notes.append(
+                    f'{entry["id"]}: no {column} for {latest["period"]}. The dashboard will show "{column.title()} not set"'
+                    + (" and no status." if column == entry["compareTo"] else ".")
+                )
         segments = [
             {"label": r["segment"], "value": tidy(r["value"]), **({"note": r["note"]} if r["note"] else {})}
             for r in rows
@@ -407,6 +440,8 @@ def build():
 
     for w in warnings:
         print(f"WARNING  {w}")
+    for n in notes:
+        print(f"NOTE     {n}")
     print(f"Wrote {OUTPUT.name}: {len(kpis)} KPI(s).")
     for k in kpis:
         last = k["series"][-1]

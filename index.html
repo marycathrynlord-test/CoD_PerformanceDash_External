@@ -242,12 +242,22 @@
   .kpi-big{font-size:30px; font-weight:700; color:var(--ink); letter-spacing:-.01em; line-height:1;}
   .kpi-context{font-size:12.5px; color:var(--slate);}
   .kpi-context strong{color:var(--ink); font-weight:700;}
+  .kpi-compare{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .kpi-chip{font-size:12px; color:var(--slate); background:var(--white); border:1px solid var(--line); border-radius:6px; padding:4px 10px; white-space:nowrap;}
+  .kpi-chip .kpi-chip-label{font-weight:700; color:var(--forest-dark);}
+  .kpi-chip strong{color:var(--ink);}
+  .kpi-chip .kpi-good{color:#00543F; font-weight:700;}
+  .kpi-chip .kpi-bad{color:#8A2E26; font-weight:700;}
+  .kpi-chip.kpi-chip-missing{border-style:dashed; border-color:#9AA6A2; background:rgba(154,166,162,0.12); font-style:italic;}
+  .kpi-notset{color:var(--slate); font-style:italic; font-size:11.5px;}
+  .kpi-table-wrap{overflow-x:auto;}
   .kpi-chart{display:block; width:100%; height:auto; margin-top:12px;}
   .kpi-legend{display:flex; gap:16px; font-size:11.5px; color:var(--slate); margin-top:2px;}
   .kpi-legend span{display:inline-flex; align-items:center; gap:6px;}
   .kpi-table{width:100%; border-collapse:collapse; margin-top:12px; font-size:12.5px;}
-  .kpi-table th{font-size:11px; font-weight:700; color:var(--slate); text-align:right; padding:0 0 6px; border-bottom:1px solid var(--line);}
-  .kpi-table td{text-align:right; padding:6px 0; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums;}
+  .kpi-table th{font-size:11px; font-weight:700; color:var(--slate); text-align:right; padding:0 0 6px 12px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  .kpi-table td{text-align:right; padding:6px 0 6px 12px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .kpi-table th:first-child, .kpi-table td:first-child{padding-left:0;}
   .kpi-table th:first-child, .kpi-table td:first-child{text-align:left;}
   .kpi-table td.kpi-up{color:#00543F; font-weight:700;}
   .kpi-table td.kpi-down{color:#8A2E26; font-weight:700;}
@@ -1958,21 +1968,55 @@ function fmtKpiValue(v, k){
   if(!k.unit || k.unit === 'number') return n;
   return n + ' ' + k.unit;
 }
-// Difference from the target/benchmark. Percent KPIs are compared in
-// percentage points ("2.7 pts"), everything else in its own unit.
-function kpiDiff(point, k){
-  if(point.target === undefined || point.target === null) return null;
-  const diff = point.value - point.target;
-  const rounded = Number(fmtKpiNumber(Math.abs(diff), k).replace(/,/g,''));
-  const amount = k.unit === 'percent' ? fmtKpiNumber(Math.abs(diff), k) + ' pts' : fmtKpiValue(Math.abs(diff), k);
-  const good = k.higherIsBetter === false ? diff <= 0 : diff >= 0;
-  if(rounded === 0) return { text:'0', sentence:'level with', sign:'', good:true, amount };
-  return { text:(diff > 0 ? '+' : '−') + amount, sentence:`${amount} ${diff > 0 ? 'above' : 'below'}`, good, amount };
+const kpiHas = v => v !== undefined && v !== null;
+
+// Decimals needed to show a target or benchmark without rounding it away
+// (a 99.999% benchmark on a 2-decimal KPI must not display as 100.00%).
+// Never fewer than the KPI's own Decimals setting.
+function kpiDecimalsFor(v, k){
+  const base = Number.isInteger(k.decimals) ? k.decimals : 0;
+  const str = String(v);
+  const own = (str.includes('.') && !str.includes('e')) ? str.split('.')[1].length : 0;
+  return Math.min(6, Math.max(base, own));
+}
+function fmtKpiComparison(v, k){
+  const d = kpiDecimalsFor(v, k);
+  const n = Number(v).toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
+  if(k.unit === 'percent') return n + '%';
+  if(k.unit === 'currency') return (v < 0 ? '-$' : '$') + Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
+  if(!k.unit || k.unit === 'number') return n;
+  return n + ' ' + k.unit;
+}
+
+// Each KPI can carry a Target (the City's own goal) and a Benchmark (an
+// outside comparison). The catalog's "Status Based On" column picks which
+// of the two decides the status.
+const KPI_COMPARISONS = [
+  { key:'target',    label:'Target',    stroke:'#5B6B67', dash:'5 4' },
+  { key:'benchmark', label:'Benchmark', stroke:'#7A5FB0', dash:'1.5 4' },
+];
+function kpiBasis(k){ return k.compareTo === 'benchmark' ? 'benchmark' : 'target'; }
+
+// Difference between a result and a target/benchmark. Percent KPIs are
+// compared in percentage points ("2.7 pts"), everything else in its own unit.
+function kpiDiff(value, comparison, k){
+  if(!kpiHas(comparison)) return null;
+  const d = kpiDecimalsFor(comparison, k);
+  const diff = value - comparison;
+  const absText = Math.abs(diff).toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
+  const isZero = Number(absText.replace(/,/g,'')) === 0;
+  const amount = k.unit === 'percent' ? absText + ' pts'
+    : k.unit === 'currency' ? '$' + absText
+    : (!k.unit || k.unit === 'number') ? absText : absText + ' ' + k.unit;
+  const good = isZero ? true : (k.higherIsBetter === false ? diff < 0 : diff > 0);
+  if(isZero) return { text:'0', phrase:'met exactly', good };
+  return { text:(diff > 0 ? '+' : '−') + amount, phrase:`${amount} ${diff > 0 ? 'above' : 'below'}`, good };
 }
 
 // Hand-rolled SVG like the status sparkline above: the result as a solid
-// line (each point colored by that period's status), the target or
-// benchmark as a dashed line. Skipped when there is only one period.
+// line (each point colored by that period's status), the target as a
+// dashed line and the benchmark as a dotted one, whichever exist.
+// Skipped when there is only one period.
 function kpiChartSVG(k, width){
   const pts = k.series;
   if(pts.length < 2) return '';
@@ -1981,28 +2025,26 @@ function kpiChartSVG(k, width){
   // (An explicit width is passed for the wider on-page layout.)
   const W = width || Math.max(240, Math.min(464, window.innerWidth - 104));
   const H = width ? 230 : 190, padL = 30, padR = 30, padT = 28, padB = 50;
-  const hasTargets = pts.some(p => p.target !== undefined && p.target !== null);
-  const all = pts.flatMap(p => (p.target !== undefined && p.target !== null) ? [p.value, p.target] : [p.value]);
+  const lines = KPI_COMPARISONS.filter(c => pts.some(p => kpiHas(p[c.key])));
+  const all = pts.flatMap(p => [p.value, ...lines.map(c => p[c.key]).filter(kpiHas)]);
   let lo = Math.min(...all), hi = Math.max(...all);
   if(hi === lo){ hi += 1; lo -= 1; }
   const x = i => padL + i * (W - padL - padR) / (pts.length - 1);
   const y = v => padT + (hi - v) / (hi - lo) * (H - padT - padB);
-  const path = (vals) => vals.map((v,i)=> v === null ? null : `${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean).map((c,i)=>(i?'L':'M')+c).join(' ');
-  const targetVals = pts.map(p => (p.target !== undefined && p.target !== null) ? p.target : null);
-  const label = k.compareLabel || 'Target';
+  const path = (vals) => vals.map((v,i)=> kpiHas(v) ? `${x(i).toFixed(1)},${y(v).toFixed(1)}` : null).filter(Boolean).map((c,i)=>(i?'L':'M')+c).join(' ');
 
-  const targetLayer = hasTargets ? `
-    <path d="${path(targetVals)}" fill="none" stroke="#5B6B67" stroke-width="1.5" stroke-dasharray="5 4"/>
-    ${pts.map((p,i)=> targetVals[i] === null ? '' : `<circle cx="${x(i).toFixed(1)}" cy="${y(p.target).toFixed(1)}" r="2.5" fill="#5B6B67"><title>${escHTML(p.period)} ${escHTML(label.toLowerCase())}: ${escHTML(fmtKpiValue(p.target, k))}</title></circle>`).join('')}` : '';
+  const comparisonLayers = lines.map(c => `
+    <path d="${path(pts.map(p => p[c.key]))}" fill="none" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/>
+    ${pts.map((p,i)=> !kpiHas(p[c.key]) ? '' : `<circle cx="${x(i).toFixed(1)}" cy="${y(p[c.key]).toFixed(1)}" r="2.5" fill="${c.stroke}"><title>${escHTML(p.period)} ${c.label.toLowerCase()}: ${escHTML(fmtKpiComparison(p[c.key], k))}</title></circle>`).join('')}`).join('');
 
   const valueLayer = `
     <path d="${path(pts.map(p=>p.value))}" fill="none" stroke="#006A53" stroke-width="2"/>
     ${pts.map((p,i)=>{
-      // Put the number on the side of the point that is clear of the dashed line.
-      const below = targetVals[i] !== null && p.value < targetVals[i];
+      // Put the number below the point when a target/benchmark line sits above it.
+      const below = lines.some(c => kpiHas(p[c.key]) && p.value < p[c.key]);
       const ly = y(p.value) + (below ? 18 : -10);
       return `<circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="5" fill="${p.status ? statusDotColor(p.status) : '#006A53'}" stroke="#fff" stroke-width="2"><title>${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>
-      <text x="${x(i).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1E1E1E">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>`;
+      <text x="${x(i).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1E1E1E" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>`;
     }).join('')}`;
 
   const xLabels = pts.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#5B6B67">${escHTML(p.period)}</text>`).join('');
@@ -2011,32 +2053,45 @@ function kpiChartSVG(k, width){
   return `
     <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHTML(k.name)} over time. ${escHTML(summary)}." font-family="inherit">
       <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#DCE6E2" stroke-width="1"/>
-      ${targetLayer}${valueLayer}${xLabels}
+      ${comparisonLayers}${valueLayer}${xLabels}
     </svg>
     <div class="kpi-legend">
       <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>Result</span>
-      ${hasTargets ? `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#5B6B67" stroke-width="1.5" stroke-dasharray="5 4"/></svg>${escHTML(label)}</span>` : ''}
+      ${lines.map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${c.label}</span>`).join('')}
     </div>`;
 }
 
 function kpiBlockHTML(k, chartWidth, chartBesideTable){
   const latest = k.series[k.series.length - 1];
-  const label = k.compareLabel || 'Target';
-  const diff = kpiDiff(latest, k);
-  const hasTargets = k.series.some(p => p.target !== undefined && p.target !== null);
-  const context = diff
-    ? `${escHTML(latest.period)} · <strong>${escHTML(diff.sentence)}</strong> the ${escHTML(label.toLowerCase())} of ${escHTML(fmtKpiValue(latest.target, k))}`
-    : escHTML(latest.period);
+  const basis = kpiBasis(k);
+  const basisLabel = basis === 'benchmark' ? 'Benchmark' : 'Target';
 
+  // One chip each for Target and Benchmark, always both: the number and
+  // how the latest result compares with it, or a clear "not set" marker
+  // when it is missing.
+  const chipsHTML = KPI_COMPARISONS.map(c=>{
+    const v = latest[c.key];
+    if(!kpiHas(v)){
+      return `<span class="kpi-chip kpi-chip-missing">${c.label} not set${c.key === basis ? ', so no status' : ''}</span>`;
+    }
+    const d = kpiDiff(latest.value, v, k);
+    return `<span class="kpi-chip"><span class="kpi-chip-label">${c.label}</span> <strong>${escHTML(fmtKpiComparison(v, k))}</strong> <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span></span>`;
+  }).join('');
+
+  const notSet = '<span class="kpi-notset">Not set</span>';
   const tableHTML = `
+    <div class="kpi-table-wrap">
     <table class="kpi-table">
-      <thead><tr><th scope="col">Period</th><th scope="col">Result</th>${hasTargets ? `<th scope="col">${escHTML(label)}</th><th scope="col">Difference</th>` : ''}</tr></thead>
+      <thead><tr><th scope="col">Period</th><th scope="col">Result</th><th scope="col">Target</th><th scope="col">Benchmark</th><th scope="col">vs ${basisLabel.toLowerCase()}</th></tr></thead>
       <tbody>${[...k.series].reverse().map(p=>{
-        const d = kpiDiff(p, k);
-        return `<tr><td>${escHTML(p.period)}${p.note ? '*' : ''}</td><td>${escHTML(fmtKpiValue(p.value, k))}</td>${hasTargets
-          ? `<td>${d ? escHTML(fmtKpiValue(p.target, k)) : '—'}</td><td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}">${d ? escHTML(d.text) : '—'}</td>` : ''}</tr>`;
+        const d = kpiDiff(p.value, p[basis], k);
+        return `<tr><td>${escHTML(p.period)}${p.note ? '*' : ''}</td><td>${escHTML(fmtKpiValue(p.value, k))}</td>
+          <td>${kpiHas(p.target) ? escHTML(fmtKpiComparison(p.target, k)) : notSet}</td>
+          <td>${kpiHas(p.benchmark) ? escHTML(fmtKpiComparison(p.benchmark, k)) : notSet}</td>
+          <td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}">${d ? escHTML(d.text) : '—'}</td></tr>`;
       }).join('')}</tbody>
-    </table>`;
+    </table>
+    </div>`;
 
   const segmentsHTML = (k.segments && k.segments.length) ? `
     <div class="kpi-segments">
@@ -2049,8 +2104,8 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
   k.series.forEach(p=>{ if(p.note){ (noteGroups[p.note] = noteGroups[p.note] || []).push(p.period); } });
   const noteLines = Object.entries(noteGroups).map(([note, periods]) => `* ${escHTML(periods.length > 2 ? periods.slice(0,-1).join(', ') + ' and ' + periods[periods.length-1] : periods.join(' and '))}: ${escHTML(note)}.`.replace(/\.\.$/, '.'));
   if(k.footnote) noteLines.push(escHTML(k.footnote));
-  const facts = [k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
-  if(facts.length) noteLines.push(facts.join(' · '));
+  const facts = [`Status based on the ${basisLabel.toLowerCase()}`, k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
+  noteLines.push(facts.join(' · '));
 
   const chartHTML = kpiChartSVG(k, chartWidth);
 
@@ -2061,13 +2116,14 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
         ${k.status ? statusBadgeHTML(k.status) : ''}
       </div>
       ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
-      <div class="kpi-figure"><span class="kpi-big">${escHTML(fmtKpiValue(latest.value, k))}</span><span class="kpi-context">${context}</span></div>
+      <div class="kpi-figure"><span class="kpi-big">${escHTML(fmtKpiValue(latest.value, k))}</span><span class="kpi-context">${escHTML(latest.period)}</span></div>
+      <div class="kpi-compare">${chipsHTML}</div>
       <div class="kpi-body${!chartHTML ? ' kpi-body-nochart' : chartBesideTable ? ' kpi-body-split' : ''}">
         ${chartHTML ? `<div class="kpi-col-chart">${chartHTML}</div>` : ''}
         <div class="kpi-col-data">
           ${tableHTML}
           ${segmentsHTML}
-          ${noteLines.length ? `<p class="kpi-notes">${noteLines.join('<br>')}</p>` : ''}
+          <p class="kpi-notes">${noteLines.join('<br>')}</p>
         </div>
       </div>
     </div>`;

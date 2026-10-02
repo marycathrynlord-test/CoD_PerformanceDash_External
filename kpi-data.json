@@ -12,7 +12,7 @@
       "unit": "percent",
       "decimals": 1,
       "higherIsBetter": true,
-      "compareLabel": "Benchmark",
+      "compareTo": "benchmark",
       "drivesStatus": true,
       "frequency": "Every 2 years",
       "source": "Employee Survey",
@@ -24,21 +24,21 @@
         {
           "period": "2022",
           "value": 69,
-          "target": 76.6,
+          "benchmark": 76.6,
           "status": "at-risk",
           "note": "Full-time employees only"
         },
         {
           "period": "2024",
           "value": 81.3,
-          "target": 75.1,
+          "benchmark": 75.1,
           "status": "on-track",
           "note": "Full-time employees only"
         },
         {
           "period": "2026",
           "value": 79.3,
-          "target": 76.6,
+          "benchmark": 76.6,
           "status": "on-track"
         }
       ],
@@ -52,6 +52,69 @@
           "value": 78.2
         }
       ]
+    },
+    {
+      "id": "IT-UPTIME",
+      "name": "Network uptime",
+      "level": "Program",
+      "attachTo": "p30",
+      "objectives": [
+        "ob14"
+      ],
+      "unit": "percent",
+      "decimals": 2,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "frequency": "Every year",
+      "status": "off-track",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0.1,
+      "series": [
+        {
+          "period": "2020",
+          "value": 99.89,
+          "target": 99.99,
+          "benchmark": 99.999,
+          "status": "off-track"
+        },
+        {
+          "period": "2021",
+          "value": 99.98,
+          "target": 99.99,
+          "benchmark": 99.999,
+          "status": "at-risk"
+        },
+        {
+          "period": "2022",
+          "value": 99.92,
+          "target": 99.99,
+          "benchmark": 99.999,
+          "status": "at-risk"
+        },
+        {
+          "period": "2023",
+          "value": 99.91,
+          "target": 99.99,
+          "benchmark": 99.999,
+          "status": "at-risk"
+        },
+        {
+          "period": "2024",
+          "value": 99.79,
+          "target": 99.99,
+          "benchmark": 99.999,
+          "status": "off-track"
+        },
+        {
+          "period": "2025",
+          "value": 99.85,
+          "target": 99.99,
+          "benchmark": 99.999,
+          "status": "off-track"
+        }
+      ],
+      "segments": []
     }
   ]
 }
