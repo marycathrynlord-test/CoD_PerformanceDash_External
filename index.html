@@ -279,6 +279,9 @@
     .explorer-split.has-detail .explorer-detail{border-bottom:none; border-right:1px solid var(--line); padding-bottom:18px;}
     .explorer-split.has-detail .heatmap-grid{grid-template-columns:1fr;}
   }
+  .explorer-split.has-detail.no-children{display:block;}
+  .explorer-split.has-detail.no-children .explorer-detail{border-right:none; border-bottom:none;}
+  .explorer-split.has-detail.no-children .heatmap-body{display:none;}
   .kpi-body.kpi-body-split{display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr); gap:32px; align-items:start;}
   .kpi-body.kpi-body-split .kpi-table{margin-top:18px;}
   .explorer-kpis .kpi-body.kpi-body-nochart{max-width:560px;}
@@ -748,7 +751,7 @@
     <div class="section-head">
       <div class="eyebrow">Explore the City's Work</div>
       <h2 id="explorer-heading">Strategic Plan Goals → Objectives</h2>
-      <p id="explorer-subhead">Pick a Goal to see the Objectives that support it.</p>
+      <p id="explorer-subhead">Pick a Goal to see the Objectives that support it. Objectives marked with KPIs can be opened.</p>
     </div>
 
     <div class="root-mode-toggle" id="root-mode-toggle"></div>
@@ -883,8 +886,8 @@ async function loadData(){
    Key Services, Programs) and is maintained by hand. kpi-data.json
    holds the measured numbers and is generated from the KPI spreadsheet
    by build_kpi_data.py — it is never typed by hand. Each KPI names the
-   Work System, Key Service or Program it belongs to (attachTo), and is
-   shown in that item's details window. The file
+   Work System, Key Service or Program it belongs to (attachTo), and can
+   also be tagged to Strategic Plan Objectives (objectives). The file
    is optional: without it the dashboard behaves exactly as before. */
 let KPI_BY_ITEM = {};
 
@@ -897,6 +900,12 @@ async function loadKpiData(){
     (file.kpis || []).forEach(k=>{
       if(!k || !k.attachTo || !Array.isArray(k.series) || !k.series.length) return;
       (KPI_BY_ITEM[k.attachTo] = KPI_BY_ITEM[k.attachTo] || []).push(k);
+      // "Also Show Under Objective" in the spreadsheet: the same KPI is
+      // listed under those Strategic Plan Objectives too. (It never
+      // changes an Objective's status — that still comes from Programs.)
+      (Array.isArray(k.objectives) ? k.objectives : []).forEach(obId=>{
+        (KPI_BY_ITEM[obId] = KPI_BY_ITEM[obId] || []).push(k);
+      });
     });
   } catch(err){
     console.warn('kpi-data.json could not be loaded; showing the dashboard without KPI numbers.', err);
@@ -1428,7 +1437,7 @@ function updateExplorerHeading(){
   if(!heading || !sub) return;
   if(dashboardView.rootMode === 'goal'){
     heading.textContent = 'Strategic Plan Goals → Objectives';
-    sub.textContent = "Pick a Goal to see the Objectives that support it."
+    sub.textContent = "Pick a Goal to see the Objectives that support it. Objectives marked with KPIs can be opened."
   } else {
     heading.textContent = 'Work Systems → Key Services → Programs';
     sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs.";
@@ -1443,6 +1452,12 @@ function renderDashboardBreadcrumb(){
   if(dashboardView.level !== 'roots'){
     parts.push(`<span class="sep">›</span>`);
     parts.push(`<button class="crumb${dashboardView.level==='root'?' current':''}" data-crumb="root">${rootName(dashboardView.rootMode, dashboardView.rootId)}</button>`);
+  }
+
+  if(dashboardView.level === 'objective'){
+    const o = DATA.objectives.find(oo=>oo.id===dashboardView.objectiveId);
+    parts.push(`<span class="sep">›</span>`);
+    parts.push(`<button class="crumb current" data-crumb="objective">${o ? o.name : 'Objective'}</button>`);
   }
 
   if(dashboardView.level === 'keyservice'){
@@ -1593,10 +1608,12 @@ function renderWorkSystemCardRow(){
   wireDashboardTiles(container);
 }
 
-// Work System View: shows the selected Work System's or Key Service's own
-// description, hand-entered measures and KPIs on the page, above the
-// tiles for what sits underneath it (Key Services or Programs). Nothing
-// is shown when the item has none of these.
+// Shows the selected item's own description, hand-entered measures and
+// KPIs on the page. In Work System View that is the selected Work System
+// or Key Service, beside the tiles for what sits underneath it (Key
+// Services or Programs). In Goal View it is the selected Objective, at
+// full width, since nothing sits underneath an Objective. Nothing is
+// shown when the item has none of these.
 function renderExplorerDetail(){
   const box = document.getElementById('explorer-detail');
   const childLabel = document.getElementById('explorer-children-label');
@@ -1609,7 +1626,10 @@ function renderExplorerDetail(){
       item = DATA.keyServices.find(k=>k.id===dashboardView.ksId);
       childWord = 'Programs';
     }
+  } else if(dashboardView.level === 'objective'){
+    item = DATA.objectives.find(o=>o.id===dashboardView.objectiveId);
   }
+  const hasChildren = !!childWord;
 
   let html = '';
   if(item){
@@ -1618,7 +1638,7 @@ function renderExplorerDetail(){
     // Size the KPI chart for the space it will really get: the panel's
     // width, minus the right-hand column of tiles on wide screens (same
     // 900px breakpoint as the CSS), minus the panel and card padding.
-    const sideColumn = window.innerWidth >= 900 ? 250 : 0;
+    const sideColumn = (hasChildren && window.innerWidth >= 900) ? 250 : 0;
     const cardInner = document.getElementById('explorer-split').clientWidth - sideColumn - 40 - 42;
     const chartBesideTable = cardInner >= 720;
     const chartWidth = Math.max(240, Math.round(chartBesideTable ? (cardInner - 32) * 1.2 / 2.2 : cardInner));
@@ -1640,7 +1660,9 @@ function renderExplorerDetail(){
 
   box.innerHTML = html;
   box.style.display = html ? '' : 'none';
-  document.getElementById('explorer-split').classList.toggle('has-detail', !!html);
+  const split = document.getElementById('explorer-split');
+  split.classList.toggle('has-detail', !!html);
+  split.classList.toggle('no-children', !!html && !hasChildren);
   childLabel.textContent = html ? childWord : '';
   childLabel.style.display = html ? '' : 'none';
 }
@@ -1672,13 +1694,15 @@ function renderDashboardHeatmap(){
 
   if(dashboardView.level === 'root'){
     if(dashboardView.rootMode === 'goal'){
-      // Strategic Plan Goal View ends here: a Goal's Objectives. The tiles
-      // are informational, not clickable — nothing sits underneath them.
+      // A Goal's Objectives. An Objective that has KPIs tagged to it can be
+      // opened to see them; the others are informational, not clickable.
       const objs = objectivesUnderGoal(dashboardView.rootId)
         .sort((a,b)=>goalSortWeight(objectiveStatus(a)) - goalSortWeight(objectiveStatus(b)));
       grid.innerHTML = objs.map(o=>heatTileHTML({
         typeLabel:'Objective', name:o.name, status:objectiveStatus(o), trendItem:null,
-        interactive:false,
+        subtitle:kpiCountLabel(o.id),
+        interactive:kpisFor(o.id).length > 0,
+        dataAttrs:kpisFor(o.id).length ? `data-drill-objective="${o.id}"` : '',
         exportKind:'objective', exportId:o.id,
       })).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
       wireDashboardTiles(grid);
@@ -1693,6 +1717,13 @@ function renderDashboardHeatmap(){
       exportKind:'ks', exportId:ks.id,
     })).join('') || `<div class="heatmap-empty">No Key Services recorded here yet.</div>`;
     wireDashboardTiles(grid);
+    return;
+  }
+
+  if(dashboardView.level === 'objective'){
+    // Goal View: the selected Objective's KPIs are shown by
+    // renderExplorerDetail; nothing sits underneath an Objective.
+    grid.innerHTML = '';
     return;
   }
 
@@ -1720,6 +1751,16 @@ function renderDashboardHeatmap(){
 }
 
 function wireDashboardTiles(scope){
+  scope.querySelectorAll('[data-drill-objective]').forEach(tile=>{
+    const activate = ()=>{
+      dashboardView = { rootMode:'goal', level:'objective', rootId: dashboardView.rootId, objectiveId: tile.dataset.drillObjective };
+      renderDashboardHeatmap();
+    };
+    tile.addEventListener('click', activate);
+    tile.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
+    });
+  });
   scope.querySelectorAll('[data-drill-root]').forEach(tile=>{
     const activate = ()=>{
       dashboardView = { rootMode: dashboardView.rootMode, level:'root', rootId: tile.dataset.drillRoot };

@@ -218,6 +218,7 @@ def build():
         for item in structure.get(list_name, []):
             item_names[item["id"]] = item["name"]
             item_levels[item["id"]] = level
+    objective_names = {o["id"]: o["name"] for o in structure.get("objectives", [])}
 
     # ---- Catalog ----------------------------------------------------------
     catalog = {}
@@ -248,6 +249,18 @@ def build():
             )
         level = item_levels.get(attach, level)
 
+        # Optional: Strategic Plan Objectives this KPI is ALSO shown under
+        # (one or more Objective IDs, separated by commas).
+        objectives = []
+        for ob in re.split(r"[,;]", clean(row.get("also show under objective"))):
+            ob = ob.strip()
+            if not ob:
+                continue
+            if ob not in objective_names:
+                problems.append(f'{where}: "Also Show Under Objective" has "{ob}", which is not an Objective ID in data.json.')
+            elif ob not in objectives:
+                objectives.append(ob)
+
         unit = clean(row.get("unit")) or "number"
         if unit.lower() in ("percent", "number", "currency"):
             unit = unit.lower()
@@ -257,6 +270,7 @@ def build():
             "name": name,
             "level": LEVEL_LABELS.get(level, ""),
             "attachTo": attach,
+            "objectives": objectives,
             "unit": unit,
             "decimals": 1 if unit == "percent" else 0,
             "higherIsBetter": True,
@@ -377,7 +391,7 @@ def build():
             for r in rows
             if r["segment"] and r["period"] == latest["period"]
         ]
-        entry = {k: v for k, v in entry.items() if v != ""}
+        entry = {k: v for k, v in entry.items() if v != "" and v != []}
         entry["status"] = latest["status"]
         entry["onTrackWithinPct"] = tidy(on_within)
         entry["offTrackBeyondPct"] = tidy(off_beyond)
@@ -398,6 +412,8 @@ def build():
         last = k["series"][-1]
         print(f'  {k["id"]:<12} -> {k["level"]:<11} {k["attachTo"]:<5} {item_names[k["attachTo"]]}: '
               f'{last["value"]} in {last["period"]} ({last["status"] or "no target"})')
+        for ob in k.get("objectives", []):
+            print(f'  {"":<12}    also under Objective {ob} {objective_names[ob]}')
 
 
 def fail(problems):

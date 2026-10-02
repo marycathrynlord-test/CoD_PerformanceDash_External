@@ -6,6 +6,9 @@
       "name": "Employee engagement score",
       "level": "Key Service",
       "attachTo": "ks5",
+      "objectives": [
+        "ob18"
+      ],
       "unit": "percent",
       "decimals": 1,
       "higherIsBetter": true,
