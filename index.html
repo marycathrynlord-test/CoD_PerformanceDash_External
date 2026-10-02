@@ -305,6 +305,8 @@
     overflow:hidden;
   }
   .heat-tile:hover, .heat-tile:focus-visible{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.18); outline:none; }
+  .heat-tile.heat-tile-static{ cursor:default; }
+  .heat-tile.heat-tile-static:hover{ transform:none; box-shadow:none; }
 
   /* ---------- Goal tiles: slightly muted brand color at rest, full
      brand color on hover/selection, status-colored "meadow" band at
@@ -745,8 +747,8 @@
   <div class="section" id="goal-drill">
     <div class="section-head">
       <div class="eyebrow">Explore the City's Work</div>
-      <h2 id="explorer-heading">Strategic Plan Goals → Key Services → Programs</h2>
-      <p id="explorer-subhead">Start at a Goal, drill into its Key Services, then into the Programs each one runs.</p>
+      <h2 id="explorer-heading">Strategic Plan Goals → Objectives</h2>
+      <p id="explorer-subhead">Pick a Goal to see the Objectives that support it.</p>
     </div>
 
     <div class="root-mode-toggle" id="root-mode-toggle"></div>
@@ -761,7 +763,6 @@
       </div>
       <div class="drill-col-head" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <div class="heatmap-breadcrumb" id="heatmap-breadcrumb"></div>
-        <button class="view-details-link" id="explorer-ks-details-btn" style="display:none;">View Key Service details →</button>
       </div>
       <div class="explorer-split" id="explorer-split">
         <div class="explorer-detail" id="explorer-detail" style="display:none;"></div>
@@ -1073,38 +1074,14 @@ function workSystemStatus(ws){
   return rollupStatus(services.map(keyServiceStatus));
 }
 
-// Strategic Plan Goals aggregate directly from Key Services aligned to
-// them (the other "solid arrow" — Key Service → Goal, bypassing
-// Objectives entirely, per the framework). A Key Service can now belong
-// to more than one Goal, so this checks array membership.
-//
-// IMPORTANT: this is deliberately only ONE of two views of a Goal's
-// health. It says nothing about Program performance, because Programs
-// never roll up into a Goal directly (only through Objectives, which
-// are alignment-only). Displaying this alone would let a Goal read as
-// "fine" while every Program under it is failing. See
-// goalProgramViewStatus() below for the other half of the picture —
-// both should always be shown together, never just this one.
-function goalKeyServiceViewStatus(g){
-  const services = DATA.keyServices.filter(k => Array.isArray(k.goals) && k.goals.includes(g.id));
-  return rollupStatus(services.map(keyServiceStatus));
-}
-
-// The other half: how is this Goal doing from the Program/Objective
-// side? Rolls each aligned Objective's own Program-based status up one
-// more level. Kept as a fully separate number from the Key Service
-// view above — never blended into one badge.
+// A Strategic Plan Goal's status comes from its Objectives only (each
+// Objective in turn rolls up the Programs aligned to it). Goals and
+// Objectives are the policy side of the dashboard; Work Systems and Key
+// Services are the operational side, and the two are deliberately not
+// connected: no Key Service feeds into, or is listed under, a Goal.
 function goalProgramViewStatus(g){
   const objs = DATA.objectives.filter(o => o.goal === g.id);
   return rollupStatus(objs.map(objectiveStatus));
-}
-
-// Used only for sorting and the headline count — takes the worse of the
-// two views, so a Goal that's fine operationally but failing on the
-// Program side still surfaces as needing attention. The two views are
-// still always displayed separately; this is never shown as a badge.
-function goalOverallStatus(g){
-  return rollupStatus([goalKeyServiceViewStatus(g), goalProgramViewStatus(g)]);
 }
 
 function statusBadgeHTML(status){
@@ -1230,14 +1207,11 @@ function renderHeadline(){
   const riskGoals = DATA.goals.filter(g=>goalProgramViewStatus(g)==='at-risk');
   const troubled = offGoals.length + riskGoals.length;
 
-  // Find the worst-performing Key Services driving the problem, worst first.
-  // These are named as DISTINCT underlying issues, kept separate from the
-  // Goals-affected count above — one Key Service tagged to multiple Goals
-  // should read as one problem with broad reach, not several problems.
-  const offKS = DATA.keyServices.filter(k=>keyServiceStatus(k)==='off-track');
-  const riskKS = DATA.keyServices.filter(k=>keyServiceStatus(k)==='at-risk');
-  const driverItems = [...offKS, ...riskKS];
-  const drivers = driverItems.slice(0,3).map(k=>k.name);
+  // Name the Objectives behind the count, worst first.
+  const offObjs = DATA.objectives.filter(o=>objectiveStatus(o)==='off-track');
+  const riskObjs = DATA.objectives.filter(o=>objectiveStatus(o)==='at-risk');
+  const driverItems = [...offObjs, ...riskObjs];
+  const drivers = driverItems.slice(0,3).map(o=>o.name);
 
   let icon, cls, html;
   if(troubled === 0){
@@ -1247,7 +1221,7 @@ function renderHeadline(){
     icon = offGoals.length > 0 ? '⚠' : '•';
     cls = offGoals.length > 0 ? 'critical' : 'caution';
     const driverText = drivers.length
-      ? ` Rooted in ${driverItems.length} underlying issue${driverItems.length!==1?'s':''} — primarily <strong>${drivers.join(', ')}</strong>.`
+      ? ` ${driverItems.length} Objective${driverItems.length!==1?'s need':' needs'} attention${driverItems.length > drivers.length ? ', including' : ':'} <strong>${drivers.join(', ')}</strong>.`
       : '';
     html = `<strong>${troubled} of ${DATA.goals.length} Strategic Plan Goals</strong> show elevated risk this quarter
       (${offGoals.length} Off Track, ${riskGoals.length} At Risk).${driverText}`;
@@ -1337,19 +1311,7 @@ function goalSortWeight(status){
   return status==='off-track' ? 0 : status==='at-risk' ? 1 : status==='on-track' ? 2 : 3;
 }
 
-function goalCompositionBar(g){
-  const services = DATA.keyServices.filter(k=>Array.isArray(k.goals) && k.goals.includes(g.id));
-  const counts = { 'on-track':0, 'at-risk':0, 'off-track':0, 'no-data':0 };
-  services.forEach(k=>counts[keyServiceStatus(k)]++);
-  const total = services.length;
-  if(total === 0) return `<div class="bar-track-wide"><span class="bar-seg" style="width:100%;background:var(--line)"></span></div>`;
-  const segs = Object.entries(counts).filter(([,n])=>n>0).map(([status,n])=>
-    `<span class="bar-seg" style="width:${(n/total*100).toFixed(1)}%;background:${statusDotColor(status)}" title="${n} ${STATUS_META[status].label}"></span>`
-  ).join('');
-  return `<div class="bar-track-wide">${segs}</div>`;
-}
-
-// Same idea as goalCompositionBar, but for the Objective/Program side —
+// A Goal's makeup by Objective —
 // composition is by Objective (each Objective's own Program-rolled status),
 // kept as a visually separate bar rather than merged into the one above.
 function goalObjectiveCompositionBar(g){
@@ -1388,14 +1350,14 @@ function staleFlagHTML(item){
 
 // Generic tile renderer shared by every level of the explorer (Goal,
 // Work System, Key Service, Program tiles all use this).
-function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAttrs='', subtitle='', exportKind='', exportId='', tileStyle='', extraClass='', statusAsHighlight=false }){
+function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAttrs='', subtitle='', exportKind='', exportId='', tileStyle='', extraClass='', statusAsHighlight=false, interactive=true }){
   const trend = trendItem ? computeTrend(trendItem.history) : null;
   const trendHTML = trend ? `<span class="heat-trend" style="color:${trend==='improving'?'#fff':trend==='declining'?'#fff':'#fff'}">${TREND_META[trend].arrow}</span>` : '';
   const exportBtnHTML = exportKind
     ? `<span class="tile-export-btn" role="button" tabindex="0" data-export-kind="${exportKind}" data-export-id="${exportId}" title="Export this ${typeLabel}" aria-label="Export ${name}">⬇</span>`
     : '';
   const styleAttr = tileStyle ? ` style="${tileStyle}"` : '';
-  const classAttr = `heat-tile status-${status}${extraClass ? ' ' + extraClass : ''}`;
+  const classAttr = `heat-tile status-${status}${extraClass ? ' ' + extraClass : ''}${interactive ? '' : ' heat-tile-static'}`;
   // When the tile's own background carries brand color rather than
   // status color (Goal tiles), the status needs to read as a clear
   // highlight of its own — a solid colored chip — rather than plain
@@ -1404,7 +1366,7 @@ function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAt
     ? `<span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span>`
     : `<span>${STATUS_META[status].label}</span>`;
   return `
-    <div class="${classAttr}"${styleAttr} role="button" tabindex="0" ${dataAttrs}>
+    <div class="${classAttr}"${styleAttr} ${interactive ? 'role="button" tabindex="0"' : ''} ${dataAttrs}>
       ${exportBtnHTML}
       <div class="heat-type">${typeLabel}</div>
       <div class="heat-name">${name}</div>
@@ -1431,10 +1393,8 @@ function rootName(rootMode, rootId){
   const root = rootsList(rootMode).find(r=>r.id===rootId);
   return root ? root.name : (rootMode === 'goal' ? 'Goal' : 'Work System');
 }
-function keyServicesUnderRoot(rootMode, rootId){
-  return rootMode === 'goal'
-    ? DATA.keyServices.filter(k=>Array.isArray(k.goals) && k.goals.includes(rootId))
-    : DATA.keyServices.filter(k=>k.workSystem===rootId);
+function keyServicesUnderWorkSystem(wsId){
+  return DATA.keyServices.filter(k=>k.workSystem===wsId);
 }
 function programsUnderKeyService(ksId){
   return DATA.programs.filter(p=>p.keyservice===ksId);
@@ -1444,27 +1404,6 @@ function programsUnderKeyService(ksId){
 function objectivesUnderGoal(goalId){
   return DATA.objectives.filter(o=>o.goal===goalId);
 }
-// Handles both a properly-formed array of IDs (["ob1","ob2","ob3"]) and
-// a single comma-joined string inside one array slot (["ob1, ob2, ob3"])
-// — splits every element on commas and trims whitespace, so either
-// format normalizes to the same clean list of individual IDs.
-function normalizeIdList(raw){
-  if(!Array.isArray(raw)) return [];
-  return raw.flatMap(item => String(item).split(',').map(s=>s.trim())).filter(Boolean);
-}
-// Key Services now carry a direct `objectives` field (added by hand in
-// data.json), so this reads that directly rather than deriving the
-// relationship through Programs.
-function keyServicesUnderObjective(objectiveId){
-  return DATA.keyServices.filter(ks => normalizeIdList(ks.objectives).includes(objectiveId));
-}
-// Programs under a Key Service, full stop — the Objective->KeyService
-// link is now direct and independent of Programs, so a Program doesn't
-// need to separately confirm that exact Objective tag to show up here.
-function programsUnderObjectiveAndKeyService(objectiveId, ksId){
-  return programsUnderKeyService(ksId);
-}
-
 function renderRootModeToggle(){
   const el = document.getElementById('root-mode-toggle');
   if(!el) return;
@@ -1488,8 +1427,8 @@ function updateExplorerHeading(){
   const sub = document.getElementById('explorer-subhead');
   if(!heading || !sub) return;
   if(dashboardView.rootMode === 'goal'){
-    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services';
-    sub.textContent = "Start at a Goal, drill into its Objectives, then into the Key Services each Objective connects to."
+    heading.textContent = 'Strategic Plan Goals → Objectives';
+    sub.textContent = "Pick a Goal to see the Objectives that support it."
   } else {
     heading.textContent = 'Work Systems → Key Services → Programs';
     sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs.";
@@ -1506,12 +1445,6 @@ function renderDashboardBreadcrumb(){
     parts.push(`<button class="crumb${dashboardView.level==='root'?' current':''}" data-crumb="root">${rootName(dashboardView.rootMode, dashboardView.rootId)}</button>`);
   }
 
-  if(dashboardView.rootMode === 'goal' && (dashboardView.level === 'objective' || dashboardView.level === 'keyservice')){
-    const o = DATA.objectives.find(oo=>oo.id===dashboardView.objectiveId);
-    parts.push(`<span class="sep">›</span>`);
-    parts.push(`<button class="crumb${dashboardView.level==='objective'?' current':''}" data-crumb="objective">${o ? o.name : 'Objective'}</button>`);
-  }
-
   if(dashboardView.level === 'keyservice'){
     const ks = DATA.keyServices.find(k=>k.id===dashboardView.ksId);
     parts.push(`<span class="sep">›</span>`);
@@ -1524,23 +1457,11 @@ function renderDashboardBreadcrumb(){
       const level = btn.dataset.crumb;
       if(level === 'roots') dashboardView = { rootMode: dashboardView.rootMode, level:'roots' };
       else if(level === 'root') dashboardView = { rootMode: dashboardView.rootMode, level:'root', rootId: dashboardView.rootId };
-      else if(level === 'objective') dashboardView = { rootMode: dashboardView.rootMode, level:'objective', rootId: dashboardView.rootId, objectiveId: dashboardView.objectiveId };
       renderDashboardHeatmap();
     });
   });
 
-  const detailsBtn = document.getElementById('explorer-ks-details-btn');
-  if(detailsBtn){
-    // Goal View only: its Key Service level has nothing underneath, so the
-    // details open in a window. In Work System View the same details are
-    // shown on the page itself (see renderExplorerDetail).
-    if(dashboardView.rootMode === 'goal' && dashboardView.level === 'keyservice'){
-      detailsBtn.style.display = 'inline-block';
-      detailsBtn.onclick = () => openDetailModal('ks', dashboardView.ksId);
-    } else {
-      detailsBtn.style.display = 'none';
-    }
-  }
+
 }
 
 // Shared between the main Goal tile grid and the "selected Goal"
@@ -1751,19 +1672,20 @@ function renderDashboardHeatmap(){
 
   if(dashboardView.level === 'root'){
     if(dashboardView.rootMode === 'goal'){
-      // Strategic Plan View: this level is Objectives, not Key Services.
+      // Strategic Plan Goal View ends here: a Goal's Objectives. The tiles
+      // are informational, not clickable — nothing sits underneath them.
       const objs = objectivesUnderGoal(dashboardView.rootId)
         .sort((a,b)=>goalSortWeight(objectiveStatus(a)) - goalSortWeight(objectiveStatus(b)));
       grid.innerHTML = objs.map(o=>heatTileHTML({
         typeLabel:'Objective', name:o.name, status:objectiveStatus(o), trendItem:null,
-        dataAttrs:`data-drill-objective="${o.id}"`,
+        interactive:false,
         exportKind:'objective', exportId:o.id,
       })).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
       wireDashboardTiles(grid);
       return;
     }
-    // Work System View: unchanged — this level is Key Services.
-    const services = keyServicesUnderRoot(dashboardView.rootMode, dashboardView.rootId)
+    // Work System View: this level is Key Services.
+    const services = keyServicesUnderWorkSystem(dashboardView.rootId)
       .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
     grid.innerHTML = services.map(ks=>heatTileHTML({
       typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks, subtitle:kpiCountLabel(ks.id),
@@ -1774,28 +1696,7 @@ function renderDashboardHeatmap(){
     return;
   }
 
-  if(dashboardView.level === 'objective'){
-    // Goal View only: Key Services matched via each Key Service's own
-    // direct `objectives` field (see keyServicesUnderObjective).
-    const services = keyServicesUnderObjective(dashboardView.objectiveId)
-      .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
-    grid.innerHTML = services.map(ks=>heatTileHTML({
-      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks, subtitle:kpiCountLabel(ks.id),
-      dataAttrs:`data-drill-ks="${ks.id}"`,
-      exportKind:'ks', exportId:ks.id,
-    })).join('') || `<div class="heatmap-empty">No Key Services associated with this Objective yet.</div>`;
-    wireDashboardTiles(grid);
-    return;
-  }
-
- 
-if(dashboardView.level === 'keyservice') {
-
-  // GOAL VIEW: stop drill-down at Key Service
-  if (dashboardView.rootMode === 'goal') {
-    grid.innerHTML = `<div class="heatmap-empty">Key Service selected — no further drill-down in Goal View.</div>`;
-    return;
-  }
+  if(dashboardView.level === 'keyservice') {
 
   // WORK SYSTEM VIEW: continue to Programs
   const progs = programsUnderKeyService(dashboardView.ksId)
@@ -1819,16 +1720,6 @@ if(dashboardView.level === 'keyservice') {
 }
 
 function wireDashboardTiles(scope){
-  scope.querySelectorAll('[data-drill-objective]').forEach(tile=>{
-    const activate = ()=>{
-      dashboardView = { rootMode: dashboardView.rootMode, level:'objective', rootId: dashboardView.rootId, objectiveId: tile.dataset.drillObjective };
-      renderDashboardHeatmap();
-    };
-    tile.addEventListener('click', activate);
-    tile.addEventListener('keydown', e=>{
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
-    });
-  });
   scope.querySelectorAll('[data-drill-root]').forEach(tile=>{
     const activate = ()=>{
       dashboardView = { rootMode: dashboardView.rootMode, level:'root', rootId: tile.dataset.drillRoot };
@@ -1841,7 +1732,7 @@ function wireDashboardTiles(scope){
   });
   scope.querySelectorAll('[data-drill-ks]').forEach(tile=>{
     const activate = ()=>{
-      dashboardView = { rootMode: dashboardView.rootMode, level:'keyservice', rootId: dashboardView.rootId, objectiveId: dashboardView.objectiveId, ksId: tile.dataset.drillKs };
+      dashboardView = { rootMode: dashboardView.rootMode, level:'keyservice', rootId: dashboardView.rootId, ksId: tile.dataset.drillKs };
       renderDashboardHeatmap();
     };
     tile.addEventListener('click', activate);
@@ -2206,9 +2097,8 @@ function buildSingleItemRow(kind, id){
   if(kind === 'ks'){
     const ks = DATA.keyServices.find(k=>k.id===id);
     if(!ks) return null;
-    const goalNames = (ks.goals||[]).map(gid=>DATA.goals.find(g=>g.id===gid)).filter(Boolean).map(g=>g.name).join('; ');
     const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
-    return ['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), goalNames, ws ? ws.name : '', ks.statusUpdated || ''];
+    return ['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), '', ws ? ws.name : '', ks.statusUpdated || ''];
   }
   if(kind === 'goal'){
     const g = DATA.goals.find(gg=>gg.id===id);
@@ -2233,7 +2123,7 @@ function buildSingleItemRow(kind, id){
 function exportSingleItemCSV(kind, id){
   const row = buildSingleItemRow(kind, id);
   if(!row) return;
-  const header = ['Type','Name','Status','Trend','Aligned Goal(s)','Work System / Key Service','Last Updated'];
+  const header = ['Type','Name','Status','Trend','Goal','Work System / Key Service','Last Updated'];
   const csv = [header, row].map(r => r.map(csvEscape).join(',')).join('\r\n');
   downloadBlob(csv, `durango-${slugify(row[1])}-${todayStamp()}.csv`, 'text/csv;charset=utf-8;');
 }
@@ -2256,25 +2146,16 @@ function wireTileExportButtons(scope){
 
 function exportCSV(){
   const scope = getExportScope();
-  const rows = [['Type','Name','Status','Trend','Aligned Goal(s)','Work System','Last Updated']];
-
-  const trendLabel = item => { const t = computeTrend(item.history); return t ? TREND_META[t].label : ''; };
+  const rows = [['Type','Name','Status','Goal']];
 
   const scopedGoals = scope === 'all' ? sortGoalsCanonical(DATA.goals) : DATA.goals.filter(g=>g.id===scope);
 
+  // Goals and their Objectives only — Key Services are not part of the
+  // Strategic Plan side of the dashboard.
   scopedGoals.forEach(g=>{
-    rows.push(['Goal', g.name, goalProgramViewStatus(g), '', '', '', '']);
-
-    const objs = objectivesUnderGoal(g.id);
-    objs.forEach(o=>{
-      rows.push(['Objective', o.name, objectiveStatus(o), '', g.name, '', '']);
-
-      const services = keyServicesUnderObjective(o.id);
-      services.forEach(ks=>{
-        const goalNames = (ks.goals||[]).map(gid=>DATA.goals.find(gg=>gg.id===gid)).filter(Boolean).map(gg=>gg.name).join('; ');
-        const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
-        rows.push(['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), goalNames, ws ? ws.name : '', ks.statusUpdated || '']);
-      });
+    rows.push(['Goal', g.name, goalProgramViewStatus(g), '']);
+    objectivesUnderGoal(g.id).forEach(o=>{
+      rows.push(['Objective', o.name, objectiveStatus(o), g.name]);
     });
   });
 
@@ -2284,11 +2165,10 @@ function exportCSV(){
 }
 
 /* ---------- Export: PDF ----------
-   Captures the Goal comparison chart AND the full drill-down tree below
-   it (Key Services, Objectives) — whichever Goal is scoped, or
-   everything if "All Goals" is selected. Goal View stops at Key
-   Service (matching the on-page drill-down), so no Program-level pages
-   are generated for this path. Degrades gracefully if
+   Captures the Goal overview and each Goal's Objectives — whichever
+   Goal is scoped, or everything if "All Goals" is selected. This
+   matches the on-page Goal View, which ends at Objectives. Degrades
+   gracefully if
    html2canvas/jsPDF failed to load from the CDN. */
 
 // Adds a canvas image to the PDF, slicing it across as many pages as
@@ -2395,10 +2275,8 @@ async function exportPDF(){
       pdf.text(`Generated ${new Date().toLocaleString('en-US')}`, margin, margin + 16);
     }
 
-    // Drill-down pages: walk the Goal View through every level it has
-    // (Goal -> Objective -> Key Service). Goal View stops at Key
-    // Service, matching the on-page drill-down, so no Program pages
-    // are generated here.
+    // Walk the Goal View through both of its levels (Goals, then each
+    // Goal's Objectives).
     if(scope === 'all'){
       const overview = await captureHeatmapLevel({ rootMode:'goal', level:'roots' }, 'All Goals — Heatmap Overview', 'goal-mountain-row');
       addTitledPage(overview.title);
@@ -2414,14 +2292,6 @@ async function exportPDF(){
       addTitledPage(goalCap.title);
       addCanvasPaginated(pdf, goalCap.canvas, margin + 24);
 
-      const objs = objectivesUnderGoal(g.id);
-      for(const o of objs){
-        const services = keyServicesUnderObjective(o.id);
-        if(!services.length) continue; // skip empty Objective pages — nothing to show
-        const objCap = await captureHeatmapLevel({ rootMode:'goal', level:'objective', rootId:g.id, objectiveId:o.id }, `${g.name} → ${o.name} — Key Services`);
-        addTitledPage(objCap.title);
-        addCanvasPaginated(pdf, objCap.canvas, margin + 24);
-      }
     }
 
     const scopeName = scope === 'all' ? 'all-goals' : slugify(DATA.goals.find(g=>g.id===scope).name);
@@ -2482,7 +2352,7 @@ const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
   { target: '#headline-banner', title: 'Start with the headline', body: 'One computed sentence tells you what needs attention right now, generated from the data below — not hand-typed.' },
   { target: '#stat-grid', title: 'At a glance', body: 'These cards break down everything the City tracks. Hover any status line to see exactly which items make it up.' },
-  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Toggle between the Strategic Plan Goal View (Goals → Objectives → Key Services) and the Work System View (Work Systems → Key Services → Programs).' },
+  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Toggle between the Strategic Plan Goal View (Goals → Objectives) and the Work System View (Work Systems → Key Services → Programs).' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
 ];
 
