@@ -262,11 +262,26 @@
   .explorer-detail .ed-meta{margin:0 0 14px; font-size:12.5px; color:var(--slate);}
   .explorer-detail .ed-meta strong{color:var(--forest-dark);}
   .explorer-detail .ed-metrics{max-width:520px; display:flex; flex-direction:column; gap:9px; margin-bottom:16px;}
-  .explorer-kpis{display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap:14px; margin-bottom:14px; align-items:start;}
+  .explorer-kpis{display:flex; flex-direction:column; gap:14px; margin-bottom:14px;}
   .explorer-kpis .kpi-block, .explorer-kpis .kpi-block + .kpi-block{
-    margin:0; padding:16px 18px; border:1px solid var(--line); border-radius:8px; background:var(--white);
+    margin:0; padding:18px 20px; border:1px solid var(--line); border-radius:8px; background:var(--white);
   }
   #explorer-children-label{margin-bottom:10px;}
+
+  /* Wide screens: the details take the full width on the left, and the
+     tiles for what sits underneath (Programs or Key Services) stack in
+     a column on the right. Narrow screens fall back to one stacked
+     column. Inside each KPI card the chart sits beside its table when
+     the card is wide enough (decided in renderExplorerDetail, which
+     measures the space actually available). */
+  @media (min-width:900px){
+    .explorer-split.has-detail{display:grid; grid-template-columns:minmax(0, 1fr) 250px; align-items:stretch;}
+    .explorer-split.has-detail .explorer-detail{border-bottom:none; border-right:1px solid var(--line); padding-bottom:18px;}
+    .explorer-split.has-detail .heatmap-grid{grid-template-columns:1fr;}
+  }
+  .kpi-body.kpi-body-split{display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr); gap:32px; align-items:start;}
+  .kpi-body.kpi-body-split .kpi-table{margin-top:18px;}
+  .explorer-kpis .kpi-body.kpi-body-nochart{max-width:560px;}
 
   /* ---------- Heatmap drill-down ---------- */
   .heatmap-breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px;}
@@ -748,10 +763,12 @@
         <div class="heatmap-breadcrumb" id="heatmap-breadcrumb"></div>
         <button class="view-details-link" id="explorer-ks-details-btn" style="display:none;">View Key Service details →</button>
       </div>
-      <div class="explorer-detail" id="explorer-detail" style="display:none;"></div>
-      <div class="heatmap-body">
-        <div class="modal-trend-label" id="explorer-children-label" style="display:none;"></div>
-        <div class="heatmap-grid" id="heatmap-grid"></div>
+      <div class="explorer-split" id="explorer-split">
+        <div class="explorer-detail" id="explorer-detail" style="display:none;"></div>
+        <div class="heatmap-body">
+          <div class="modal-trend-label" id="explorer-children-label" style="display:none;"></div>
+          <div class="heatmap-grid" id="heatmap-grid"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1677,6 +1694,13 @@ function renderExplorerDetail(){
   if(item){
     const d = item.details || {};
     const kpis = kpisFor(item.id);
+    // Size the KPI chart for the space it will really get: the panel's
+    // width, minus the right-hand column of tiles on wide screens (same
+    // 900px breakpoint as the CSS), minus the panel and card padding.
+    const sideColumn = window.innerWidth >= 900 ? 250 : 0;
+    const cardInner = document.getElementById('explorer-split').clientWidth - sideColumn - 40 - 42;
+    const chartBesideTable = cardInner >= 720;
+    const chartWidth = Math.max(240, Math.round(chartBesideTable ? (cardInner - 32) * 1.2 / 2.2 : cardInner));
     const meta = [d.owner ? `<strong>Owner</strong> ${escHTML(d.owner)}` : '', d.lastUpdated ? `<strong>Last updated</strong> ${escHTML(d.lastUpdated)}` : ''].filter(Boolean);
     const metrics = (d.metrics || []).map(m=>`
       <div class="modal-metric-row">
@@ -1689,15 +1713,23 @@ function renderExplorerDetail(){
       ${metrics ? `<div class="ed-metrics">${metrics}</div>` : ''}
       ${kpis.length ? `
         <div class="modal-trend-label">${kpis.length === 1 ? 'Key performance indicator' : 'Key performance indicators'}</div>
-        <div class="explorer-kpis">${kpis.map(kpiBlockHTML).join('')}</div>` : ''}
+        <div class="explorer-kpis">${kpis.map(k => kpiBlockHTML(k, chartWidth, chartBesideTable)).join('')}</div>` : ''}
     `.trim();
   }
 
   box.innerHTML = html;
   box.style.display = html ? '' : 'none';
+  document.getElementById('explorer-split').classList.toggle('has-detail', !!html);
   childLabel.textContent = html ? childWord : '';
   childLabel.style.display = html ? '' : 'none';
 }
+
+// Re-fit the on-page KPI charts when the window is resized.
+let explorerResizeTimer = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(explorerResizeTimer);
+  explorerResizeTimer = setTimeout(()=>{ if(DATA) renderExplorerDetail(); }, 150);
+});
 
 function renderDashboardHeatmap(){
   renderRootModeToggle();
@@ -1931,7 +1963,7 @@ function openDetailModal(kind, id){
 
   document.getElementById('modal-kpis').innerHTML = itemKpis.length
     ? `<div class="modal-trend-label">${itemKpis.length === 1 ? 'Key performance indicator' : 'Key performance indicators'}</div>`
-      + itemKpis.map(kpiBlockHTML).join('')
+      + itemKpis.map(k => kpiBlockHTML(k)).join('')
     : '';
 
   const trendBox = document.getElementById('modal-trend');
@@ -2003,13 +2035,14 @@ function kpiDiff(point, k){
 // Hand-rolled SVG like the status sparkline above: the result as a solid
 // line (each point colored by that period's status), the target or
 // benchmark as a dashed line. Skipped when there is only one period.
-function kpiChartSVG(k){
+function kpiChartSVG(k, width){
   const pts = k.series;
   if(pts.length < 2) return '';
   // Drawn at the width it will actually be shown (the modal is narrower
   // on phones), so the labels stay a readable size instead of shrinking.
-  const W = Math.max(240, Math.min(464, window.innerWidth - 104));
-  const H = 190, padL = 30, padR = 30, padT = 28, padB = 50;
+  // (An explicit width is passed for the wider on-page layout.)
+  const W = width || Math.max(240, Math.min(464, window.innerWidth - 104));
+  const H = width ? 230 : 190, padL = 30, padR = 30, padT = 28, padB = 50;
   const hasTargets = pts.some(p => p.target !== undefined && p.target !== null);
   const all = pts.flatMap(p => (p.target !== undefined && p.target !== null) ? [p.value, p.target] : [p.value]);
   let lo = Math.min(...all), hi = Math.max(...all);
@@ -2048,7 +2081,7 @@ function kpiChartSVG(k){
     </div>`;
 }
 
-function kpiBlockHTML(k){
+function kpiBlockHTML(k, chartWidth, chartBesideTable){
   const latest = k.series[k.series.length - 1];
   const label = k.compareLabel || 'Target';
   const diff = kpiDiff(latest, k);
@@ -2081,6 +2114,8 @@ function kpiBlockHTML(k){
   const facts = [k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
   if(facts.length) noteLines.push(facts.join(' · '));
 
+  const chartHTML = kpiChartSVG(k, chartWidth);
+
   return `
     <div class="kpi-block">
       <div class="kpi-head">
@@ -2089,10 +2124,14 @@ function kpiBlockHTML(k){
       </div>
       ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
       <div class="kpi-figure"><span class="kpi-big">${escHTML(fmtKpiValue(latest.value, k))}</span><span class="kpi-context">${context}</span></div>
-      ${kpiChartSVG(k)}
-      ${tableHTML}
-      ${segmentsHTML}
-      ${noteLines.length ? `<p class="kpi-notes">${noteLines.join('<br>')}</p>` : ''}
+      <div class="kpi-body${!chartHTML ? ' kpi-body-nochart' : chartBesideTable ? ' kpi-body-split' : ''}">
+        ${chartHTML ? `<div class="kpi-col-chart">${chartHTML}</div>` : ''}
+        <div class="kpi-col-data">
+          ${tableHTML}
+          ${segmentsHTML}
+          ${noteLines.length ? `<p class="kpi-notes">${noteLines.join('<br>')}</p>` : ''}
+        </div>
+      </div>
     </div>`;
 }
 
