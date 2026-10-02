@@ -254,6 +254,20 @@
   .kpi-segments{display:flex; flex-direction:column; gap:7px; margin-top:14px;}
   .kpi-notes{font-size:11.5px; color:var(--slate); line-height:1.5; margin:12px 0 0;}
 
+  /* ---------- Work System View: the selected Work System's or Key
+     Service's own description and KPIs, shown on the page itself,
+     directly above the tiles for what sits underneath it ---------- */
+  .explorer-detail{padding:18px 20px 6px; border-bottom:1px solid var(--line);}
+  .explorer-detail .ed-desc{margin:0 0 10px; font-size:13.5px; color:var(--slate); line-height:1.6; max-width:820px;}
+  .explorer-detail .ed-meta{margin:0 0 14px; font-size:12.5px; color:var(--slate);}
+  .explorer-detail .ed-meta strong{color:var(--forest-dark);}
+  .explorer-detail .ed-metrics{max-width:520px; display:flex; flex-direction:column; gap:9px; margin-bottom:16px;}
+  .explorer-kpis{display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap:14px; margin-bottom:14px; align-items:start;}
+  .explorer-kpis .kpi-block, .explorer-kpis .kpi-block + .kpi-block{
+    margin:0; padding:16px 18px; border:1px solid var(--line); border-radius:8px; background:var(--white);
+  }
+  #explorer-children-label{margin-bottom:10px;}
+
   /* ---------- Heatmap drill-down ---------- */
   .heatmap-breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px;}
   .heatmap-breadcrumb .crumb{
@@ -320,59 +334,32 @@
     display:inline-flex; align-items:center; padding:3px 10px; border-radius:100px;
     font-size:10.5px; font-weight:700;
   }
-  /* Below this width, six zero-gap jagged slivers plus greyed-out
-     neighbors get unreadable — hide the persistent mountain row (and
-     the river row) entirely and fall back to the single standalone
-     "selected" card above the breadcrumb instead. */
-  #goal-mountain-row-wrap, #worksystem-river-row-wrap{ display:block; }
-  #selected-goal-banner, #selected-worksystem-banner{ display:none; margin-bottom:12px; }
+  /* Below this width, six zero-gap jagged mountain slivers plus
+     greyed-out neighbors get unreadable — hide the persistent mountain
+     row and fall back to the single standalone "selected" card above
+     the breadcrumb instead. */
+  #goal-mountain-row-wrap{ display:block; }
+  #selected-goal-banner{ display:none; margin-bottom:12px; }
   @media (max-width:820px){
-    #goal-mountain-row-wrap, #worksystem-river-row-wrap{ display:none; }
-    #selected-goal-banner.has-selection, #selected-worksystem-banner.has-selection{ display:block; }
+    #goal-mountain-row-wrap{ display:none; }
+    #selected-goal-banner.has-selection{ display:block; }
   }
 
-  /* ---------- Work System tiles: a meandering river channel, the
-     Work-System-View analog of the Goal mountain row. Each tile is a
-     segment of ONE continuous river: the channel's edge values are
-     shared between adjacent tiles (this tile's right edge = the next
-     tile's left edge), so the water visually keeps flowing across the
-     zero-gap row exactly like the mountain range's peaks do. No bank
-     color — the channel is thick enough that it's the tile, essentially;
-     name and status sit centered, which lands them inside the water
-     band at every tile (verified: the tile's vertical center always
-     falls within the channel's own bend at that point, for every one
-     of the 6 segments). ---------- */
-  .heatmap-grid.river-grid{ grid-template-columns:repeat(6, 1fr); gap:0; }
-  .heat-tile.river-tile{
-    min-height:210px; border-radius:0; padding:0;
-    background:transparent;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; color:#fff;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,.18));
-    transition: transform .12s ease, filter .15s ease;
-  }
-  .heat-tile.river-tile:hover, .heat-tile.river-tile:focus-visible, .heat-tile.river-tile:active{
-    filter: drop-shadow(0 7px 13px rgba(0,0,0,.25));
-    box-shadow: none;
-  }
-  .heat-tile.river-tile.river-tile-dimmed{ filter: grayscale(.82) brightness(.95) drop-shadow(0 2px 5px rgba(0,0,0,.12)); }
-  .heat-tile.river-tile.river-tile-dimmed:hover{ filter: grayscale(.4) brightness(1) drop-shadow(0 5px 9px rgba(0,0,0,.2)); }
-  .river-channel{
-    position:absolute; inset:0;
-    filter: drop-shadow(0 0 2px rgba(0,0,0,.35));
-  }
-  .river-ripple{
-    position:absolute; inset:0; z-index:0;
-    background: rgba(255,255,255,.28);
-  }
-  .heat-tile.river-tile .heat-type,
-  .heat-tile.river-tile .heat-name,
-  .heat-tile.river-tile .heat-foot{
-    position:relative; z-index:1; margin-left:12px; margin-right:12px;
-  }
-  .heat-tile.river-tile .heat-foot{ justify-content:center; gap:8px; }
-  .heat-tile.river-tile .tile-export-btn{ top:auto; bottom:8px; right:8px; z-index:2; background:rgba(0,0,0,.14); }
-  .heat-tile.river-tile .tile-export-btn:hover{ background:rgba(0,0,0,.24); }
+  /* ---------- Work System cards: a plain row of rectangular cards, one
+     per Work System, each in that Work System's own color (set in
+     data.json) with its status shown as a chip. The row stays in place
+     while drilling in: the selected card gets a ring and the others
+     fade back. Rectangles wrap cleanly, so unlike the mountain row this
+     one is shown at every screen width. ---------- */
+  .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(6, 1fr); gap:10px; }
+  @media (max-width:1000px){ .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(3, 1fr); } }
+  @media (max-width:560px){ .heatmap-grid.ws-card-grid{ grid-template-columns:repeat(2, 1fr); } }
+  .heat-tile.ws-card{ min-height:118px; }
+  .heat-tile.ws-card .heat-name{ font-size:13px; padding-right:4px; }
+  .heat-tile.ws-card .heat-foot{ opacity:1; justify-content:flex-start; margin-top:12px; }
+  .heat-tile.ws-card.ws-card-selected{ box-shadow:0 0 0 2px var(--white), 0 0 0 4px var(--forest-dark); }
+  .heat-tile.ws-card.ws-card-dimmed{ filter:grayscale(.9) brightness(.92); }
+  .heat-tile.ws-card.ws-card-dimmed:hover, .heat-tile.ws-card.ws-card-dimmed:focus-visible{ filter:grayscale(.3); }
   .heat-tile .heat-type{
     font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
     opacity:.85; margin-bottom:6px;
@@ -401,7 +388,6 @@
   }
   .root-mode-btn.active{ background:var(--forest); border-color:var(--forest); color:#fff; }
   .root-mode-btn:hover:not(.active){ border-color:var(--sage); background:var(--mist); }
-  #selected-goal-banner{ margin-bottom:12px; }
 
   .view-details-link{
     font-size:12.5px; font-weight:600; color:var(--teal); background:none; border:none;
@@ -750,20 +736,21 @@
 
     <div class="root-mode-toggle" id="root-mode-toggle"></div>
     <div id="selected-goal-banner"></div>
-    <div id="selected-worksystem-banner"></div>
 
     <div class="drill-col">
       <div class="heatmap-body" id="goal-mountain-row-wrap">
         <div class="heatmap-grid mountain-grid" id="goal-mountain-row"></div>
       </div>
-      <div class="heatmap-body" id="worksystem-river-row-wrap">
-        <div class="heatmap-grid river-grid" id="worksystem-river-row"></div>
+      <div class="heatmap-body" id="worksystem-card-row-wrap">
+        <div class="heatmap-grid ws-card-grid" id="worksystem-card-row"></div>
       </div>
       <div class="drill-col-head" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <div class="heatmap-breadcrumb" id="heatmap-breadcrumb"></div>
         <button class="view-details-link" id="explorer-ks-details-btn" style="display:none;">View Key Service details →</button>
       </div>
+      <div class="explorer-detail" id="explorer-detail" style="display:none;"></div>
       <div class="heatmap-body">
+        <div class="modal-trend-label" id="explorer-children-label" style="display:none;"></div>
         <div class="heatmap-grid" id="heatmap-grid"></div>
       </div>
     </div>
@@ -1527,15 +1514,12 @@ function renderDashboardBreadcrumb(){
 
   const detailsBtn = document.getElementById('explorer-ks-details-btn');
   if(detailsBtn){
-    if(dashboardView.level === 'keyservice'){
+    // Goal View only: its Key Service level has nothing underneath, so the
+    // details open in a window. In Work System View the same details are
+    // shown on the page itself (see renderExplorerDetail).
+    if(dashboardView.rootMode === 'goal' && dashboardView.level === 'keyservice'){
       detailsBtn.style.display = 'inline-block';
-      detailsBtn.textContent = 'View Key Service details →';
       detailsBtn.onclick = () => openDetailModal('ks', dashboardView.ksId);
-    } else if(dashboardView.rootMode === 'workSystem' && dashboardView.level === 'root'){
-      // Work System KPIs live in the Work System's own details window.
-      detailsBtn.style.display = 'inline-block';
-      detailsBtn.textContent = 'View Work System details →';
-      detailsBtn.onclick = () => openDetailModal('ws', dashboardView.rootId);
     } else {
       detailsBtn.style.display = 'none';
     }
@@ -1629,86 +1613,31 @@ function renderSelectedGoalBanner(){
   wireTileExportButtons(container);
 }
 
-// One continuous river, segmented across the 6 Work System tiles: each
-// tile's channel edges (left/mid/right, as % from top) are chosen so
-// this tile's right-edge value matches the next tile's left-edge value
-// — same trick the mountain range uses to look continuous across
-// separate zero-gap DOM elements. The water itself is a child element
-// (clipped to the channel shape) layered over the tile's own sandy-
-// Blends two hex colors by `amount` (0 = pure hex, 1 = pure target) —
-// plain arithmetic, not CSS color-mix(), so the exact resulting hex is
-// computed once in JS and is trivial to verify directly, with zero
-// dependency on how any given browser (or test tool) resolves CSS
-// color functions.
-function mixHex(hex, targetHex, amount){
-  const h = s => parseInt(s, 16);
-  const r1=h(hex.slice(1,3)), g1=h(hex.slice(3,5)), b1=h(hex.slice(5,7));
-  const r2=h(targetHex.slice(1,3)), g2=h(targetHex.slice(3,5)), b2=h(targetHex.slice(5,7));
-  const mix = (a,b) => Math.round(a + (b-a)*amount);
-  const toHex = n => n.toString(16).padStart(2,'0');
-  return `#${toHex(mix(r1,r2))}${toHex(mix(g1,g2))}${toHex(mix(b1,b2))}`;
-}
-
-// Quadratic Bezier through (0,p0), (50,p1), (100,p2), sampled at many
-// points, for a genuinely smooth/curved channel edge instead of a
-// single-bend angular polygon. A Bezier curve always stays within the
-// convex hull of its control points, so as long as p0/p1/p2 are within
-// [0,100] the whole sampled curve is guaranteed to be too.
-function bezierY(t, p0, p1, p2){
-  return (1-t)*(1-t)*p0 + 2*(1-t)*t*p1 + t*t*p2;
-}
-function riverChannelClip(left, mid, right, half, steps=14){
-  const top = [], bottom = [];
-  for(let i=0; i<=steps; i++){
-    const t = i/steps, x = (t*100).toFixed(1);
-    top.push(`${x}% ${bezierY(t, left-half, mid-half, right-half).toFixed(1)}%`);
-    bottom.push(`${x}% ${bezierY(t, left+half, mid+half, right+half).toFixed(1)}%`);
-  }
-  return `polygon(${[...top, ...bottom.reverse()].join(', ')})`;
-}
-
-function workSystemRiverTileHTML(ws, status, { left, mid, right }, { selected=false, dimmed=false, width=null } = {}){
-  const half = 32; // channel half-width, in % of tile height — thick enough that text centered in the tile always lands inside the water
-  const clip = riverChannelClip(left, mid, right, half);
-  const cls = `river-tile${selected ? ' river-tile-selected' : ''}${dimmed ? ' river-tile-dimmed' : ''}`;
-  const widthStyle = width ? `width:${width}px;` : '';
-  const base = ws.color || '#4A7D8C';
-  // Ombre: a lighter tint near the "surface" (top) deepening toward the
-  // base color at the "bottom" — real computed hex stops, not a CSS
-  // color-mix() gradient.
-  const lightShade = mixHex(base, '#ffffff', 0.4);
-  const darkShade = mixHex(base, '#000000', 0.25);
-  const waterGradient = `linear-gradient(180deg, ${lightShade} 0%, ${base} 55%, ${darkShade} 100%)`;
-
-  // Two thin ripple bands, offset above/below the channel's own
-  // centerline — same curve-generation function as the channel itself,
-  // just much thinner, so they follow the exact same bend and read as
-  // ripples running with the current rather than a separate texture.
-  const rippleHalf = 1.3;
-  const rippleClipA = riverChannelClip(left-13, mid-13, right-13, rippleHalf);
-  const rippleClipB = riverChannelClip(left+13, mid+13, right+13, rippleHalf);
-
+// One plain rectangular card per Work System, in that Work System's own
+// color (ws.color in data.json), with its status shown as a chip.
+function workSystemCardHTML(ws, status, { selected=false, dimmed=false } = {}){
+  const cls = `ws-card${selected ? ' ws-card-selected' : ''}${dimmed ? ' ws-card-dimmed' : ''}`;
+  const kpiLabel = kpiCountLabel(ws.id);
   return `
     <div class="heat-tile status-${status} ${cls}"
-         style="background:transparent; ${widthStyle}"
-         role="button" tabindex="0" data-drill-root="${ws.id}">
-      <div class="river-channel" style="clip-path:${clip}; background:${waterGradient};"></div>
-      <div class="river-ripple" style="clip-path:${rippleClipA};"></div>
-      <div class="river-ripple" style="clip-path:${rippleClipB};"></div>
+         style="background:${ws.color || '#4A7D8C'}; color:#fff;"
+         role="button" tabindex="0" data-drill-root="${ws.id}"${selected ? ' aria-current="true"' : ''}>
       <span class="tile-export-btn" role="button" tabindex="0" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${ws.name}">⬇</span>
-      <div class="heat-type">Work System</div>
-      <div class="heat-name">${ws.name}</div>
-      ${kpiCountLabel(ws.id) ? `<div class="heat-subtitle" style="position:relative; z-index:1; margin:4px 12px 0;">${kpiCountLabel(ws.id)}</div>` : ''}
+      <div>
+        <div class="heat-type">Work System</div>
+        <div class="heat-name">${ws.name}</div>
+        ${kpiLabel ? `<div class="heat-subtitle" style="margin:4px 0 0;">${kpiLabel}</div>` : ''}
+      </div>
       <div class="heat-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span></div>
     </div>
   `;
 }
 
-// The persistent river row: always shows all 6 Work Systems (desktop),
-// greying out every one except whichever is currently selected — the
-// Work-System-View analog of the Goal mountain row.
-function renderWorkSystemRiverRow(){
-  const container = document.getElementById('worksystem-river-row');
+// The persistent Work System row: always shows every Work System, and
+// fades back all but the one currently selected — the Work-System-View
+// counterpart of the Goal mountain row.
+function renderWorkSystemCardRow(){
+  const container = document.getElementById('worksystem-card-row');
   if(!container) return;
 
   if(dashboardView.rootMode !== 'workSystem'){
@@ -1717,58 +1646,72 @@ function renderWorkSystemRiverRow(){
   }
 
   const sorted = [...DATA.workSystems].sort((a,b)=>goalSortWeight(workSystemStatus(a)) - goalSortWeight(workSystemStatus(b)));
-  // 7 boundary points for 6 segments, and 6 mid-bend points — chosen to
-  // meander noticeably without ever bringing the channel's edge within
-  // less than ~20% of the tile's own top/bottom, so there's always a
-  // clear bank strip for text.
-  const centers = [42, 58, 38, 62, 35, 65, 48];
-  const midBends = [50, 46, 64, 40, 60, 42];
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = sorted.map((ws,i)=>{
-    const left = centers[i] ?? 50, mid = midBends[i] ?? 50, right = centers[i+1] ?? 50;
-    const status = workSystemStatus(ws);
-    return workSystemRiverTileHTML(ws, status, { left, mid, right }, {
-      selected: selectedId === ws.id,
-      dimmed: selectedId !== null && selectedId !== ws.id,
-    });
-  }).join('');
+  container.innerHTML = sorted.map(ws=> workSystemCardHTML(ws, workSystemStatus(ws), {
+    selected: selectedId === ws.id,
+    dimmed: selectedId !== null && selectedId !== ws.id,
+  })).join('');
   wireDashboardTiles(container);
 }
 
-// Mobile-only fallback: a single standalone river card for the
-// selected Work System, same role as the Goal banner above.
-function renderSelectedWorkSystemBanner(){
-  const container = document.getElementById('selected-worksystem-banner');
-  if(!container) return;
-
-  if(dashboardView.rootMode !== 'workSystem' || dashboardView.level === 'roots'){
-    container.innerHTML = '';
-    container.classList.remove('has-selection');
-    return;
+// Work System View: shows the selected Work System's or Key Service's own
+// description, hand-entered measures and KPIs on the page, above the
+// tiles for what sits underneath it (Key Services or Programs). Nothing
+// is shown when the item has none of these.
+function renderExplorerDetail(){
+  const box = document.getElementById('explorer-detail');
+  const childLabel = document.getElementById('explorer-children-label');
+  let item = null, childWord = '';
+  if(dashboardView.rootMode === 'workSystem'){
+    if(dashboardView.level === 'root'){
+      item = DATA.workSystems.find(w=>w.id===dashboardView.rootId);
+      childWord = 'Key Services';
+    } else if(dashboardView.level === 'keyservice'){
+      item = DATA.keyServices.find(k=>k.id===dashboardView.ksId);
+      childWord = 'Programs';
+    }
   }
-  const ws = DATA.workSystems.find(w=>w.id===dashboardView.rootId);
-  if(!ws){ container.innerHTML = ''; container.classList.remove('has-selection'); return; }
 
-  const status = workSystemStatus(ws);
-  container.classList.add('has-selection');
-  container.innerHTML = workSystemRiverTileHTML(ws, status, { left:50, mid:44, right:50 }, { selected:true, width:260 });
-  wireTileExportButtons(container);
+  let html = '';
+  if(item){
+    const d = item.details || {};
+    const kpis = kpisFor(item.id);
+    const meta = [d.owner ? `<strong>Owner</strong> ${escHTML(d.owner)}` : '', d.lastUpdated ? `<strong>Last updated</strong> ${escHTML(d.lastUpdated)}` : ''].filter(Boolean);
+    const metrics = (d.metrics || []).map(m=>`
+      <div class="modal-metric-row">
+        <span class="mm-label">${escHTML(m.label)}</span>
+        <span class="mm-value">${escHTML(m.value)}${m.target ? ` <span class="mm-target">/ target ${escHTML(m.target)}</span>` : ''}</span>
+      </div>`).join('');
+    html = `
+      ${d.description ? `<p class="ed-desc">${escHTML(d.description)}</p>` : ''}
+      ${meta.length ? `<p class="ed-meta">${meta.join(' &nbsp;·&nbsp; ')}</p>` : ''}
+      ${metrics ? `<div class="ed-metrics">${metrics}</div>` : ''}
+      ${kpis.length ? `
+        <div class="modal-trend-label">${kpis.length === 1 ? 'Key performance indicator' : 'Key performance indicators'}</div>
+        <div class="explorer-kpis">${kpis.map(kpiBlockHTML).join('')}</div>` : ''}
+    `.trim();
+  }
+
+  box.innerHTML = html;
+  box.style.display = html ? '' : 'none';
+  childLabel.textContent = html ? childWord : '';
+  childLabel.style.display = html ? '' : 'none';
 }
 
 function renderDashboardHeatmap(){
   renderRootModeToggle();
   renderDashboardBreadcrumb();
+  renderExplorerDetail();
   renderGoalMountainRow();
   renderSelectedGoalBanner();
-  renderWorkSystemRiverRow();
-  renderSelectedWorkSystemBanner();
+  renderWorkSystemCardRow();
   const grid = document.getElementById('heatmap-grid');
   grid.classList.remove('mountain-grid');
 
   if(dashboardView.level === 'roots'){
     // Nothing to show here for either mode — the persistent row above
-    // (mountain range or river) IS the roots-level content now; the
+    // (mountain range or Work System cards) IS the roots-level content now; the
     // secondary grid stays empty until something is actually selected.
     grid.innerHTML = '';
     return;
@@ -1954,19 +1897,18 @@ function wireDetailButtons(scope){
 }
 
 function openDetailModal(kind, id){
-  const item = kind === 'ws' ? DATA.workSystems.find(w=>w.id===id)
-    : kind === 'ks' ? DATA.keyServices.find(k=>k.id===id)
+  const item = kind === 'ks'
+    ? DATA.keyServices.find(k=>k.id===id)
     : DATA.programs.find(p=>p.id===id);
   if(!item) return;
 
-  const label = kind === 'ws' ? 'Work System' : kind === 'ks' ? 'Key Service' : 'Program';
-  const status = kind === 'ws' ? workSystemStatus(item) : kind === 'ks' ? keyServiceStatus(item) : programStatus(item);
+  const label = kind === 'ks' ? 'Key Service' : 'Program';
+  const status = kind === 'ks' ? keyServiceStatus(item) : programStatus(item);
   const d = item.details || {};
 
   const tagEl = document.getElementById('modal-tag');
   tagEl.textContent = label;
   tagEl.classList.toggle('gold', kind === 'program');
-  tagEl.style.borderColor = tagEl.style.color = kind === 'ws' ? 'var(--fw-purple)' : '';
 
   document.getElementById('modal-status-slot').innerHTML = statusBadgeHTML(status);
   document.getElementById('modal-title').textContent = item.name;
@@ -2024,21 +1966,6 @@ function openDetailModal(kind, id){
     } else {
       relatedBox.innerHTML = '';
     }
-  } else if(kind === 'ws'){
-    // A Work System's status IS a rollup of these Key Services.
-    const services = DATA.keyServices.filter(k=>k.workSystem===item.id);
-    relatedBox.innerHTML = services.length ? `
-      <div class="modal-trend-label">Key Services in this Work System</div>
-      ${services.map(k=>`
-        <div class="modal-meta-row" style="align-items:center; margin-bottom:6px;">
-          <button class="detail-btn" data-related-ks="${k.id}" style="text-align:left; flex:1;">${k.name}</button>
-          ${statusBadgeHTML(keyServiceStatus(k))}
-        </div>
-      `).join('')}
-    ` : '';
-    relatedBox.querySelectorAll('[data-related-ks]').forEach(btn=>{
-      btn.addEventListener('click', ()=> openDetailModal('ks', btn.dataset.relatedKs));
-    });
   } else {
     relatedBox.innerHTML = '';
   }
