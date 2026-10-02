@@ -58,6 +58,9 @@
       "name": "Network uptime",
       "level": "Program",
       "attachTo": "p30",
+      "alsoUnder": [
+        "ks7"
+      ],
       "objectives": [
         "ob14"
       ],

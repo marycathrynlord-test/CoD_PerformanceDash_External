@@ -249,17 +249,25 @@ def build():
             )
         level = item_levels.get(attach, level)
 
-        # Optional: Strategic Plan Objectives this KPI is ALSO shown under
-        # (one or more Objective IDs, separated by commas).
-        objectives = []
-        for ob in re.split(r"[,;]", clean(row.get("also show under objective"))):
-            ob = ob.strip()
-            if not ob:
+        # Optional: other places this KPI is ALSO shown, as IDs separated by
+        # commas. They can be Objectives (ob...) and/or further Work Systems,
+        # Key Services or Programs, e.g. a Program KPI that is also a headline
+        # measure for its Key Service. ("Also Show Under Objective" is the
+        # older name for this column.)
+        objectives, also_under = [], []
+        extra = clean(row.get("also show under") or row.get("also show under objective"))
+        for item in re.split(r"[,;]", extra):
+            item = item.strip()
+            if not item or item == attach:
                 continue
-            if ob not in objective_names:
-                problems.append(f'{where}: "Also Show Under Objective" has "{ob}", which is not an Objective ID in data.json.')
-            elif ob not in objectives:
-                objectives.append(ob)
+            if item in objective_names:
+                if item not in objectives:
+                    objectives.append(item)
+            elif item in item_names:
+                if item not in also_under:
+                    also_under.append(item)
+            else:
+                problems.append(f'{where}: "Also Show Under" has "{item}", which is not an ID in data.json.')
 
         unit = clean(row.get("unit")) or "number"
         if unit.lower() in ("percent", "number", "currency"):
@@ -270,6 +278,7 @@ def build():
             "name": name,
             "level": LEVEL_LABELS.get(level, ""),
             "attachTo": attach,
+            "alsoUnder": also_under,
             "objectives": objectives,
             "unit": unit,
             "decimals": 1 if unit == "percent" else 0,
@@ -307,7 +316,8 @@ def build():
                 off_beyond = to_number(row.get("off track beyond %"))
         except ValueError:
             problems.append(f"{where}: the two status threshold columns must be numbers.")
-        if entry["drivesStatus"] and level == "work system":
+        placed = [attach] + also_under
+        if entry["drivesStatus"] and all(item_levels.get(i) == "work system" for i in placed):
             warnings.append(
                 f"{where}: Drives Status is ignored for Work System KPIs. A Work System's color "
                 "always comes from its Key Services."
@@ -447,6 +457,8 @@ def build():
         last = k["series"][-1]
         print(f'  {k["id"]:<12} -> {k["level"]:<11} {k["attachTo"]:<5} {item_names[k["attachTo"]]}: '
               f'{last["value"]} in {last["period"]} ({last["status"] or "no target"})')
+        for other in k.get("alsoUnder", []):
+            print(f'  {"":<12}    also under {LEVEL_LABELS[item_levels[other]]} {other} {item_names[other]}')
         for ob in k.get("objectives", []):
             print(f'  {"":<12}    also under Objective {ob} {objective_names[ob]}')
 

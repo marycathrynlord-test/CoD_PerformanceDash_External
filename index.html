@@ -910,7 +910,13 @@ async function loadKpiData(){
     (file.kpis || []).forEach(k=>{
       if(!k || !k.attachTo || !Array.isArray(k.series) || !k.series.length) return;
       (KPI_BY_ITEM[k.attachTo] = KPI_BY_ITEM[k.attachTo] || []).push(k);
-      // "Also Show Under Objective" in the spreadsheet: the same KPI is
+      // "Also Show Under" in the spreadsheet: the same KPI is listed under
+      // further Work Systems, Key Services or Programs as well (and, with
+      // Drives Status = Yes, sets the color of those Key Services/Programs).
+      (Array.isArray(k.alsoUnder) ? k.alsoUnder : []).forEach(id=>{
+        if(id !== k.attachTo) (KPI_BY_ITEM[id] = KPI_BY_ITEM[id] || []).push(k);
+      });
+      // Objective IDs in that same column: the same KPI is
       // listed under those Strategic Plan Objectives too, and its status
       // counts toward each of those Objectives (see objectiveStatus).
       (Array.isArray(k.objectives) ? k.objectives : []).forEach(obId=>{
