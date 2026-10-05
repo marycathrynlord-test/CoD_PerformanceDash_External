@@ -168,6 +168,176 @@
         }
       ],
       "segments": []
+    },
+    {
+      "id": "IT_PHISHRATE",
+      "name": "Organization Phish Prone Rate",
+      "level": "Program",
+      "attachTo": "p31",
+      "alsoUnder": [
+        "ks7"
+      ],
+      "unit": "percent",
+      "decimals": 2,
+      "higherIsBetter": false,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "frequency": "Every Quarter",
+      "owner": "Patrick Allmon",
+      "source": "KnowBe4",
+      "status": "on-track",
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [
+        {
+          "period": "2019-Q1",
+          "value": 8.8,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "off-track"
+        },
+        {
+          "period": "2020-Q1",
+          "value": 8.9,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "off-track"
+        },
+        {
+          "period": "2020-Q2",
+          "value": 2.4,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2022-Q2",
+          "value": 1.05,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2022-Q3",
+          "value": 0.9,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2022-Q4",
+          "value": 0.633333,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2023-Q1",
+          "value": 0.7,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2023-Q2",
+          "value": 1.133333,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2023-Q3",
+          "value": 0.566667,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2023-Q4",
+          "value": 0.833333,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2024-Q1",
+          "value": 1.533333,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2024-Q2",
+          "value": 1.1,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2024-Q3",
+          "value": 0.666667,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2024-Q4",
+          "value": 0.733333,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q1",
+          "value": 0.75,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q2",
+          "value": 8.366667,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "off-track"
+        },
+        {
+          "period": "2025-Q3",
+          "value": 9.7,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "off-track"
+        },
+        {
+          "period": "2025-Q4",
+          "value": 10.566667,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "off-track"
+        },
+        {
+          "period": "2026-Q1",
+          "value": 1.7,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2026-Q2",
+          "value": 0.733333,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        },
+        {
+          "period": "2026-Q3",
+          "value": 0.766667,
+          "target": 3.9,
+          "benchmark": 3.9,
+          "status": "on-track"
+        }
+      ],
+      "segments": []
     }
   ]
 }
