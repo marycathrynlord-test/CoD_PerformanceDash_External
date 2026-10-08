@@ -266,7 +266,7 @@
   /* Segment-only KPIs (no single headline number): one tile per segment,
      side by side, each with its own latest value and status. */
   .kpi-bysegment{font-size:11.5px; color:var(--slate); background:rgba(154,166,162,0.12); border:1px dashed #9AA6A2; border-radius:6px; padding:3px 9px; font-style:italic;}
-  .kpi-seg-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px; margin-top:12px;}
+  .kpi-seg-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(138px, 1fr)); gap:10px; margin-top:12px;}
   .kpi-seg-tile{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--white); display:flex; flex-direction:column; gap:6px; border-top:3px solid var(--seg-color, #006A53);}
   .kpi-seg-label{font-size:12.5px; font-weight:700; color:var(--forest-dark);}
   .kpi-seg-value{font-size:22px; font-weight:700; color:var(--ink); line-height:1; letter-spacing:-.01em;}
@@ -276,6 +276,9 @@
   .kpi-seg-meta .kpi-good{color:#00543F; font-weight:700;}
   .kpi-seg-meta .kpi-bad{color:#8A2E26; font-weight:700;}
   .kpi-seg-tile .kpi-seg-status:empty{display:none;}
+  .kpi-total-tile{background:rgba(0,106,83,0.05);}
+  .kpi-total-tile .kpi-seg-value{font-size:26px;}
+  .kpi-table td.kpi-total-col{font-weight:700;}
 
   /* ---------- Work System View: the selected Work System's or Key
      Service's own description and KPIs, shown on the page itself,
@@ -2266,13 +2269,39 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
   }).join('');
 
   const notSet = '<span class="kpi-notset">Not set</span>';
+  const breakdown = kpiBreakdownLines(k);
+
+  // With segments: a card each for the Total and every segment, above the
+  // graph, colored to match its line. The Total card carries the KPI's
+  // status and both comparisons; segment cards show theirs when set.
+  const tile = (label, p, color, isTotal) => {
+    if(!p) return '';
+    const comps = KPI_COMPARISONS.map(c => {
+      const v = p[c.key];
+      if(!kpiHas(v)) return isTotal ? `${c.label} <span class="kpi-notset">not set${c.key === basis ? ', so no status' : ''}</span>` : '';
+      const d = kpiDiff(p.value, v, k);
+      return `${c.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong> · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>`;
+    }).filter(Boolean).join('<br>');
+    return `<div class="kpi-seg-tile${isTotal ? ' kpi-total-tile' : ''}" style="--seg-color:${color}">
+      <span class="kpi-seg-label">${escHTML(label)}</span>
+      <span class="kpi-seg-value">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}<small>${escHTML(p.period)}</small></span>
+      <span class="kpi-seg-status">${p.status ? statusBadgeHTML(p.status) : ''}</span>
+      ${comps ? `<span class="kpi-seg-meta">${comps}</span>` : ''}
+    </div>`;
+  };
+  const segAt = (sg, period) => sg.series.find(q => q.period === period);
+  const tilesHTML = breakdown.length ? `<div class="kpi-seg-grid">
+      ${tile('Total', latest, '#006A53', true)}
+      ${breakdown.map((sg, n) => tile(sg.label, segAt(sg, latest.period) || sg.series[sg.series.length - 1], KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length], false)).join('')}
+    </div>` : '';
+
   const tableHTML = `
     <div class="kpi-table-wrap">
     <table class="kpi-table">
-      <thead><tr><th scope="col">Period</th><th scope="col">Result</th><th scope="col">Target</th><th scope="col">Benchmark</th><th scope="col">vs ${basisLabel.toLowerCase()}</th></tr></thead>
+      <thead><tr><th scope="col">Period</th>${breakdown.map(sg => `<th scope="col">${escHTML(sg.label)}</th>`).join('')}<th scope="col">${breakdown.length ? 'Total' : 'Result'}</th><th scope="col">Target</th><th scope="col">Benchmark</th><th scope="col">vs ${basisLabel.toLowerCase()}</th></tr></thead>
       <tbody>${[...k.series].reverse().map(p=>{
         const d = kpiDiff(p.value, p[basis], k);
-        return `<tr><td>${escHTML(p.period)}${p.note ? '*' : ''}</td><td>${escHTML(fmtKpiValue(p.value, k))}</td>
+        return `<tr><td>${escHTML(p.period)}${p.note ? '*' : ''}</td>${breakdown.map(sg => { const q = segAt(sg, p.period); return `<td>${q ? escHTML(fmtKpiValue(q.value, k)) : '—'}</td>`; }).join('')}<td${breakdown.length ? ' class="kpi-total-col"' : ''}>${escHTML(fmtKpiValue(p.value, k))}</td>
           <td>${kpiHas(p.target) ? escHTML(fmtKpiComparison(p.target, k)) : notSet}</td>
           <td>${kpiHas(p.benchmark) ? escHTML(fmtKpiComparison(p.benchmark, k)) : notSet}</td>
           <td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}">${d ? escHTML(d.text) : '—'}</td></tr>`;
@@ -2280,7 +2309,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
     </table>
     </div>`;
 
-  const segmentsHTML = (k.segments && k.segments.length) ? `
+  const segmentsHTML = (!breakdown.length && k.segments && k.segments.length) ? `
     <div class="kpi-segments">
       <div class="modal-trend-label" style="margin-bottom:0;">${escHTML(latest.period)} breakdown</div>
       ${k.segments.map(sg=>{
@@ -2307,8 +2336,9 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
         ${k.status ? statusBadgeHTML(k.status) : ''}
       </div>
       ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
+      ${breakdown.length ? tilesHTML : `
       <div class="kpi-figure"><span class="kpi-big">${escHTML(fmtKpiValue(latest.value, k))}</span><span class="kpi-context">${escHTML(latest.period)}</span></div>
-      <div class="kpi-compare">${chipsHTML}</div>
+      <div class="kpi-compare">${chipsHTML}</div>`}
       <div class="kpi-body${!chartHTML ? ' kpi-body-nochart' : chartBesideTable ? ' kpi-body-split' : ''}">
         ${chartHTML ? `<div class="kpi-col-chart">${chartHTML}</div>` : ''}
         <div class="kpi-col-data">
