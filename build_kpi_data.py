@@ -398,19 +398,12 @@ def build():
         fail(problems)
 
     # ---- Assemble output --------------------------------------------------
-    kpis = []
-    for entry in catalog.values():
-        rows = entry.pop("_rows")
-        on_within, off_beyond = entry.pop("_thresholds")
-        headline = [r for r in rows if not r["segment"]]
-        if not headline:
-            warnings.append(f'{entry["id"]}: no headline rows (blank Segment) with a value yet, so it is left off the dashboard.')
-            continue
-        if all(re.fullmatch(r"\d{4}", r["period"]) for r in headline):
-            headline.sort(key=lambda r: int(r["period"]))  # plain years: sort them
-
+    def build_series(rows, entry, on_within, off_beyond):
+        """One point per period: value, target, benchmark, status, note."""
+        if all(re.fullmatch(r"\d{4}", r["period"]) for r in rows):
+            rows = sorted(rows, key=lambda r: int(r["period"]))  # plain years: sort them
         series = []
-        for r in headline:
+        for r in rows:
             point = {"period": r["period"], "value": tidy(r["value"])}
             for column in ("target", "benchmark"):
                 if r[column] is not None:
@@ -421,7 +414,44 @@ def build():
             if r["note"]:
                 point["note"] = r["note"]
             series.append(point)
+        return series
 
+    kpis = []
+    for entry in catalog.values():
+        rows = entry.pop("_rows")
+        on_within, off_beyond = entry.pop("_thresholds")
+        if not rows:
+            warnings.append(f'{entry["id"]}: no rows with a value yet, so it is left off the dashboard.')
+            continue
+        headline = [r for r in rows if not r["segment"]]
+
+        if not headline:
+            # Segment-only KPI (e.g. one rate per social media platform, each
+            # with its own target): no single headline number or status. Each
+            # segment gets its own series and status, shown side by side.
+            order = []
+            for r in rows:
+                if r["segment"] not in order:
+                    order.append(r["segment"])
+            segment_series = []
+            for label in order:
+                series = build_series([r for r in rows if r["segment"] == label], entry, on_within, off_beyond)
+                latest = series[-1]
+                if entry["compareTo"] not in latest:
+                    notes.append(f'{entry["id"]} / {label}: no {entry["compareTo"]} for {latest["period"]}, so no status for that segment.')
+                segment_series.append({"label": label, "series": series})
+            notes.append(f'{entry["id"]}: no headline rows (blank Segment), so it is shown by segment ({", ".join(order)}) with no overall status.')
+            entry = {k: v for k, v in entry.items() if v != "" and v != []}
+            entry["status"] = None
+            entry["segmentsOnly"] = True
+            entry["onTrackWithinPct"] = tidy(on_within)
+            entry["offTrackBeyondPct"] = tidy(off_beyond)
+            entry["series"] = []
+            entry["segmentSeries"] = segment_series
+            kpis.append(entry)
+            continue
+
+        series = build_series(headline, entry, on_within, off_beyond)
         latest = series[-1]
         for column in ("target", "benchmark"):
             if column not in latest:
@@ -454,9 +484,14 @@ def build():
         print(f"NOTE     {n}")
     print(f"Wrote {OUTPUT.name}: {len(kpis)} KPI(s).")
     for k in kpis:
-        last = k["series"][-1]
-        print(f'  {k["id"]:<12} -> {k["level"]:<11} {k["attachTo"]:<5} {item_names[k["attachTo"]]}: '
-              f'{last["value"]} in {last["period"]} ({last["status"] or "no target"})')
+        if k.get("segmentsOnly"):
+            parts = ", ".join(f'{sg["label"]} {sg["series"][-1]["value"]} ({sg["series"][-1]["status"] or "no target"})'
+                              for sg in k["segmentSeries"])
+            print(f'  {k["id"]:<12} -> {k["level"]:<11} {k["attachTo"]:<5} {item_names[k["attachTo"]]}: by segment: {parts}')
+        else:
+            last = k["series"][-1]
+            print(f'  {k["id"]:<12} -> {k["level"]:<11} {k["attachTo"]:<5} {item_names[k["attachTo"]]}: '
+                  f'{last["value"]} in {last["period"]} ({last["status"] or "no target"})')
         for other in k.get("alsoUnder", []):
             print(f'  {"":<12}    also under {LEVEL_LABELS[item_levels[other]]} {other} {item_names[other]}')
         for ob in k.get("objectives", []):

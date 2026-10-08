@@ -263,6 +263,19 @@
   .kpi-table td.kpi-down{color:#8A2E26; font-weight:700;}
   .kpi-segments{display:flex; flex-direction:column; gap:7px; margin-top:14px;}
   .kpi-notes{font-size:11.5px; color:var(--slate); line-height:1.5; margin:12px 0 0;}
+  /* Segment-only KPIs (no single headline number): one tile per segment,
+     side by side, each with its own latest value and status. */
+  .kpi-bysegment{font-size:11.5px; color:var(--slate); background:rgba(154,166,162,0.12); border:1px dashed #9AA6A2; border-radius:6px; padding:3px 9px; font-style:italic;}
+  .kpi-seg-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px; margin-top:12px;}
+  .kpi-seg-tile{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--white); display:flex; flex-direction:column; gap:6px; border-top:3px solid var(--seg-color, #006A53);}
+  .kpi-seg-label{font-size:12.5px; font-weight:700; color:var(--forest-dark);}
+  .kpi-seg-value{font-size:22px; font-weight:700; color:var(--ink); line-height:1; letter-spacing:-.01em;}
+  .kpi-seg-value small{font-size:11.5px; font-weight:400; color:var(--slate); margin-left:6px; letter-spacing:0;}
+  .kpi-seg-meta{font-size:11.5px; color:var(--slate); line-height:1.45;}
+  .kpi-seg-meta strong{color:var(--ink);}
+  .kpi-seg-meta .kpi-good{color:#00543F; font-weight:700;}
+  .kpi-seg-meta .kpi-bad{color:#8A2E26; font-weight:700;}
+  .kpi-seg-tile .kpi-seg-status:empty{display:none;}
 
   /* ---------- Work System View: the selected Work System's or Key
      Service's own description and KPIs, shown on the page itself,
@@ -931,7 +944,9 @@ async function loadKpiData(){
     if(!res.ok) return;
     const file = await res.json();
     (file.kpis || []).forEach(k=>{
-      if(!k || !k.attachTo || !Array.isArray(k.series) || !k.series.length) return;
+      const hasSeries = Array.isArray(k && k.series) && k.series.length;
+      const hasSegments = k && k.segmentsOnly && Array.isArray(k.segmentSeries) && k.segmentSeries.some(sg => sg.series && sg.series.length);
+      if(!k || !k.attachTo || !(hasSeries || hasSegments)) return;
       (KPI_BY_ITEM[k.attachTo] = KPI_BY_ITEM[k.attachTo] || []).push(k);
       // "Also Show Under" in the spreadsheet: the same KPI is listed under
       // further Work Systems, Key Services or Programs as well (and, with
@@ -2103,7 +2118,111 @@ function kpiChartSVG(k, width){
     </div>`;
 }
 
+const KPI_SEGMENT_COLORS = ['#2F6FA3', '#006A53', '#7A5FB0', '#8A5A44', '#1B8A79', '#5B6B67', '#B04A7A', '#4A5A9A'];
+
+// Periods across all segments, in order (plain years sorted numerically).
+function kpiSegmentPeriods(k){
+  const periods = [];
+  k.segmentSeries.forEach(sg => sg.series.forEach(p => { if(!periods.includes(p.period)) periods.push(p.period); }));
+  if(periods.every(p => /^\d{4}$/.test(p))) periods.sort((a,b) => Number(a) - Number(b));
+  return periods;
+}
+
+// One line per segment, sharing the same axis, colored to match its tile.
+function kpiSegmentChartSVG(k, width){
+  const periods = kpiSegmentPeriods(k);
+  if(periods.length < 2) return '';
+  const W = width || Math.max(240, Math.min(464, window.innerWidth - 104));
+  const H = width ? 230 : 190, padL = 30, padR = 30, padT = 20, padB = 40;
+  const all = k.segmentSeries.flatMap(sg => sg.series.map(p => p.value));
+  let lo = Math.min(...all), hi = Math.max(...all);
+  if(hi === lo){ hi += 1; lo -= 1; }
+  const x = period => padL + periods.indexOf(period) * (W - padL - padR) / (periods.length - 1);
+  const y = v => padT + (hi - v) / (hi - lo) * (H - padT - padB);
+  const lines = k.segmentSeries.map((sg, i) => {
+    const color = KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length];
+    const pts = [...sg.series].sort((a,b) => periods.indexOf(a.period) - periods.indexOf(b.period));
+    const d = pts.map((p,j) => (j ? 'L' : 'M') + x(p.period).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
+    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="2"/>
+      ${pts.map(p => `<circle cx="${x(p.period).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="4" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>`).join('')}`;
+  }).join('');
+  const xLabels = periods.map(p => `<text x="${x(p).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#5B6B67">${escHTML(p)}</text>`).join('');
+  const yLabels = [hi, lo].map(v => `<text x="${padL - 6}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#5B6B67">${escHTML(fmtKpiNumber(v, k))}</text>`).join('');
+  const summary = k.segmentSeries.map(sg => { const l = sg.series[sg.series.length - 1]; return `${sg.label} ${fmtKpiValue(l.value, k)} in ${l.period}`; }).join(', ');
+  return `
+    <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHTML(k.name)} by segment over time. Latest: ${escHTML(summary)}." font-family="inherit">
+      <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#DCE6E2" stroke-width="1"/>
+      ${lines}${xLabels}${yLabels}
+    </svg>
+    <div class="kpi-legend" style="flex-wrap:wrap;">
+      ${k.segmentSeries.map((sg,i) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length]}" stroke-width="2"/></svg>${escHTML(sg.label)}</span>`).join('')}
+    </div>`;
+}
+
+// Card for a KPI that only has segment rows: the segments side by side,
+// each with its own latest value, target/benchmark and status, and no
+// single headline number or overall status.
+function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
+  const basis = kpiBasis(k);
+  const basisLabel = basis === 'benchmark' ? 'Benchmark' : 'Target';
+  const tiles = k.segmentSeries.map((sg, i) => {
+    const latest = sg.series[sg.series.length - 1];
+    const comps = KPI_COMPARISONS.map(c => {
+      const v = latest[c.key];
+      if(!kpiHas(v)) return `${c.label} <span class="kpi-notset">not set</span>`;
+      const d = kpiDiff(latest.value, v, k);
+      return `${c.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong>${c.key === basis ? ` · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>` : ''}`;
+    }).join('<br>');
+    return `<div class="kpi-seg-tile" style="--seg-color:${KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length]}">
+      <span class="kpi-seg-label">${escHTML(sg.label)}</span>
+      <span class="kpi-seg-value">${escHTML(fmtKpiValue(latest.value, k))}${latest.note ? '*' : ''}<small>${escHTML(latest.period)}</small></span>
+      <span class="kpi-seg-status">${latest.status ? statusBadgeHTML(latest.status) : ''}</span>
+      <span class="kpi-seg-meta">${comps}</span>
+    </div>`;
+  }).join('');
+
+  const periods = kpiSegmentPeriods(k);
+  const cell = (sg, period) => {
+    const p = sg.series.find(q => q.period === period);
+    if(!p) return '<td>—</td>';
+    const d = kpiDiff(p.value, p[basis], k);
+    return `<td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}" title="${escHTML(basisLabel)}: ${kpiHas(p[basis]) ? escHTML(fmtKpiComparison(p[basis], k)) : 'not set'}">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</td>`;
+  };
+  const tableHTML = `
+    <div class="kpi-table-wrap">
+    <table class="kpi-table">
+      <thead><tr><th scope="col">Period</th>${k.segmentSeries.map(sg => `<th scope="col">${escHTML(sg.label)}</th>`).join('')}</tr></thead>
+      <tbody>${[...periods].reverse().map(period => `<tr><td>${escHTML(period)}</td>${k.segmentSeries.map(sg => cell(sg, period)).join('')}</tr>`).join('')}</tbody>
+    </table>
+    </div>`;
+
+  const noteLines = [];
+  k.segmentSeries.forEach(sg => sg.series.forEach(p => { if(p.note) noteLines.push(`* ${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(p.note)}`); }));
+  if(k.footnote) noteLines.push(escHTML(k.footnote));
+  const facts = [`Green or red in the table: compared with each segment's own ${basisLabel.toLowerCase()}`, k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
+  noteLines.push(facts.join(' · '));
+
+  const chartHTML = kpiSegmentChartSVG(k, chartWidth);
+  return `
+    <div class="kpi-block">
+      <div class="kpi-head">
+        <span class="kpi-name">${escHTML(k.name)}</span>
+        <span class="kpi-bysegment">Shown by segment · no overall status</span>
+      </div>
+      ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
+      <div class="kpi-seg-grid">${tiles}</div>
+      <div class="kpi-body${!chartHTML ? ' kpi-body-nochart' : chartBesideTable ? ' kpi-body-split' : ''}">
+        ${chartHTML ? `<div class="kpi-col-chart">${chartHTML}</div>` : ''}
+        <div class="kpi-col-data">
+          ${tableHTML}
+          <p class="kpi-notes">${noteLines.join('<br>')}</p>
+        </div>
+      </div>
+    </div>`;
+}
+
 function kpiBlockHTML(k, chartWidth, chartBesideTable){
+  if(k.segmentsOnly) return kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable);
   const latest = k.series[k.series.length - 1];
   const basis = kpiBasis(k);
   const basisLabel = basis === 'benchmark' ? 'Benchmark' : 'Target';
