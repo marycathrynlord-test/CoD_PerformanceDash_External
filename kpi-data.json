@@ -395,6 +395,166 @@
         }
       ],
       "segments": []
+    },
+    {
+      "id": "PIO-ENGRATE",
+      "name": "Social media engagement rate",
+      "level": "Program",
+      "attachTo": "p12",
+      "alsoUnder": [
+        "ks3"
+      ],
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "segmentsOnly": true,
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [],
+      "segmentSeries": [
+        {
+          "label": "Instagram",
+          "series": [
+            {
+              "period": "2021",
+              "value": 4.11,
+              "target": 5.9,
+              "benchmark": 2.6,
+              "status": "off-track"
+            },
+            {
+              "period": "2022",
+              "value": 4.2,
+              "target": 5.9,
+              "benchmark": 2.6,
+              "status": "off-track"
+            },
+            {
+              "period": "2023",
+              "value": 5.1,
+              "target": 5.9,
+              "benchmark": 2.6,
+              "status": "at-risk"
+            },
+            {
+              "period": "2024",
+              "value": 5.7,
+              "target": 5.9,
+              "benchmark": 2.6,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 3.5,
+              "target": 3.5,
+              "benchmark": 3.5,
+              "status": "on-track"
+            }
+          ]
+        },
+        {
+          "label": "Facebook",
+          "series": [
+            {
+              "period": "2021",
+              "value": 8.4,
+              "target": 6.5,
+              "benchmark": 2.5,
+              "status": "on-track"
+            },
+            {
+              "period": "2022",
+              "value": 6.9,
+              "target": 6.5,
+              "benchmark": 2.5,
+              "status": "on-track"
+            },
+            {
+              "period": "2023",
+              "value": 7.7,
+              "target": 6.5,
+              "benchmark": 2.5,
+              "status": "on-track"
+            },
+            {
+              "period": "2024",
+              "value": 6.3,
+              "target": 6.5,
+              "benchmark": 2.5,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 7.9,
+              "target": 6.5,
+              "benchmark": 3.2,
+              "status": "on-track"
+            }
+          ]
+        },
+        {
+          "label": "LinkedIn",
+          "series": [
+            {
+              "period": "2022",
+              "value": 8,
+              "target": 21.2,
+              "benchmark": 2.7,
+              "status": "off-track"
+            },
+            {
+              "period": "2023",
+              "value": 16.8,
+              "target": 21.2,
+              "benchmark": 2.7,
+              "status": "off-track"
+            },
+            {
+              "period": "2024",
+              "value": 20.6,
+              "target": 21.2,
+              "benchmark": 2.7,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 14.34,
+              "target": 21.2,
+              "benchmark": 3.1,
+              "status": "off-track"
+            }
+          ]
+        },
+        {
+          "label": "TikTok",
+          "series": [
+            {
+              "period": "2023",
+              "value": 3.7,
+              "target": 4.7,
+              "benchmark": 1.6,
+              "status": "off-track"
+            },
+            {
+              "period": "2024",
+              "value": 4.6,
+              "target": 4.7,
+              "benchmark": 1.6,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 5.4,
+              "target": 4.7,
+              "benchmark": 1.6,
+              "status": "on-track"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
