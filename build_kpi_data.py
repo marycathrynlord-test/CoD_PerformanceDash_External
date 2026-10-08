@@ -342,7 +342,12 @@ def build():
         period = clean(row.get("period"))
         segment = clean(row.get("segment"))
         if not period:
-            problems.append(f"{where}: Period is blank.")
+            # A placeholder row (KPI listed, nothing measured yet) is fine: the
+            # KPI still shows as "Data not yet entered". A row that has a value
+            # but no Period can't be placed on the timeline, so it is skipped
+            # with a warning instead of stopping the whole build.
+            if not is_blank(row.get("value")):
+                warnings.append(f"{where}: {kpi_id} has a Value but no Period, so that row is skipped. Add the Period to show it.")
             continue
         if re.fullmatch(r"[3-6]\d{4}", period):
             warnings.append(
