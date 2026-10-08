@@ -52,6 +52,28 @@
           "label": "PT/Seasonal",
           "value": 78.2
         }
+      ],
+      "segmentSeries": [
+        {
+          "label": "Full-time",
+          "series": [
+            {
+              "period": "2026",
+              "value": 79.9,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "PT/Seasonal",
+          "series": [
+            {
+              "period": "2026",
+              "value": 78.2,
+              "status": null
+            }
+          ]
+        }
       ]
     },
     {
@@ -395,6 +417,88 @@
         {
           "label": "Physical",
           "value": 50
+        }
+      ],
+      "segmentSeries": [
+        {
+          "label": "Digital",
+          "series": [
+            {
+              "period": "2021",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2022",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2023",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2024",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            }
+          ]
+        },
+        {
+          "label": "Physical",
+          "series": [
+            {
+              "period": "2021",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2022",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2023",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2024",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 50,
+              "target": 50,
+              "benchmark": 50,
+              "status": "on-track"
+            }
+          ]
         }
       ]
     },
