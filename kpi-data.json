@@ -376,6 +376,46 @@
       "series": [],
       "segmentSeries": [
         {
+          "label": "Total",
+          "series": [
+            {
+              "period": "2021",
+              "value": 143,
+              "target": 150,
+              "benchmark": 150,
+              "status": "off-track"
+            },
+            {
+              "period": "2022",
+              "value": 146,
+              "target": 150,
+              "benchmark": 150,
+              "status": "off-track"
+            },
+            {
+              "period": "2023",
+              "value": 47,
+              "target": 150,
+              "benchmark": 150,
+              "status": "off-track"
+            },
+            {
+              "period": "2024",
+              "value": 122,
+              "target": 150,
+              "benchmark": 150,
+              "status": "off-track"
+            },
+            {
+              "period": "2025",
+              "value": 112,
+              "target": 150,
+              "benchmark": 150,
+              "status": "off-track"
+            }
+          ]
+        },
+        {
           "label": "Digital",
           "series": [
             {
