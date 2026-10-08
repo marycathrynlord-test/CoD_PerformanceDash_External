@@ -2229,7 +2229,7 @@ function kpiChartSVG(k, width){
   const lines = KPI_COMPARISONS.filter(c => pts.some(p => kpiHas(p[c.key])));
   const breakdown = kpiBreakdownLines(k);
   const all = pts.flatMap(p => [p.value, ...lines.map(c => p[c.key]).filter(kpiHas)])
-    .concat(breakdown.flatMap(sg => sg.series.map(p => p.value)));
+    .concat(breakdown.flatMap(sg => sg.series.flatMap(p => [p.value, ...KPI_COMPARISONS.map(c => p[c.key]).filter(kpiHas)])));
   let lo = Math.min(...all), hi = Math.max(...all);
   if(hi === lo){ hi += 1; lo -= 1; }
   const x = i => padL + i * (W - padL - padR) / (pts.length - 1);
@@ -2259,7 +2259,8 @@ function kpiChartSVG(k, width){
     if(!sp.length) return '';
     const d = sp.map((p,j) => (j ? 'L' : 'M') + x(idx(p.period)).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
     const last = sp[sp.length - 1];
-    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.75"/>
+    const xOf = period => idx(period) >= 0 ? x(idx(period)) : null;
+    return `${kpiSegmentComparisonLines(sg, color, k, xOf, y)}<path d="${d}" fill="none" stroke="${color}" stroke-width="1.75"/>
       ${sp.map(p => `<circle cx="${x(idx(p.period)).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>`).join('')}
       <text x="${(x(idx(last.period)) + 8).toFixed(1)}" y="${(y(last.value) + 4 + n * 12 * (breakdown.some((o,m) => m < n && Math.abs(y(o.series[o.series.length-1].value) - y(last.value)) < 12) ? 1 : 0)).toFixed(1)}" font-size="11" font-weight="700" fill="${color}" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(sg.label)} ${escHTML(fmtKpiValue(last.value, k))}</text>`;
   }).join('');
@@ -2276,6 +2277,7 @@ function kpiChartSVG(k, width){
     <div class="kpi-legend" style="flex-wrap:wrap;">
       <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>${breakdown.length ? 'Total' : 'Result'}</span>
       ${breakdown.map((sg,n) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length]}" stroke-width="1.75"/></svg>${escHTML(sg.label)}</span>`).join('')}
+      ${breakdown.length ? kpiComparisonLegendHTML(breakdown, 'Segment ') : ''}
       ${lines.map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${c.label}</span>`).join('')}
     </div>`;
 }
@@ -2290,27 +2292,45 @@ function kpiSegmentPeriods(k){
   return periods;
 }
 
+// A segment's Target (dashed) and Benchmark (dotted) lines, drawn in the
+// segment's own color so each one reads with its result line.
+function kpiSegmentComparisonLines(sg, color, k, xOf, y){
+  return KPI_COMPARISONS.map(c => {
+    const pts = sg.series.filter(p => kpiHas(p[c.key]) && xOf(p.period) !== null);
+    if(!pts.length) return '';
+    const d = pts.map((p,j) => (j ? 'L' : 'M') + xOf(p.period).toFixed(1) + ',' + y(p[c.key]).toFixed(1)).join(' ');
+    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round" opacity="0.85"/>
+      ${pts.map(p => `<circle cx="${xOf(p.period).toFixed(1)}" cy="${y(p[c.key]).toFixed(1)}" r="2.5" fill="${color}"><title>${escHTML(sg.label)}, ${escHTML(p.period)} ${c.label.toLowerCase()}: ${escHTML(fmtKpiComparison(p[c.key], k))}</title></circle>`).join('')}`;
+  }).join('');
+}
+function kpiComparisonLegendHTML(series, prefix = ''){
+  return KPI_COMPARISONS.filter(c => series.some(sg => sg.series.some(p => kpiHas(p[c.key]))))
+    .map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="#5B6B67" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${prefix}${prefix ? c.label.toLowerCase() : c.label}</span>`).join('');
+}
+
 // One line per segment, sharing the same axis, colored to match its tile.
 function kpiSegmentChartSVG(k, width){
   const periods = kpiSegmentPeriods(k);
   if(periods.length < 2) return '';
   const W = width || Math.max(240, Math.min(464, window.innerWidth - 104));
-  const H = width ? 230 : 190, padL = 30, padR = 30, padT = 20, padB = 40;
-  const all = k.segmentSeries.flatMap(sg => sg.series.map(p => p.value));
+  const H = width ? 230 : 190, padR = 30, padT = 20, padB = 40;
+  const all = k.segmentSeries.flatMap(sg => sg.series.flatMap(p => [p.value, ...KPI_COMPARISONS.map(c => p[c.key]).filter(kpiHas)]));
   let lo = Math.min(...all), hi = Math.max(...all);
   if(hi === lo){ hi += 1; lo -= 1; }
+  // Left margin wide enough for the axis numbers ("146.00" was cut off).
+  const padL = Math.max(30, 12 + Math.max(...[hi, lo].map(v => fmtKpiNumber(v, k).length)) * 6.4);
   const x = period => padL + periods.indexOf(period) * (W - padL - padR) / (periods.length - 1);
   const y = v => padT + (hi - v) / (hi - lo) * (H - padT - padB);
   const lines = k.segmentSeries.map((sg, i) => {
     const color = KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length];
     const pts = [...sg.series].sort((a,b) => periods.indexOf(a.period) - periods.indexOf(b.period));
     const d = pts.map((p,j) => (j ? 'L' : 'M') + x(p.period).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
-    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="2"/>
+    return `${kpiSegmentComparisonLines(sg, color, k, x, y)}<path d="${d}" fill="none" stroke="${color}" stroke-width="2"/>
       ${pts.map(p => `<circle cx="${x(p.period).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="4" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>`).join('')}`;
   }).join('');
   const xLabels = periods.map(p => `<text x="${x(p).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#5B6B67">${escHTML(p)}</text>`).join('');
   const yLabels = [hi, lo].map(v => `<text x="${padL - 6}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#5B6B67">${escHTML(fmtKpiNumber(v, k))}</text>`).join('');
-  const summary = k.segmentSeries.map(sg => { const l = sg.series[sg.series.length - 1]; return `${sg.label} ${fmtKpiValue(l.value, k)} in ${l.period}`; }).join(', ');
+  const summary = k.segmentSeries.map(sg => { const l = sg.series[sg.series.length - 1]; return `${sg.label} ${fmtKpiValue(l.value, k)} in ${l.period}` + KPI_COMPARISONS.filter(c => kpiHas(l[c.key])).map(c => `, ${c.label.toLowerCase()} ${fmtKpiComparison(l[c.key], k)}`).join(''); }).join('; ');
   return `
     <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHTML(k.name)} by segment over time. Latest: ${escHTML(summary)}." font-family="inherit">
       <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#DCE6E2" stroke-width="1"/>
@@ -2318,6 +2338,7 @@ function kpiSegmentChartSVG(k, width){
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
       ${k.segmentSeries.map((sg,i) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length]}" stroke-width="2"/></svg>${escHTML(sg.label)}</span>`).join('')}
+      ${kpiComparisonLegendHTML(k.segmentSeries)}
     </div>`;
 }
 
@@ -2333,7 +2354,7 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
       const v = latest[c.key];
       if(!kpiHas(v)) return `${c.label} <span class="kpi-notset">not set</span>`;
       const d = kpiDiff(latest.value, v, k);
-      return `${c.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong>${c.key === basis ? ` · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>` : ''}`;
+      return `${c.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong> · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>`;
     }).join('<br>');
     return `<div class="kpi-seg-tile" style="--seg-color:${KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length]}">
       <span class="kpi-seg-label">${escHTML(sg.label)}</span>
