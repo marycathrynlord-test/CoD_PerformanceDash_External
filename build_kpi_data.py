@@ -421,7 +421,14 @@ def build():
         rows = entry.pop("_rows")
         on_within, off_beyond = entry.pop("_thresholds")
         if not rows:
-            warnings.append(f'{entry["id"]}: no rows with a value yet, so it is left off the dashboard.')
+            # Set up in the catalog but no numbers yet: still listed on the
+            # dashboard, with a "data not yet entered" card and no status.
+            notes.append(f'{entry["id"]}: no values yet, so it is shown as "Data not yet entered".')
+            entry = {k: v for k, v in entry.items() if v != "" and v != []}
+            entry["status"] = None
+            entry["pending"] = True
+            entry["series"] = []
+            kpis.append(entry)
             continue
         headline = [r for r in rows if not r["segment"]]
 
@@ -495,7 +502,9 @@ def build():
         print(f"NOTE     {n}")
     print(f"Wrote {OUTPUT.name}: {len(kpis)} KPI(s).")
     for k in kpis:
-        if k.get("segmentsOnly"):
+        if k.get("pending"):
+            print(f'  {k["id"]:<12} -> {k["level"]:<11} {k["attachTo"]:<5} {item_names[k["attachTo"]]}: data not yet entered')
+        elif k.get("segmentsOnly"):
             parts = ", ".join(f'{sg["label"]} {sg["series"][-1]["value"]} ({sg["series"][-1]["status"] or "no target"})'
                               for sg in k["segmentSeries"])
             print(f'  {k["id"]:<12} -> {k["level"]:<11} {k["attachTo"]:<5} {item_names[k["attachTo"]]}: by segment: {parts}')
