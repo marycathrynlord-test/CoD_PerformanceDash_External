@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>City of Durango — Performance Dashboard - Organizational View TEST FOR SYNC OCT 2</title>
+<title>City of Durango — Performance Dashboard</title>
 
 <!-- Used only for "Export PDF" -->
 
@@ -49,17 +49,17 @@
   .brand{display:flex;align-items:center;gap:14px;}
   .mark{width:40px;height:40px;flex:none;}
   .brand-text{line-height:1.15;}
-  .brand-text .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--sage);}
+  .brand-text .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#D7EBE6;}
   .brand-text .title{font-size:19px;font-weight:700;letter-spacing:.01em;}
   .header-right{display:flex;align-items:center;gap:14px;}
   .datepill{font-size:12.5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);padding:7px 14px;border-radius:100px;}
   .livepill{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-    background:rgba(127,180,169,.22);border:1px solid var(--sage);color:var(--sage);padding:7px 14px;border-radius:100px;}
-  .livepill .dot{width:7px;height:7px;border-radius:50%;background:var(--sage);animation:pulse 2s ease-in-out infinite;}
+    background:rgba(127,180,169,.22);border:1px solid var(--sage);color:#fff;padding:7px 14px;border-radius:100px;}
+  .livepill .dot{width:7px;height:7px;border-radius:50%;background:var(--sage);animation:pulse 2s ease-in-out 3;}
   @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.45;transform:scale(1.3);}}
 
   .titleband{padding:36px 0 8px;}
-  .titleband .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+  .titleband .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:8px;}
   .titleband h1{font-size:clamp(26px,3.4vw,38px);font-weight:700;margin:0 0 6px;color:var(--forest-dark);letter-spacing:-.01em;}
   .titleband p{margin:0 0 14px;color:var(--slate);font-size:15px;max-width:820px;line-height:1.6;}
 
@@ -85,7 +85,7 @@
   /* ---------- Section headings ---------- */
   .section{margin-top:44px;}
   .section-head{margin-bottom:16px;}
-  .section-head .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+  .section-head .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px;}
   .section-head h2{margin:0 0 6px;font-size:23px;font-weight:700;color:var(--forest-dark);letter-spacing:-.01em;}
   .section-head p{margin:0;color:var(--slate);font-size:14px;max-width:100%x;line-height:1.5;}
 
@@ -96,7 +96,7 @@
   }
   .status-dot{width:8px;height:8px;border-radius:50%;flex:none;}
   .status-on-track{ color:#00543F; background:rgba(27,138,121,0.14); }
-  .status-on-track .status-dot{ background:#1B8A79; }
+  .status-on-track .status-dot{ background:#198372; }
   .status-at-risk{ color:#8A6414; background:rgba(217,164,65,0.20); }
   .status-at-risk .status-dot{ background:#D9A441; }
   .status-off-track{ color:#8A2E26; background:rgba(193,68,59,0.14); }
@@ -316,7 +316,7 @@
   .heatmap-breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px;}
   .heatmap-breadcrumb .crumb{
     background:none; border:none; font-family:inherit; font-size:13px; font-weight:600;
-    color:var(--teal); cursor:pointer; padding:2px 4px; border-radius:4px;
+    color:var(--teal-ink); cursor:pointer; padding:2px 4px; border-radius:4px;
   }
   .heatmap-breadcrumb .crumb:hover{ text-decoration:underline; }
   .heatmap-breadcrumb .crumb.current{ color:var(--forest-dark); cursor:default; }
@@ -370,7 +370,7 @@
     display:flex; align-items:center; justify-content:space-between; gap:6px;
     font-size:10px; font-weight:700;
   }
-  .heat-type-mountain{ text-transform:uppercase; letter-spacing:.06em; opacity:.85; font-size:9px; }
+  .heat-type-mountain{ text-transform:uppercase; letter-spacing:.06em; font-size:9px; }
   .tile-brand-fill{ position:absolute; inset:0; }
   .heat-tile.goal-tile .tile-export-btn{ top:auto; bottom:8px; right:8px; background:rgba(255,255,255,.25); }
   .heat-tile.goal-tile .tile-export-btn:hover{ background:rgba(255,255,255,.4); }
@@ -431,12 +431,12 @@
   }
   .heat-tile .heat-type{
     font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
-    opacity:.85; margin-bottom:6px;
+    margin-bottom:6px;
   }
   .heat-tile .heat-name{font-size:12.5px; font-weight:700; line-height:1.3;}
-  .heat-tile .heat-foot{display:flex; align-items:center; justify-content:space-between; margin-top:8px; font-size:10.5px; font-weight:600; opacity:.9;}
+  .heat-tile .heat-foot{display:flex; align-items:center; justify-content:space-between; margin-top:8px; font-size:10.5px; font-weight:600;}
   .heat-tile .heat-trend{font-size:13px;}
-  .heat-tile .heat-subtitle{font-size:9.5px; opacity:.85; margin:-2px 0 6px;}
+  .heat-tile .heat-subtitle{font-size:9.5px; margin:-2px 0 6px;}
 
   /* ---------- View mode toggle (grouped vs. flat all-at-once) ---------- */
   .view-toggle{display:flex; flex-wrap:wrap; gap:6px;}
@@ -459,15 +459,15 @@
   .root-mode-btn:hover:not(.active){ border-color:var(--sage); background:var(--mist); }
 
   .view-details-link{
-    font-size:12.5px; font-weight:600; color:var(--teal); background:none; border:none;
+    font-size:12.5px; font-weight:600; color:var(--teal-ink); background:none; border:none;
     cursor:pointer; font-family:inherit; padding:2px 0;
   }
   .view-details-link:hover{ text-decoration:underline; }
 
-  .heat-tile.status-on-track{ background:#1B8A79; }
+  .heat-tile.status-on-track{ background:#198372; }
   .heat-tile.status-at-risk{ background:#D9A441; color:#3a2c05; }
   .heat-tile.status-off-track{ background:#C1443B; }
-  .heat-tile.status-no-data{ background:#9AA6A2; }
+  .heat-tile.status-no-data{ background:#9AA6A2; color:#1E1E1E; }
 
   .heat-tile.split .heat-split-bg{ position:absolute; inset:0; z-index:0; }
   .heat-tile.split .heat-split-bg .half{ position:absolute; top:0; bottom:0; width:50%; }
@@ -540,7 +540,7 @@
 
   .tour-highlight{
     outline:3px solid var(--sage); outline-offset:4px; border-radius:10px;
-    animation:tourPulse 1.4s ease-in-out infinite;
+    animation:tourPulse 1.4s ease-in-out 3;
   }
   @keyframes tourPulse{
     0%,100%{ box-shadow:0 0 0 0 rgba(127,180,169,0.45); }
@@ -648,13 +648,48 @@
   .footer-panel{background:var(--forest-dark); color:var(--white); border-radius:var(--radius); padding:36px 32px 0; overflow:hidden; position:relative;}
   .footer-inner{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:24px; position:relative; z-index:2; padding-bottom:24px;}
   .footer-inner h3{margin:0 0 8px; font-size:16px; font-weight:700;}
-  .footer-inner p{margin:0; font-size:13px; color:var(--sage); max-width:360px; line-height:1.6;}
+  .footer-inner p{margin:0; font-size:13px; color:#D7EBE6; max-width:360px; line-height:1.6;}
   .contact-grid{display:grid; grid-template-columns:repeat(2,auto); gap:8px 40px; font-size:13px;}
-  .contact-grid div span{display:block; color:var(--sage); font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:3px;}
+  .contact-grid div span{display:block; color:#D7EBE6; font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:3px;}
   .footer-mountains{display:block; width:100%; height:110px; position:relative; z-index:1;}
+
+  /* ===== Accessibility (WCAG 2.1 AA) ===== */
+  :root{ --teal-ink:#177A6B; --focus:#004E3D; }
+  .sr-only{position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+  .skip-link{position:absolute; left:12px; top:-80px; z-index:3000; background:#fff; color:#004E3D; font-weight:700; padding:10px 16px; border-radius:8px; border:2px solid #004E3D; text-decoration:none;}
+  .skip-link:focus{top:12px;}
+  main:focus{outline:none;}
+  /* Clearly visible keyboard focus on everything (2.4.7, 1.4.11) */
+  :focus-visible{outline:3px solid var(--focus) !important; outline-offset:2px !important;}
+  header :focus-visible, footer :focus-visible, .modal-overlay .tour-btn.primary:focus-visible{outline-color:#fff !important; box-shadow:0 0 0 6px var(--focus);}
+  /* Each tile is one real button covering the tile, with its Export
+     button as a separate sibling (no button inside a button). */
+  .tile-hit{position:absolute; inset:0; z-index:1; width:100%; height:100%; background:transparent; border:0; margin:0; padding:0; cursor:pointer; border-radius:inherit; font:inherit; color:inherit;}
+  .tile-hit:focus-visible{outline:3px solid #fff !important; outline-offset:-5px !important; box-shadow:inset 0 0 0 8px #1E1E1E;}
+  .heat-tile:has(.tile-hit:focus-visible){transform:translateY(-2px);}
+  .tile-export-btn{z-index:2; border:0; padding:0; margin:0; font-family:inherit; opacity:1;}
+  .tile-export-btn:focus-visible{outline:3px solid #fff !important; outline-offset:0 !important; box-shadow:0 0 0 6px #1E1E1E;}
+  .heat-tile.status-no-data .tile-export-btn{ background:rgba(0,0,0,.10); }
+  /* Closed pop-up is fully removed from keyboard and screen readers */
+  .modal-overlay{ visibility:hidden; transition:opacity .2s ease, visibility 0s linear .2s; }
+  .modal-overlay.open{ visibility:visible; transition:opacity .2s ease, visibility 0s; }
+  /* Hover boxes can be moved onto with the pointer (1.4.13) */
+  .hover-tooltip.visible{ pointer-events:auto; }
+  /* Reflow at 320px wide (1.4.10) */
+  @media (max-width:480px){
+    header{ padding:16px; }
+    .header-right{ flex-wrap:wrap; gap:8px; }
+    .brand-text .title{ font-size:16px; }
+    .wrap{ padding-left:16px; padding-right:16px; }
+  }
+  /* Respect "reduce motion" (2.3.3 good practice, 2.2.2) */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+  }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <header>
   <div class="brand">
@@ -670,17 +705,17 @@
   </div>
   <div class="header-right">
     <div class="header-export" id="header-export">
-      <button class="tour-restart-btn" id="export-menu-btn" aria-haspopup="true" aria-expanded="false">⬇ Export ▾</button>
+      <button class="tour-restart-btn" id="export-menu-btn" aria-controls="export-dropdown" aria-expanded="false"><span aria-hidden="true">⬇</span> Export <span aria-hidden="true">▾</span></button>
       <div class="export-dropdown" id="export-dropdown" hidden>
         <label class="export-dropdown-label" for="export-scope-select">Scope</label>
         <select id="export-scope-select" class="export-select" style="width:100%;"></select>
-        <button class="export-dropdown-item" id="export-csv-btn">⬇ Export as CSV</button>
-        <button class="export-dropdown-item" id="export-pdf-btn">⬇ Export as PDF</button>
+        <button class="export-dropdown-item" id="export-csv-btn"><span aria-hidden="true">⬇</span> Export as CSV</button>
+        <button class="export-dropdown-item" id="export-pdf-btn"><span aria-hidden="true">⬇</span> Export as PDF</button>
       </div>
     </div>
-    <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour">❓ Take the tour</button>
+    <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour"><span aria-hidden="true">❓</span> Take the tour</button>
     <span class="datepill" id="today-pill">Loading date…</span>
-    <span class="livepill"><span class="dot"></span>Sample Data</span>
+    <span class="livepill"><span class="dot" aria-hidden="true"></span>Sample Data</span>
   </div>
 </header>
 
@@ -688,6 +723,8 @@
 <div id="error-state"></div>
 
 <div class="wrap" id="dashboard">
+<main id="main" tabindex="-1">
+<div id="sr-status" class="sr-only" role="status" aria-live="polite"></div>
 
   <div class="titleband">
     <div class="eyebrow" id="period-label">FY2026 · Performance Snapshot</div>
@@ -741,7 +778,7 @@
         <h3 class="reference-col-title">Progress Key</h3>
         <p class="reference-col-sub">What each status color means, wherever it appears.</p>
         <div class="ref-row">
-          <span class="ref-icon dot" style="background:#1B8A79;"></span>
+          <span class="ref-icon dot" style="background:#198372;"></span>
           <div>
             <div class="ref-term">On Track</div>
             <div class="ref-desc">Performance is at or above target, or within an agreed tolerance (e.g. within 5%).</div>
@@ -826,11 +863,13 @@
     </div>
   </div>
 
+</main>
+
   <!-- Hover tooltip for status breakdown in at-a-glance cards -->
-  <div class="hover-tooltip" id="hover-tooltip" role="tooltip"></div>
+  <div class="hover-tooltip" id="hover-tooltip"></div>
 
   <!-- GUIDED TOUR CARD -->
-  <div class="tour-card" id="tour-card">
+  <div class="tour-card" id="tour-card" role="dialog" aria-modal="false" aria-labelledby="tour-title" aria-describedby="tour-body">
     <div class="tour-card-head">
       <span class="tour-progress" id="tour-progress">1 / 6</span>
       <button class="tour-skip-link" id="tour-skip">Skip tour</button>
@@ -1072,7 +1111,7 @@ function trendArrowHTML(item, kind, id){
   const trend = computeTrend(item.history);
   if(!trend) return '';
   const m = TREND_META[trend];
-  return `<span class="trend-arrow" data-trend-kind="${kind}" data-trend-id="${id}" style="color:${m.color}" title="Trend: ${m.label} (based on the last two updates)">${m.arrow}</span>`;
+  return `<span class="trend-arrow" data-trend-kind="${kind}" data-trend-id="${id}" style="color:${m.color}" role="img" aria-label="Trend: ${m.label}" title="Trend: ${m.label} (based on the last two updates)">${m.arrow}</span>`;
 }
 
 // Small hand-rolled SVG sparkline — deliberately not a charting library,
@@ -1156,13 +1195,45 @@ function goalProgramViewStatus(g){
   return rollupStatus(objs.map(objectiveStatus));
 }
 
+// Text color for a solid status-colored chip: dark where white text
+// would fall below 4.5:1 (At Risk gold, No Data grey).
+function statusTextColor(status){
+  return status === 'at-risk' ? '#3a2c05' : status === 'no-data' ? '#1E1E1E' : '#fff';
+}
+
+// Goal tiles keep each Goal's own brand color. Text is white when that
+// reaches 4.5:1; otherwise the color is darkened just enough for white
+// text (at most 15%), and if that still isn't enough, the text goes dark.
+function hexLuminance(hex){
+  const h = hex.replace('#',''); const f = h.length === 3 ? h.split('').map(c=>c+c).join('') : h;
+  return [0,2,4].map(i => parseInt(f.slice(i,i+2),16)/255)
+    .map(c => c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4))
+    .reduce((sum, c, i) => sum + c * [0.2126, 0.7152, 0.0722][i], 0);
+}
+function contrastRatio(a, b){
+  const [hi, lo] = [hexLuminance(a), hexLuminance(b)].sort((x,y)=>y-x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+function darkenHex(hex, factor){
+  const h = hex.replace('#',''); const f = h.length === 3 ? h.split('').map(c=>c+c).join('') : h;
+  return '#' + [0,2,4].map(i => Math.round(parseInt(f.slice(i,i+2),16) * factor).toString(16).padStart(2,'0')).join('');
+}
+function readableTileColors(bg){
+  if(!/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(bg || '')) return { bg, fg:'#fff' };
+  for(let f = 1; f >= 0.85; f -= 0.01){
+    const c = darkenHex(bg, f);
+    if(contrastRatio('#ffffff', c) >= 4.6) return { bg:c, fg:'#fff' };
+  }
+  return { bg, fg:'#1E1E1E' };
+}
+
 function statusBadgeHTML(status){
   const meta = STATUS_META[status] || STATUS_META['no-data'];
   return `<span class="status-badge status-${status}"><span class="status-dot"></span>${meta.label}</span>`;
 }
 
 function statusDotColor(status){
-  return status==='on-track' ? '#1B8A79'
+  return status==='on-track' ? '#198372'
        : status==='at-risk'  ? '#D9A441'
        : status==='off-track'? '#C1443B'
        : '#9AA6A2';
@@ -1208,6 +1279,7 @@ function showTooltip(target, tipId){
   tooltip.style.left = `${rect.left}px`;
   tooltip.style.top = `${rect.bottom + 8}px`;
   tooltip.classList.add('visible');
+  markTooltipShown(target);
 
   // Keep it on-screen: nudge left if it would overflow the right edge.
   requestAnimationFrame(()=>{
@@ -1218,14 +1290,43 @@ function showTooltip(target, tipId){
   });
 }
 
+let tooltipHideTimer = null;
+let tooltipOwner = null;
 function hideTooltip(){
-  document.getElementById('hover-tooltip').classList.remove('visible');
+  clearTimeout(tooltipHideTimer);
+  const tooltip = document.getElementById('hover-tooltip');
+  tooltip.classList.remove('visible');
+  tooltip.removeAttribute('role');
+  if(tooltipOwner){ tooltipOwner.removeAttribute('aria-describedby'); tooltipOwner = null; }
 }
+// Leaving the trigger waits a moment, so the pointer can move onto the box.
+function scheduleHideTooltip(){
+  clearTimeout(tooltipHideTimer);
+  tooltipHideTimer = setTimeout(hideTooltip, 300);
+}
+function markTooltipShown(owner){
+  clearTimeout(tooltipHideTimer);
+  const tooltip = document.getElementById('hover-tooltip');
+  tooltip.setAttribute('role', 'tooltip');
+  if(tooltipOwner && tooltipOwner !== owner) tooltipOwner.removeAttribute('aria-describedby');
+  tooltipOwner = owner;
+  owner.setAttribute('aria-describedby', 'hover-tooltip');
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  const tooltip = document.getElementById('hover-tooltip');
+  if(!tooltip) return;
+  tooltip.addEventListener('mouseenter', ()=> clearTimeout(tooltipHideTimer));
+  tooltip.addEventListener('mouseleave', scheduleHideTooltip);
+});
+// Escape closes an open hover box without moving focus (1.4.13).
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape' && document.getElementById('hover-tooltip').classList.contains('visible')) hideTooltip();
+});
 
 function wireStatusTooltips(scope){
   scope.querySelectorAll('.mini-status[data-tip-id]').forEach(el=>{
     el.addEventListener('mouseenter', ()=> showTooltip(el, el.dataset.tipId));
-    el.addEventListener('mouseleave', hideTooltip);
+    el.addEventListener('mouseleave', scheduleHideTooltip);
     el.addEventListener('focus', ()=> showTooltip(el, el.dataset.tipId));
     el.addEventListener('blur', hideTooltip);
     // Touch devices have no hover — tap to toggle instead.
@@ -1424,9 +1525,9 @@ function staleFlagHTML(item){
 // Work System, Key Service, Program tiles all use this).
 function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAttrs='', subtitle='', exportKind='', exportId='', tileStyle='', extraClass='', statusAsHighlight=false, interactive=true }){
   const trend = trendItem ? computeTrend(trendItem.history) : null;
-  const trendHTML = trend ? `<span class="heat-trend" style="color:${trend==='improving'?'#fff':trend==='declining'?'#fff':'#fff'}">${TREND_META[trend].arrow}</span>` : '';
+  const trendHTML = trend ? `<span class="heat-trend" role="img" aria-label="Trend: ${TREND_META[trend].label}">${TREND_META[trend].arrow}</span>` : '';
   const exportBtnHTML = exportKind
-    ? `<span class="tile-export-btn" role="button" tabindex="0" data-export-kind="${exportKind}" data-export-id="${exportId}" title="Export this ${typeLabel}" aria-label="Export ${name}">⬇</span>`
+    ? `<button type="button" class="tile-export-btn" data-export-kind="${exportKind}" data-export-id="${exportId}" title="Export this ${typeLabel}" aria-label="Export ${escHTML(name)} as CSV">⬇</button>`
     : '';
   const styleAttr = tileStyle ? ` style="${tileStyle}"` : '';
   const classAttr = `heat-tile status-${status}${extraClass ? ' ' + extraClass : ''}${interactive ? '' : ' heat-tile-static'}`;
@@ -1435,10 +1536,11 @@ function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAt
   // highlight of its own — a solid colored chip — rather than plain
   // text that would otherwise blend into a pastel background.
   const statusLabelHTML = statusAsHighlight
-    ? `<span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span>`
+    ? `<span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${statusTextColor(status)};">${STATUS_META[status].label}</span>`
     : `<span>${STATUS_META[status].label}</span>`;
   return `
-    <div class="${classAttr}"${styleAttr} ${interactive ? 'role="button" tabindex="0"' : ''} ${dataAttrs}>
+    <div class="${classAttr}"${styleAttr} ${dataAttrs}>
+      ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`${typeLabel}: ${name}. ${STATUS_META[status].label}${trend ? '. Trend: ' + TREND_META[trend].label : ''}${subtitle ? '. ' + subtitle : ''}`)}"></button>` : ''}
       ${exportBtnHTML}
       <div class="heat-type">${typeLabel}</div>
       <div class="heat-name">${name}</div>
@@ -1480,8 +1582,10 @@ function renderRootModeToggle(){
   const el = document.getElementById('root-mode-toggle');
   if(!el) return;
   el.innerHTML = `
-    <button class="root-mode-btn${dashboardView.rootMode==='goal'?' active':''}" data-root-mode="goal">Strategic Plan Goal View</button>
-    <button class="root-mode-btn${dashboardView.rootMode==='workSystem'?' active':''}" data-root-mode="workSystem">Work System View</button>
+    <div role="group" aria-label="Choose a view" style="display:contents;">
+    <button type="button" class="root-mode-btn${dashboardView.rootMode==='goal'?' active':''}" data-root-mode="goal" aria-pressed="${dashboardView.rootMode==='goal'}">Strategic Plan Goal View</button>
+    <button type="button" class="root-mode-btn${dashboardView.rootMode==='workSystem'?' active':''}" data-root-mode="workSystem" aria-pressed="${dashboardView.rootMode==='workSystem'}">Work System View</button>
+    </div>
   `;
   el.querySelectorAll('[data-root-mode]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -1528,7 +1632,9 @@ function renderDashboardBreadcrumb(){
     parts.push(`<span class="sep">›</span>`);
     parts.push(`<button class="crumb current" data-crumb="keyservice">${ks ? ks.name : 'Key Service'}</button>`);
   }
-  bc.innerHTML = parts.join('');
+  bc.innerHTML = parts.join('').replace(/class="crumb current"/g, 'class="crumb current" aria-current="location"').replace(/<span class="sep">/g, '<span class="sep" aria-hidden="true">');
+  bc.setAttribute('role', 'navigation');
+  bc.setAttribute('aria-label', 'Breadcrumb');
 
   bc.querySelectorAll('.crumb').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -1550,9 +1656,10 @@ function renderDashboardBreadcrumb(){
 // zone — two separately-positioned regions, since they now live in two
 // differently-colored parts of the same tile. `selected`/`dimmed` drive
 // the persistent-row highlight-vs-grey-out behavior.
-function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false, dimmed=false, width=null } = {}){
+function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false, dimmed=false, width=null, interactive=true } = {}){
   const statusColor = statusDotColor(status);
-  const statusTextColor = status === 'at-risk' ? '#3a2c05' : '#fff';
+  const statusText = statusTextColor(status);
+  const tileColors = readableTileColors(g.color);
   const cls = `goal-tile${selected ? ' goal-tile-selected' : ''}${dimmed ? ' goal-tile-dimmed' : ''}`;
   const widthStyle = width ? `width:${width}px;` : '';
   // Solid brand color, full stop — no status color on the mountain
@@ -1561,13 +1668,14 @@ function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false
   const clip = `polygon(0% 100%, 0% ${left}%, 50% ${peak}%, 100% ${right}%, 100% 100%)`;
   return `
     <div class="heat-tile status-${status} ${cls}"
-         style="clip-path:${clip}; background:${g.color}; color:#fff; ${widthStyle}"
-         role="button" tabindex="0" data-drill-root="${g.id}">
-      <span class="tile-export-btn" role="button" tabindex="0" data-export-kind="goal" data-export-id="${g.id}" title="Export this Goal" aria-label="Export ${g.name}">⬇</span>
+         style="clip-path:${clip}; background:${tileColors.bg}; color:${tileColors.fg}; ${widthStyle}"
+         ${interactive ? `data-drill-root="${g.id}"` : ''}>
+      ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`Goal: ${g.name}. ${STATUS_META[status].label}`)}"${selected ? ' aria-current="true"' : ''}></button>` : ''}
+      <button type="button" class="tile-export-btn" data-export-kind="goal" data-export-id="${g.id}" title="Export this Goal" aria-label="Export ${escHTML(g.name)} as CSV">⬇</button>
       <div class="heat-name-mountain">${g.name}</div>
       <div class="heat-foot-mountain">
         <span class="heat-type-mountain">Goal</span>
-        <span class="heat-status-highlight" style="background:${statusColor}; color:${statusTextColor};">${STATUS_META[status].label}</span>
+        <span class="heat-status-highlight" style="background:${statusColor}; color:${statusText};">${STATUS_META[status].label}</span>
       </div>
     </div>
   `;
@@ -1621,7 +1729,7 @@ function renderSelectedGoalBanner(){
   container.classList.add('has-selection');
   container.innerHTML = goalMountainTileHTML(
     g, status, { left:55, peak:15, right:55 },
-    { selected:true, width:260 }
+    { selected:true, width:260, interactive:false }
   );
   // Decorative context card — not part of the click-driven grid, so
   // wire it separately rather than via wireDashboardTiles (whose
@@ -1653,12 +1761,13 @@ function workSystemCardHTML(ws, status, { selected=false } = {}){
   const kpiLabel = kpiCountLabel(ws.id);
   return `
     <div class="heat-tile ws-card${selected ? ' ws-card-selected' : ''}"
-         role="button" tabindex="0" data-drill-root="${ws.id}"${selected ? ' aria-current="true"' : ''}>
-      <span class="tile-export-btn" role="button" tabindex="0" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${ws.name}">⬇</span>
+         data-drill-root="${ws.id}">
+      <button type="button" class="tile-hit" aria-label="${escHTML(`Work System: ${ws.name}. ${STATUS_META[status].label}${kpiLabel ? '. ' + kpiLabel : ''}`)}"${selected ? ' aria-current="true"' : ''}></button>
+      <button type="button" class="tile-export-btn" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${escHTML(ws.name)} as CSV">⬇</button>
       <span class="ws-icon">${workSystemIconSVG(ws)}</span>
       <div class="ws-name">${ws.name}</div>
       ${kpiLabel ? `<div class="ws-kpis">${kpiLabel}</div>` : ''}
-      <div class="ws-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${status==='at-risk' ? '#3a2c05' : '#fff'};">${STATUS_META[status].label}</span></div>
+      <div class="ws-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${statusTextColor(status)};">${STATUS_META[status].label}</span></div>
     </div>
   `;
 }
@@ -1750,7 +1859,28 @@ window.addEventListener('resize', ()=>{
   explorerResizeTimer = setTimeout(()=>{ if(DATA) renderExplorerDetail(); }, 150);
 });
 
+// Re-rendering replaces the buttons the person just used, so keyboard
+// focus is moved to the new content and the change is announced.
 function renderDashboardHeatmap(){
+  const explorer = document.getElementById('goal-drill');
+  const prev = document.activeElement;
+  const hadFocus = explorer && prev && explorer.contains(prev) && prev !== explorer;
+  const prevMode = prev && prev.dataset ? prev.dataset.rootMode : null;
+  renderDashboardHeatmapContent();
+  const bc = document.getElementById('heatmap-breadcrumb');
+  const status = document.getElementById('sr-status');
+  if(status && bc) status.textContent = 'Showing ' + [...bc.querySelectorAll('.crumb')].map(c => c.textContent.trim()).join(', then ');
+  if(!hadFocus || document.contains(prev)) return;
+  const detail = document.getElementById('explorer-detail');
+  let target = null;
+  if(prevMode) target = document.querySelector(`[data-root-mode="${prevMode}"]`);
+  if(!target && detail && detail.style.display !== 'none' && detail.innerHTML.trim()){ detail.setAttribute('tabindex', '-1'); target = detail; }
+  if(!target) target = document.querySelector('#heatmap-grid .tile-hit');
+  if(!target) target = document.querySelector('#heatmap-breadcrumb [aria-current]');
+  if(target) target.focus({ preventScroll:false });
+}
+
+function renderDashboardHeatmapContent(){
   renderRootModeToggle();
   renderDashboardBreadcrumb();
   renderExplorerDetail();
@@ -1891,6 +2021,7 @@ function wireObjectiveTooltips(scope){
       tooltip.style.left = `${rect.left}px`;
       tooltip.style.top = `${rect.bottom + 8}px`;
       tooltip.classList.add('visible');
+      markTooltipShown(el);
       requestAnimationFrame(()=>{
         const tRect = tooltip.getBoundingClientRect();
         if(tRect.right > window.innerWidth - 12){ tooltip.style.left = `${Math.max(12, window.innerWidth - tRect.width - 12)}px`; }
@@ -1898,7 +2029,7 @@ function wireObjectiveTooltips(scope){
     };
     el.setAttribute('tabindex','0');
     el.addEventListener('mouseenter', show);
-    el.addEventListener('mouseleave', hideTooltip);
+    el.addEventListener('mouseleave', scheduleHideTooltip);
     el.addEventListener('focus', show);
     el.addEventListener('blur', hideTooltip);
     // Touch devices have no hover — tap to toggle instead.
@@ -2011,10 +2142,12 @@ function openDetailModal(kind, id){
   }
 
   const overlay = document.getElementById('modal-overlay');
+  if(!overlay.classList.contains('open')) modalReturnFocus = document.activeElement;
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   document.getElementById('modal-close').focus();
 }
+let modalReturnFocus = null;
 
 /* ---------- KPI block: headline number, chart, table ---------- */
 function fmtKpiNumber(v, k){
@@ -2215,7 +2348,7 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
     const p = sg.series.find(q => q.period === period);
     if(!p) return '<td>—</td>';
     const d = kpiDiff(p.value, p[basis], k);
-    return `<td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}" title="${escHTML(basisLabel)}: ${kpiHas(p[basis]) ? escHTML(fmtKpiComparison(p[basis], k)) : 'not set'}">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</td>`;
+    return `<td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}" title="${escHTML(basisLabel)}: ${kpiHas(p[basis]) ? escHTML(fmtKpiComparison(p[basis], k)) : 'not set'}">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}${d ? `<span class="sr-only"> (${escHTML(d.phrase)} ${basisLabel.toLowerCase()})</span><span aria-hidden="true"> ${d.good ? '▲' : '▼'}</span>` : ''}</td>`;
   };
   const tableHTML = `
     <div class="kpi-table-wrap">
@@ -2352,9 +2485,28 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
 
 function closeDetailModal(){
   const overlay = document.getElementById('modal-overlay');
+  if(!overlay.classList.contains('open')) return;
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
+  // Put focus back on whatever opened the pop-up.
+  const back = modalReturnFocus;
+  modalReturnFocus = null;
+  if(back && document.contains(back)) back.focus();
+  else document.getElementById('main').focus();
 }
+// Tab and Shift+Tab stay inside the open pop-up.
+document.addEventListener('keydown', e=>{
+  const overlay = document.getElementById('modal-overlay');
+  if(e.key !== 'Tab' || !overlay || !overlay.classList.contains('open')) return;
+  const panel = overlay.querySelector('.modal-panel');
+  const items = [...panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+    .filter(el => !el.disabled && el.offsetParent !== null);
+  if(!items.length) return;
+  const first = items[0], last = items[items.length - 1];
+  if(!panel.contains(document.activeElement)){ e.preventDefault(); first.focus(); return; }
+  if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+});
 
 function wireModalChrome(){
   document.getElementById('modal-close').addEventListener('click', closeDetailModal);
@@ -2700,22 +2852,36 @@ function showTourStep(){
   if(step.target){
     const el = document.querySelector(step.target);
     if(el){
-      el.scrollIntoView({ behavior:'smooth', block:'center' });
+      el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center' });
       el.classList.add('tour-highlight');
       tourHighlightedEl = el;
     }
   }
 }
 
-function startTour(){
+let tourReturnFocus = null;
+function startTour(e){
   tourStep = 0;
   document.getElementById('tour-card').style.display = 'block';
   showTourStep();
+  // Started from the "Take the tour" button: move focus into the tour.
+  // (When it opens by itself on a first visit, focus is left alone.)
+  if(e && e.type === 'click'){
+    tourReturnFocus = document.activeElement;
+    document.getElementById('tour-next').focus();
+  }
 }
 
 function endTour(markSeen){
   clearTourHighlight();
-  document.getElementById('tour-card').style.display = 'none';
+  const card = document.getElementById('tour-card');
+  const hadFocus = card.contains(document.activeElement);
+  card.style.display = 'none';
+  if(hadFocus){
+    const back = tourReturnFocus && document.contains(tourReturnFocus) ? tourReturnFocus : document.getElementById('tour-restart-btn');
+    back.focus();
+  }
+  tourReturnFocus = null;
   if(markSeen){
     try{ localStorage.setItem('durangoTourSeen', '1'); } catch(e){ /* storage unavailable — fine, tour just replays next visit */ }
   }
@@ -2732,6 +2898,9 @@ function wireTour(){
   });
   document.getElementById('tour-skip').addEventListener('click', ()=> endTour(true));
   document.getElementById('tour-restart-btn').addEventListener('click', startTour);
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape' && document.getElementById('tour-card').style.display === 'block') endTour(true);
+  });
 
   let alreadySeen = false;
   try{ alreadySeen = localStorage.getItem('durangoTourSeen') === '1'; } catch(e){ /* storage unavailable — default to showing the tour */ }
