@@ -369,91 +369,46 @@
       "drivesStatus": true,
       "frequency": "Every Year",
       "owner": "Library Director",
-      "status": "on-track",
+      "status": null,
+      "segmentsOnly": true,
       "onTrackWithinPct": 0,
       "offTrackBeyondPct": 0,
-      "series": [
-        {
-          "period": "2021",
-          "value": 100,
-          "target": 100,
-          "benchmark": 100,
-          "status": "on-track"
-        },
-        {
-          "period": "2022",
-          "value": 100,
-          "target": 100,
-          "benchmark": 100,
-          "status": "on-track"
-        },
-        {
-          "period": "2023",
-          "value": 100,
-          "target": 100,
-          "benchmark": 100,
-          "status": "on-track"
-        },
-        {
-          "period": "2024",
-          "value": 100,
-          "target": 100,
-          "benchmark": 100,
-          "status": "on-track"
-        },
-        {
-          "period": "2025",
-          "value": 100,
-          "target": 100,
-          "benchmark": 100,
-          "status": "on-track"
-        }
-      ],
-      "segments": [
-        {
-          "label": "Digital",
-          "value": 50
-        },
-        {
-          "label": "Physical",
-          "value": 50
-        }
-      ],
+      "series": [],
       "segmentSeries": [
         {
           "label": "Digital",
           "series": [
             {
               "period": "2021",
-              "value": 50,
+              "value": 55,
               "target": 50,
               "benchmark": 50,
               "status": "on-track"
             },
             {
               "period": "2022",
-              "value": 50,
+              "value": 48,
               "target": 50,
               "benchmark": 50,
-              "status": "on-track"
+              "status": "off-track"
             },
             {
               "period": "2023",
-              "value": 50,
+              "value": 25,
               "target": 50,
               "benchmark": 50,
-              "status": "on-track"
+              "status": "off-track"
             },
             {
               "period": "2024",
-              "value": 50,
+              "value": 68,
               "target": 50,
               "benchmark": 50,
               "status": "on-track"
             },
             {
               "period": "2025",
-              "value": 50,
+              "value": 54,
               "target": 50,
               "benchmark": 50,
               "status": "on-track"
@@ -465,35 +420,35 @@
           "series": [
             {
               "period": "2021",
-              "value": 50,
+              "value": 88,
               "target": 50,
               "benchmark": 50,
               "status": "on-track"
             },
             {
               "period": "2022",
-              "value": 50,
+              "value": 98,
               "target": 50,
               "benchmark": 50,
               "status": "on-track"
             },
             {
               "period": "2023",
-              "value": 50,
+              "value": 22,
               "target": 50,
               "benchmark": 50,
-              "status": "on-track"
+              "status": "off-track"
             },
             {
               "period": "2024",
-              "value": 50,
+              "value": 54,
               "target": 50,
               "benchmark": 50,
               "status": "on-track"
             },
             {
               "period": "2025",
-              "value": 50,
+              "value": 58,
               "target": 50,
               "benchmark": 50,
               "status": "on-track"
