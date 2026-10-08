@@ -470,6 +470,17 @@ def build():
         entry["offTrackBeyondPct"] = tidy(off_beyond)
         entry["series"] = series
         entry["segments"] = segments
+        # Each segment's history too, so the chart can draw a line per
+        # segment (e.g. Digital and Physical) beside the headline result.
+        order = []
+        for r in rows:
+            if r["segment"] and r["segment"] not in order:
+                order.append(r["segment"])
+        if order:
+            entry["segmentSeries"] = [
+                {"label": label, "series": build_series([r for r in rows if r["segment"] == label], entry, on_within, off_beyond)}
+                for label in order
+            ]
         kpis.append(entry)
 
     output = {

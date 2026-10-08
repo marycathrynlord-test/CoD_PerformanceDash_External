@@ -2074,6 +2074,11 @@ function kpiDiff(value, comparison, k){
 // line (each point colored by that period's status), the target as a
 // dashed line and the benchmark as a dotted one, whichever exist.
 // Skipped when there is only one period.
+const KPI_BREAKDOWN_COLORS = ['#2F6FA3', '#B26A1E', '#B04A7A', '#4A5A9A', '#8A5A44', '#1B8A79'];
+function kpiBreakdownLines(k){
+  return (!k.segmentsOnly && Array.isArray(k.segmentSeries)) ? k.segmentSeries.filter(sg => sg.series && sg.series.length) : [];
+}
+
 function kpiChartSVG(k, width){
   const pts = k.series;
   if(pts.length < 2) return '';
@@ -2081,9 +2086,14 @@ function kpiChartSVG(k, width){
   // on phones), so the labels stay a readable size instead of shrinking.
   // (An explicit width is passed for the wider on-page layout.)
   const W = width || Math.max(240, Math.min(464, window.innerWidth - 104));
-  const H = width ? 230 : 190, padL = 30, padR = 30, padT = 28, padB = 50;
+  const H = width ? 230 : 190, padL = 30, padT = 28, padB = 50;
+  // Room on the right for each breakdown line's end label ("Physical 44.00").
+  const endLabels = kpiBreakdownLines(k).map(sg => `${sg.label} ${fmtKpiValue(sg.series[sg.series.length - 1].value, k)}`);
+  const padR = endLabels.length ? Math.max(30, 16 + Math.max(...endLabels.map(t => t.length)) * 6.8) : 30;
   const lines = KPI_COMPARISONS.filter(c => pts.some(p => kpiHas(p[c.key])));
-  const all = pts.flatMap(p => [p.value, ...lines.map(c => p[c.key]).filter(kpiHas)]);
+  const breakdown = kpiBreakdownLines(k);
+  const all = pts.flatMap(p => [p.value, ...lines.map(c => p[c.key]).filter(kpiHas)])
+    .concat(breakdown.flatMap(sg => sg.series.map(p => p.value)));
   let lo = Math.min(...all), hi = Math.max(...all);
   if(hi === lo){ hi += 1; lo -= 1; }
   const x = i => padL + i * (W - padL - padR) / (pts.length - 1);
@@ -2104,16 +2114,32 @@ function kpiChartSVG(k, width){
       <text x="${x(i).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1E1E1E" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>`;
     }).join('')}`;
 
+  // Breakdown segments (e.g. Digital and Physical): a thinner line each,
+  // matched to the headline's periods, with the latest value at its end.
+  const idx = period => pts.findIndex(p => p.period === period);
+  const breakdownLayer = breakdown.map((sg, n) => {
+    const color = KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length];
+    const sp = sg.series.filter(p => idx(p.period) >= 0).sort((a,b) => idx(a.period) - idx(b.period));
+    if(!sp.length) return '';
+    const d = sp.map((p,j) => (j ? 'L' : 'M') + x(idx(p.period)).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
+    const last = sp[sp.length - 1];
+    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.75"/>
+      ${sp.map(p => `<circle cx="${x(idx(p.period)).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>`).join('')}
+      <text x="${(x(idx(last.period)) + 8).toFixed(1)}" y="${(y(last.value) + 4 + n * 12 * (breakdown.some((o,m) => m < n && Math.abs(y(o.series[o.series.length-1].value) - y(last.value)) < 12) ? 1 : 0)).toFixed(1)}" font-size="11" font-weight="700" fill="${color}" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(sg.label)} ${escHTML(fmtKpiValue(last.value, k))}</text>`;
+  }).join('');
+
   const xLabels = pts.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#5B6B67">${escHTML(p.period)}</text>`).join('');
-  const summary = pts.map(p => `${p.period}: ${fmtKpiValue(p.value, k)}`).join(', ');
+  const summary = pts.map(p => `${p.period}: ${fmtKpiValue(p.value, k)}`).join(', ')
+    + breakdown.map(sg => `; ${sg.label}: ` + sg.series.map(p => `${p.period} ${fmtKpiValue(p.value, k)}`).join(', ')).join('');
 
   return `
     <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHTML(k.name)} over time. ${escHTML(summary)}." font-family="inherit">
       <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#DCE6E2" stroke-width="1"/>
-      ${comparisonLayers}${valueLayer}${xLabels}
+      ${comparisonLayers}${breakdownLayer}${valueLayer}${xLabels}
     </svg>
-    <div class="kpi-legend">
-      <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>Result</span>
+    <div class="kpi-legend" style="flex-wrap:wrap;">
+      <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>${breakdown.length ? 'Total' : 'Result'}</span>
+      ${breakdown.map((sg,n) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length]}" stroke-width="1.75"/></svg>${escHTML(sg.label)}</span>`).join('')}
       ${lines.map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${c.label}</span>`).join('')}
     </div>`;
 }
@@ -2257,7 +2283,11 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
   const segmentsHTML = (k.segments && k.segments.length) ? `
     <div class="kpi-segments">
       <div class="modal-trend-label" style="margin-bottom:0;">${escHTML(latest.period)} breakdown</div>
-      ${k.segments.map(sg=>`<div class="modal-metric-row"><span class="mm-label">${escHTML(sg.label)}</span><span class="mm-value">${escHTML(fmtKpiValue(sg.value, k))}</span></div>`).join('')}
+      ${k.segments.map(sg=>{
+        const n = kpiBreakdownLines(k).findIndex(b => b.label === sg.label);
+        const swatch = n >= 0 ? `<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:-1px;background:${KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length]}"></span>` : '';
+        return `<div class="modal-metric-row"><span class="mm-label">${swatch}${escHTML(sg.label)}</span><span class="mm-value">${escHTML(fmtKpiValue(sg.value, k))}</span></div>`;
+      }).join('')}
     </div>` : '';
 
   // Group periods that share the same note into one footnote line.
