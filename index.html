@@ -693,11 +693,12 @@
      shows a share, not a status, so it is never red/gold/green. Drawn in
      currentColor so it reads on white cards and on colored Goal tiles. */
   .gauge-svg{display:block; overflow:visible;}
-  .gauge-svg .g-track{stroke:currentColor; opacity:.22;}
-  .gauge-svg .g-fill{stroke:currentColor;}
-  .gauge-svg .g-needle{stroke:currentColor;}
-  .gauge-svg .g-hub{fill:currentColor;}
-  .gauge-svg .g-tick{stroke:currentColor; opacity:.55;}
+  .gauge-svg .g-track{stroke:currentColor; opacity:.2;}
+  .gauge-svg .g-fill{stroke:currentColor; opacity:.9;}
+  .gauge-svg .g-needle{fill:var(--gauge-needle, var(--ink)); stroke:var(--gauge-needle, var(--ink)); stroke-width:1;}
+  .gauge-svg .g-hub{fill:var(--gauge-needle, var(--ink));}
+  .gauge-svg .g-hole{fill:var(--gauge-hole, #fff);}
+  .gauge-svg .g-tick{stroke:currentColor; opacity:.45;}
   .gauge-empty .gauge-svg .g-needle, .gauge-empty .gauge-svg .g-hub{display:none;}
   .gauge-block{display:flex; flex-direction:column; align-items:center; text-align:center; color:var(--forest);}
   .gauge-block .gauge-pct{font-size:26px; font-weight:700; line-height:1; margin-top:2px; color:var(--forest-dark);}
@@ -711,7 +712,8 @@
   .heat-tile.goal-tile .heat-foot-mountain{bottom:9px;}
 
   /* Work System buttons */
-  .ws-foot .gauge-inline{color:var(--forest);}
+  .ws-foot .gauge-inline{color:var(--forest); --gauge-hole:var(--mist);}
+  .heat-tile.ws-card.ws-card-selected .ws-foot .gauge-inline{--gauge-needle:#fff; --gauge-hole:var(--forest);}
   .ws-foot .gauge-inline .gauge-pct{color:var(--forest-dark); font-size:16px;}
   .ws-gauge-cap{font-size:11px; font-weight:600; color:var(--slate); margin-top:4px;}
   .heat-tile.ws-card.ws-card-selected .ws-foot .gauge-inline,
@@ -758,6 +760,58 @@
   .box-tag:not(.gold){color:#1F64A3;}  /* blue text at 4.5:1+ on white */
   .heat-tile.gauge-tile.goal-root-card{min-height:150px;}
   @media (min-width:821px){ .heatmap-grid.goal-roots-grid{display:none;} }
+  /* ---------- Goal Area row: mountain, band, gauge block ----------
+     Each Goal is one column: its brand-colored mountain with the name,
+     then (under the shared white "Goal Area Target Success Indicators"
+     band) a block in the same color with a dial showing the share of
+     Key Service KPIs meeting target. */
+  #goal-mountain-row.mountain-grid{position:relative; gap:0; padding-bottom:6px;}
+  .goal-col{position:relative; display:flex; flex-direction:column; cursor:pointer;
+    transition:transform .14s ease, filter .18s ease; filter:drop-shadow(0 4px 6px rgba(0,0,0,.16));}
+  .goal-col:hover, .goal-col:has(.tile-hit:focus-visible){transform:translateY(-3px); filter:drop-shadow(0 10px 14px rgba(0,0,0,.24)); z-index:2;}
+  .goal-col.goal-col-dimmed{filter:grayscale(.85) brightness(.97) drop-shadow(0 2px 4px rgba(0,0,0,.1)); opacity:.88;}
+  .goal-col.goal-col-dimmed:hover{filter:grayscale(.3) drop-shadow(0 8px 12px rgba(0,0,0,.2)); opacity:1;}
+  .goal-col.goal-col-static{cursor:default;}
+  .goal-col.goal-col-static:hover{transform:none;}
+  .goal-mtn{height:150px; position:relative;}
+  /* Soft light on the peaks, fading out well above the Goal name. */
+  .goal-mtn::before{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%);}
+  .goal-mtn-name{position:absolute; left:12px; right:12px; bottom:16px; font-size:13px; font-weight:700; line-height:1.25; letter-spacing:.005em;}
+  .goal-band-gap{height:40px;}
+  .goal-gauge-block{position:static; height:196px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    padding:20px 10px 14px; text-align:center;
+    background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.10) 100%);
+    --gauge-hole:var(--goal-bg); --gauge-needle:currentColor;}
+  .goal-col-darktext .goal-gauge-block{background-image:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,0,0,.05) 100%);}
+  .goal-col:first-child .goal-gauge-block, #goal-mountain-row .goal-col:nth-child(2) .goal-gauge-block{border-bottom-left-radius:10px;}
+  #goal-mountain-row .goal-col:last-child .goal-gauge-block{border-bottom-right-radius:10px;}
+  #selected-goal-banner .goal-gauge-block{border-radius:0 0 10px 10px;}
+  .ggb-dial{color:inherit;}
+  .ggb-dial .gauge-svg .g-track{opacity:.28;}
+  .ggb-dial .gauge-svg .g-fill{opacity:1;}
+  .ggb-dial .gauge-svg .g-tick{opacity:.6;}
+  .ggb-dial.gauge-empty .gauge-svg .g-track{opacity:.22;}
+  .goal-gauge-block .ggb-pct{font-size:28px; font-weight:700; line-height:1; letter-spacing:-.01em; margin-top:4px; font-variant-numeric:tabular-nums;}
+  .goal-gauge-block .ggb-cap{font-size:11px; font-weight:600; margin-top:9px; padding:4px 10px; border-radius:100px;
+    background:rgba(0,0,0,.16); line-height:1.2;}
+  .goal-col-darktext .goal-gauge-block .ggb-cap{background:rgba(0,0,0,.07);}
+  .goal-col .goal-gauge-block .tile-hit{position:absolute; inset:0; z-index:1;}
+  .goal-col .goal-gauge-block .tile-export-btn{position:absolute; top:auto; bottom:8px; right:8px; z-index:2;
+    width:22px; height:22px; border-radius:50%; font-size:11px; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.18); color:inherit; opacity:.75; transition:opacity .15s ease, background .15s ease;}
+  .goal-col-darktext .goal-gauge-block .tile-export-btn{background:rgba(0,0,0,.08);}
+  .goal-col:hover .goal-gauge-block .tile-export-btn, .goal-col .goal-gauge-block .tile-export-btn:focus-visible{opacity:1;}
+  .goal-band{position:absolute; left:-8px; right:-8px; top:150px; height:40px; z-index:3; pointer-events:none;
+    display:flex; align-items:center; justify-content:center; gap:12px; background:#fff; color:var(--forest-dark);
+    border-radius:6px; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 6px 16px rgba(0,0,0,.14);}
+  .goal-band .gb-title{font-size:12px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;}
+  .goal-band .gb-sub{font-size:12px; font-weight:500; color:var(--slate); padding-left:12px; border-left:1px solid var(--line);}
+  @media (max-width:1100px){ .goal-mtn-name{font-size:11.5px;} .goal-gauge-block .ggb-pct{font-size:22px;} .goal-band .gb-sub{display:none;} }
+  #selected-goal-banner .goal-col{width:260px;}
+  #selected-goal-banner.has-selection{position:relative; width:260px; max-width:100%;}
+  #selected-goal-banner .goal-band{left:-4px; right:-4px;}
+  #selected-goal-banner .goal-band .gb-title{font-size:9.5px; letter-spacing:.06em; white-space:nowrap;}
+  #selected-goal-banner .goal-band .gb-sub{display:none;}
   #modal-status-slot{display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;}
 </style>
 </head>
@@ -1143,27 +1197,36 @@ function gaugeSpoken(g){
 }
 
 // Half-circle gauge with a needle, 0% at the left and 100% at the right.
+// A dial: a track, the filled share in solid color, five ticks
+// (0/25/50/75/100%) and a tapered needle on a hub. Drawn in
+// currentColor so it works on white cards and on colored Goal blocks;
+// --gauge-hole sets the hub's center dot to the background color.
 function gaugeSVG(g, width){
-  const w = width || 120, h = Math.round(w * 0.6);
-  const cx = 60, cy = 58, r = 46;
-  const pct = (g.percent === null || g.percent === undefined) ? null : Math.max(0, Math.min(100, g.percent));
+  const w = width || 120, h = Math.round(w * 84 / 140);
+  const cx = 70, cy = 70, r = 54;
+  const share = (g.withResult ? g.meeting / g.withResult : null);
   const arc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
   const ticks = [0, 25, 50, 75, 100].map(t => {
     const a = Math.PI * (1 - t / 100);
-    const x1 = cx + Math.cos(a) * (r + 7), y1 = cy - Math.sin(a) * (r + 7);
-    const x2 = cx + Math.cos(a) * (r + 11), y2 = cy - Math.sin(a) * (r + 11);
-    return `<line class="g-tick" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke-width="1.6" stroke-linecap="round"/>`;
+    const p = (rad) => `${(cx + Math.cos(a) * rad).toFixed(1)} ${(cy - Math.sin(a) * rad).toFixed(1)}`;
+    return `<path class="g-tick" d="M ${p(r + 9)} L ${p(r + 13)}" stroke-width="2" stroke-linecap="round"/>`;
   }).join('');
-  let needle = '';
-  if(pct !== null){
+  let fill = '', needle = '';
+  if(share !== null){
+    const pct = Math.max(0, Math.min(1, share)) * 100;
+    if(pct > 0) fill = `<path class="g-fill" d="${arc}" fill="none" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="${pct.toFixed(2)} 100"/>`;
     const a = Math.PI * (1 - pct / 100);
-    const nx = cx + Math.cos(a) * (r - 14), ny = cy - Math.sin(a) * (r - 14);
-    needle = `<line class="g-needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke-width="3.2" stroke-linecap="round"/><circle class="g-hub" cx="${cx}" cy="${cy}" r="5"/>`;
+    const dx = Math.cos(a), dy = -Math.sin(a), nx = -dy, ny = dx;
+    const tip = [cx + dx * (r - 13), cy + dy * (r - 13)];
+    const tail = [cx - dx * 9, cy - dy * 9];
+    const b1 = [cx + nx * 4.2, cy + ny * 4.2], b2 = [cx - nx * 4.2, cy - ny * 4.2];
+    const pts = [tip, b1, tail, b2].map(q => q.map(v => v.toFixed(1)).join(',')).join(' ');
+    needle = `<polygon class="g-needle" points="${pts}" stroke-linejoin="round"/>
+      <circle class="g-hub" cx="${cx}" cy="${cy}" r="7"/><circle class="g-hole" cx="${cx}" cy="${cy}" r="2.6"/>`;
   }
-  return `<svg class="gauge-svg" width="${w}" height="${h}" viewBox="0 -12 120 76" aria-hidden="true" focusable="false">
-    <path class="g-track" d="${arc}" fill="none" stroke-width="11" stroke-linecap="round"/>
-    ${pct ? `<path class="g-fill" d="${arc}" fill="none" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="${pct} 100"/>` : ''}
-    ${ticks}${needle}
+  return `<svg class="gauge-svg" width="${w}" height="${h}" viewBox="0 0 140 84" aria-hidden="true" focusable="false">
+    <path class="g-track" d="${arc}" fill="none" stroke-width="12" stroke-linecap="round"/>
+    ${fill}${ticks}${needle}
   </svg>`;
 }
 
@@ -1197,7 +1260,7 @@ function gaugeTileHTML({ typeLabel, name, gauge, subtitle='', definition='', dat
       ${subtitle ? `<div class="heat-subtitle">${escHTML(subtitle)}</div>` : ''}
       ${definition ? `<div class="gt-def">${escHTML(definition)}</div>` : ''}
       <div class="gt-gauge${gauge.withResult ? '' : ' gauge-empty'}" aria-hidden="true">
-        ${gaugeSVG(gauge, 64)}
+        ${gaugeSVG(gauge, 76)}
         <div><div class="gauge-pct">${gaugePctText(gauge)}</div><div class="gt-cap">${escHTML(gaugeCaption(gauge))}</div></div>
       </div>
     </div>`;
@@ -1824,25 +1887,35 @@ function renderDashboardBreadcrumb(){
 // zone — two separately-positioned regions, since they now live in two
 // differently-colored parts of the same tile. `selected`/`dimmed` drive
 // the persistent-row highlight-vs-grey-out behavior.
+// Percent for the Goal blocks: whole numbers stay whole (100%), others
+// show two decimals (33.33%), worked out from the counts themselves.
+function goalPctText(g){
+  if(!g.withResult) return '—';
+  const v = g.meeting / g.withResult * 100;
+  return Number.isInteger(v) ? `${v}%` : `${v.toFixed(2)}%`;
+}
+
+// One Goal column: mountain (name), gap under the shared band, gauge block.
+// The block holds the Goal's one real button; the mountain is a mouse
+// target only, so keyboard users get a single stop per Goal.
 function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false, dimmed=false, width=null, interactive=true } = {}){
   const gauge = gaugeFor(g.id);
-  const tileColors = readableTileColors(g.color);
-  const cls = `goal-tile${selected ? ' goal-tile-selected' : ''}${dimmed ? ' goal-tile-dimmed' : ''}`;
-  const widthStyle = width ? `width:${width}px;` : '';
-  // Solid brand color, full stop — no status color on the mountain
-  // itself anymore. Status now shows entirely through the colored
-  // "On Track / At Risk / Off Track" badge below, not the shape.
+  const c = readableTileColors(g.color);
+  const cls = `goal-col${selected ? ' goal-col-selected' : ''}${dimmed ? ' goal-col-dimmed' : ''}${interactive ? '' : ' goal-col-static'}`;
   const clip = `polygon(0% 100%, 0% ${left}%, 50% ${peak}%, 100% ${right}%, 100% 100%)`;
+  const cap = gauge.withResult ? `${gauge.meeting} of ${plural(gauge.withResult, 'KPI')} meeting target` : (gauge.kpis.length ? 'Awaiting results' : 'No KPIs yet');
   return `
-    <div class="heat-tile ${cls}"
-         style="clip-path:${clip}; background:${tileColors.bg}; color:${tileColors.fg}; ${widthStyle}"
-         ${interactive ? `data-drill-root="${g.id}"` : ''}>
-      ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`Goal: ${g.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>` : ''}
-      <button type="button" class="tile-export-btn" data-export-kind="goal" data-export-id="${g.id}" title="Export this Goal" aria-label="Export ${escHTML(g.name)} as CSV">⬇</button>
-      <div class="heat-name-mountain">${g.name}</div>
-      <div class="heat-foot-mountain">
-        <span class="heat-type-mountain">Goal</span>
-        ${gaugeInlineHTML(gauge, 44)}
+    <div class="${cls}${c.fg === '#fff' ? '' : ' goal-col-darktext'}" style="color:${c.fg}; --goal-bg:${c.bg};${width ? ` width:${width}px;` : ''}" ${interactive ? `data-drill-root="${g.id}"` : ''}>
+      <div class="goal-mtn" style="clip-path:${clip}; background:${c.bg};">
+        <div class="goal-mtn-name">${escHTML(g.name)}</div>
+      </div>
+      <div class="goal-band-gap"></div>
+      <div class="goal-gauge-block" style="background:${c.bg};">
+        ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`Goal: ${g.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>` : ''}
+        <button type="button" class="tile-export-btn" data-export-kind="goal" data-export-id="${g.id}" title="Export this Goal" aria-label="Export ${escHTML(g.name)} as CSV">⬇</button>
+        <div class="ggb-dial${gauge.withResult ? '' : ' gauge-empty'}" aria-hidden="true">${gaugeSVG(gauge, 138)}</div>
+        <div class="ggb-pct" aria-hidden="true">${goalPctText(gauge)}</div>
+        <div class="ggb-cap" aria-hidden="true">${escHTML(cap)}</div>
       </div>
     </div>
   `;
@@ -1862,11 +1935,11 @@ function renderGoalMountainRow(){
   }
 
   const goals = sortGoalsCanonical(DATA.goals);
-  const boundaries = [45, 38, 35, 15, 22, 40, 55];
-  const peaks = [25, 28, 10, 2, 30, 45];
+  const boundaries = [66, 56, 56, 25, 35, 58, 66];
+  const peaks = [38, 44, 15, 2, 46, 56];
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = goals.map((g,i)=>{
+  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span><span class="gb-sub">Share of Key Service KPIs meeting target</span></div>` + goals.map((g,i)=>{
     const left = boundaries[i] ?? 40, peak = peaks[i] ?? 30, right = boundaries[i+1] ?? 40;
     return goalMountainTileHTML(g, null, { left, peak, right }, {
       selected: selectedId === g.id,
@@ -1892,7 +1965,7 @@ function renderSelectedGoalBanner(){
   if(!g){ container.innerHTML = ''; container.classList.remove('has-selection'); return; }
 
   container.classList.add('has-selection');
-  container.innerHTML = goalMountainTileHTML(
+  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span><span class="gb-sub">Share of Key Service KPIs meeting target</span></div>` + goalMountainTileHTML(
     g, null, { left:55, peak:15, right:55 },
     { selected:true, width:260, interactive:false }
   );
