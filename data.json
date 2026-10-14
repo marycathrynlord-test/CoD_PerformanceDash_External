@@ -38,12 +38,12 @@
   ],
 
   "workSystems": [
-    { "id": "ws1", "name": "Leadership and Governance", "color": "#3A5A6E" },
-    { "id": "ws2", "name": "Financial and Internal Services", "color": "#4A7A80" },
-    { "id": "ws3", "name": "Community Growth and Economic Vitality", "color": "#5C8A78" },
-    { "id": "ws4", "name": "Public Safety", "color": "#4A6580" },
-    { "id": "ws5", "name": "Infrastructure", "color": "#4A7D8C" },
-    { "id": "ws6", "name": "Parks, Recreation and Cultural Services", "color": "#5A8874" }
+    { "id": "ws1", "name": "Leadership and Governance", "color": "#006A53" },
+    { "id": "ws2", "name": "Financial and Internal Services", "color": "#006A53" },
+    { "id": "ws3", "name": "Community Growth and Economic Vitality", "color": "#006A53" },
+    { "id": "ws4", "name": "Public Safety", "color": "#006A53" },
+    { "id": "ws5", "name": "Infrastructure", "color": "#006A53" },
+    { "id": "ws6", "name": "Parks, Recreation and Cultural Services", "color": "#006A53" }
   ],
 
   "keyServices": [

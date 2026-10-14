@@ -13,18 +13,21 @@
   :root{
     --ink:#1E1E1E;
     --forest:#006A53;
-    --forest-dark:#004E3D;
+    /* Approved brand palette: #1E1E1E, #006A53, #1B8A79, #7FB4A9 (+ white).
+       Neutrals below are tints of those four. Exceptions: the Strategic
+       Plan Goal mountain (Goal colors) and the red/gold status colors. */
+    --forest-dark:#006A53;
     --teal:#1B8A79;
     --sage:#7FB4A9;
-    --mist:#EAF2EF;
-    --paper:#FBFCFB;
-    --line:#DCE6E2;
-    --slate:#5B6B67;
+    --mist:#ECF4F2;      /* sage, 15% tint */
+    --paper:#FAFCFC;     /* sage, 4% tint */
+    --line:#D9E9E5;      /* sage, 30% tint */
+    --slate:#4B4B4B;     /* ink, 80% tint: secondary text, 8.9:1 on white */
     --white:#FFFFFF;
     --radius:10px;
-    --fw-gold:#D9A441;
-    --fw-blue:#2F86D1;
-    --fw-purple:#9B7FC9;
+    --fw-gold:#7FB4A9;   /* framework legend colors, now brand */
+    --fw-blue:#006A53;
+    --fw-purple:#1B8A79;
   }
 
   *{box-sizing:border-box;}
@@ -49,7 +52,7 @@
   .brand{display:flex;align-items:center;gap:14px;}
   .mark{width:40px;height:40px;flex:none;}
   .brand-text{line-height:1.15;}
-  .brand-text .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#D7EBE6;}
+  .brand-text .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#FFFFFF;}
   .brand-text .title{font-size:19px;font-weight:700;letter-spacing:.01em;}
   .header-right{display:flex;align-items:center;gap:14px;}
   .datepill{font-size:12.5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);padding:7px 14px;border-radius:100px;}
@@ -95,14 +98,14 @@
     padding:3px 10px; border-radius:100px; white-space:nowrap; flex:none;
   }
   .status-dot{width:8px;height:8px;border-radius:50%;flex:none;}
-  .status-on-track{ color:#00543F; background:rgba(27,138,121,0.14); }
-  .status-on-track .status-dot{ background:#198372; }
+  .status-on-track{ color:#006A53; background:rgba(27,138,121,0.14); }
+  .status-on-track .status-dot{ background:#006A53; }
   .status-at-risk{ color:#8A6414; background:rgba(217,164,65,0.20); }
   .status-at-risk .status-dot{ background:#D9A441; }
   .status-off-track{ color:#8A2E26; background:rgba(193,68,59,0.14); }
   .status-off-track .status-dot{ background:#C1443B; }
-  .status-no-data{ color:#5B6B67; background:rgba(154,166,162,0.20); }
-  .status-no-data .status-dot{ background:#9AA6A2; }
+  .status-no-data{ color:#4B4B4B; background:rgba(127,180,169,0.22); }
+  .status-no-data .status-dot{ background:#7FB4A9; }
 
   .status-legend{display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:14px; font-size:12.5px; color:var(--slate);}
   .status-legend .item{display:flex; align-items:center; gap:7px;}
@@ -120,7 +123,7 @@
 
   /* ---------- Detail modal ---------- */
   .modal-overlay{
-    position:fixed; inset:0; background:rgba(13,43,36,0.45);
+    position:fixed; inset:0; background:rgba(30,30,30,0.45);
     display:flex; align-items:center; justify-content:center; padding:24px;
     opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:1000;
   }
@@ -181,7 +184,7 @@
   /* ---------- Accordion tree (shared) ---------- */
   .drill-col{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
   .drill-col-head{padding:16px 20px; border-bottom:1px solid var(--line);}
-  .drill-col-head .tag{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--fw-purple);}
+  .drill-col-head .tag{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#006A53;}
   .drill-col-head h3{margin:2px 0 0; font-size:16px; font-weight:700; color:var(--forest-dark);}
   .drill-col-body{padding:8px 12px 14px;}
 
@@ -196,7 +199,7 @@
     font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
     border:1.5px solid var(--fw-blue); color:var(--fw-blue); border-radius:5px; padding:2px 7px; white-space:nowrap;
   }
-  .box-tag.gold{border-color:var(--fw-gold); color:#9C6E1F;}
+  .box-tag.gold{border-color:#7FB4A9; color:#1E1E1E;}
   .node-header .name{font-size:14.5px; font-weight:700; color:var(--ink);}
   .node-header .meta{font-size:12px; color:var(--slate); display:flex; align-items:center; gap:8px; white-space:nowrap;}
   .node-header .chevron{transition:transform .2s ease; color:var(--slate); font-size:13px;}
@@ -216,8 +219,8 @@
   .empty-note{margin:0 0 10px 30px; font-size:12px; color:var(--slate); font-style:italic;}
 
   .align-tag{
-    font-size:10px; font-weight:600; color:var(--fw-purple);
-    background:rgba(155,127,201,0.12); border:1px solid rgba(155,127,201,0.35);
+    font-size:10px; font-weight:600; color:#006A53;
+    background:rgba(127,180,169,0.14); border:1px solid rgba(127,180,169,0.5);
     border-radius:100px; padding:2px 8px; white-space:nowrap; cursor:help;
   }
   .goal-subhead{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--slate); padding:14px 8px 8px;}
@@ -246,9 +249,9 @@
   .kpi-chip{font-size:12px; color:var(--slate); background:var(--white); border:1px solid var(--line); border-radius:6px; padding:4px 10px; white-space:nowrap;}
   .kpi-chip .kpi-chip-label{font-weight:700; color:var(--forest-dark);}
   .kpi-chip strong{color:var(--ink);}
-  .kpi-chip .kpi-good{color:#00543F; font-weight:700;}
+  .kpi-chip .kpi-good{color:#006A53; font-weight:700;}
   .kpi-chip .kpi-bad{color:#8A2E26; font-weight:700;}
-  .kpi-chip.kpi-chip-missing{border-style:dashed; border-color:#9AA6A2; background:rgba(154,166,162,0.12); font-style:italic;}
+  .kpi-chip.kpi-chip-missing{border-style:dashed; border-color:#7FB4A9; background:rgba(127,180,169,0.12); font-style:italic;}
   .kpi-notset{color:var(--slate); font-style:italic; font-size:11.5px;}
   .kpi-table-wrap{overflow-x:auto;}
   .kpi-chart{display:block; width:100%; height:auto; margin-top:12px;}
@@ -259,14 +262,14 @@
   .kpi-table td{text-align:right; padding:6px 0 6px 12px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; white-space:nowrap;}
   .kpi-table th:first-child, .kpi-table td:first-child{padding-left:0;}
   .kpi-table th:first-child, .kpi-table td:first-child{text-align:left;}
-  .kpi-table td.kpi-up{color:#00543F; font-weight:700;}
+  .kpi-table td.kpi-up{color:#006A53; font-weight:700;}
   .kpi-table td.kpi-down{color:#8A2E26; font-weight:700;}
   .kpi-segments{display:flex; flex-direction:column; gap:7px; margin-top:14px;}
   .kpi-notes{font-size:11.5px; color:var(--slate); line-height:1.5; margin:12px 0 0;}
-  .kpi-pending-note{font-size:13px; color:var(--slate); margin:10px 0 0; padding:10px 12px; border:1px dashed #9AA6A2; border-radius:6px; background:rgba(154,166,162,0.08);}
+  .kpi-pending-note{font-size:13px; color:var(--slate); margin:10px 0 0; padding:10px 12px; border:1px dashed #7FB4A9; border-radius:6px; background:rgba(127,180,169,0.10);}
   /* Segment-only KPIs (no single headline number): one tile per segment,
      side by side, each with its own latest value and status. */
-  .kpi-bysegment{font-size:11.5px; color:var(--slate); background:rgba(154,166,162,0.12); border:1px dashed #9AA6A2; border-radius:6px; padding:3px 9px; font-style:italic;}
+  .kpi-bysegment{font-size:11.5px; color:var(--slate); background:rgba(127,180,169,0.14); border:1px dashed #7FB4A9; border-radius:6px; padding:3px 9px; font-style:italic;}
   .kpi-seg-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(138px, 1fr)); gap:10px; margin-top:12px;}
   .kpi-seg-tile{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--white); display:flex; flex-direction:column; gap:6px; border-top:3px solid var(--seg-color, #006A53);}
   .kpi-seg-label{font-size:12.5px; font-weight:700; color:var(--forest-dark);}
@@ -274,7 +277,7 @@
   .kpi-seg-value small{font-size:11.5px; font-weight:400; color:var(--slate); margin-left:6px; letter-spacing:0;}
   .kpi-seg-meta{font-size:11.5px; color:var(--slate); line-height:1.45;}
   .kpi-seg-meta strong{color:var(--ink);}
-  .kpi-seg-meta .kpi-good{color:#00543F; font-weight:700;}
+  .kpi-seg-meta .kpi-good{color:#006A53; font-weight:700;}
   .kpi-seg-meta .kpi-bad{color:#8A2E26; font-weight:700;}
   .kpi-seg-tile .kpi-seg-status:empty{display:none;}
   .kpi-total-tile{background:rgba(0,106,83,0.05);}
@@ -419,8 +422,8 @@
   .ws-kpis{ font-size:11.5px; font-weight:600; color:var(--slate); margin-top:4px; }
   .ws-foot{ margin-top:auto; padding-top:12px; }
   .ws-foot .heat-status-highlight{ font-size:11.5px; padding:4px 11px; }
-  .heatmap-grid .heat-tile.ws-card .tile-export-btn{ background:rgba(0,78,61,.08); color:var(--forest-dark); }
-  .heatmap-grid .heat-tile.ws-card .tile-export-btn:hover{ background:rgba(0,78,61,.18); }
+  .heatmap-grid .heat-tile.ws-card .tile-export-btn{ background:rgba(0,106,83,.08); color:var(--forest-dark); }
+  .heatmap-grid .heat-tile.ws-card .tile-export-btn:hover{ background:rgba(0,106,83,.18); }
   .heatmap-grid .heat-tile.ws-card.ws-card-selected{ background:var(--forest); border-color:var(--forest-dark); color:var(--white); }
   .heat-tile.ws-card.ws-card-selected .ws-icon{ background:var(--white); color:var(--forest); }
   .heat-tile.ws-card.ws-card-selected .ws-kpis{ color:var(--mist); }
@@ -465,10 +468,10 @@
   }
   .view-details-link:hover{ text-decoration:underline; }
 
-  .heat-tile.status-on-track{ background:#198372; }
-  .heat-tile.status-at-risk{ background:#D9A441; color:#3a2c05; }
+  .heat-tile.status-on-track{ background:#006A53; }
+  .heat-tile.status-at-risk{ background:#D9A441; color:#1E1E1E; }
   .heat-tile.status-off-track{ background:#C1443B; }
-  .heat-tile.status-no-data{ background:#9AA6A2; color:#1E1E1E; }
+  .heat-tile.status-no-data{ background:#7FB4A9; color:#1E1E1E; }
 
   .heat-tile.split .heat-split-bg{ position:absolute; inset:0; z-index:0; }
   .heat-tile.split .heat-split-bg .half{ position:absolute; top:0; bottom:0; width:50%; }
@@ -649,15 +652,15 @@
   .footer-panel{background:var(--forest-dark); color:var(--white); border-radius:var(--radius); padding:36px 32px 0; overflow:hidden; position:relative;}
   .footer-inner{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:24px; position:relative; z-index:2; padding-bottom:24px;}
   .footer-inner h3{margin:0 0 8px; font-size:16px; font-weight:700;}
-  .footer-inner p{margin:0; font-size:13px; color:#D7EBE6; max-width:360px; line-height:1.6;}
+  .footer-inner p{margin:0; font-size:13px; color:#FFFFFF; max-width:360px; line-height:1.6;}
   .contact-grid{display:grid; grid-template-columns:repeat(2,auto); gap:8px 40px; font-size:13px;}
-  .contact-grid div span{display:block; color:#D7EBE6; font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:3px;}
+  .contact-grid div span{display:block; color:#FFFFFF; font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:3px;}
   .footer-mountains{display:block; width:100%; height:110px; position:relative; z-index:1;}
 
   /* ===== Accessibility (WCAG 2.1 AA) ===== */
-  :root{ --teal-ink:#177A6B; --focus:#004E3D; }
+  :root{ --teal-ink:#006A53; --focus:#1E1E1E; }
   .sr-only{position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
-  .skip-link{position:absolute; left:12px; top:-80px; z-index:3000; background:#fff; color:#004E3D; font-weight:700; padding:10px 16px; border-radius:8px; border:2px solid #004E3D; text-decoration:none;}
+  .skip-link{position:absolute; left:12px; top:-80px; z-index:3000; background:#fff; color:#006A53; font-weight:700; padding:10px 16px; border-radius:8px; border:2px solid #006A53; text-decoration:none;}
   .skip-link:focus{top:12px;}
   main:focus{outline:none;}
   /* Clearly visible keyboard focus on everything (2.4.7, 1.4.11) */
@@ -731,8 +734,8 @@
   .heat-tile.gauge-tile .gt-gauge{margin-top:auto; padding-top:10px; display:flex; align-items:center; gap:10px; color:var(--forest);}
   .heat-tile.gauge-tile .gt-gauge .gauge-pct{font-size:20px; font-weight:700; color:var(--forest-dark); line-height:1;}
   .heat-tile.gauge-tile .gt-gauge .gt-cap{font-size:11px; font-weight:600; color:var(--slate); line-height:1.35;}
-  .heat-tile.gauge-tile .tile-export-btn{background:rgba(0,78,61,.08); color:var(--forest-dark);}
-  .heat-tile.gauge-tile .tile-export-btn:hover{background:rgba(0,78,61,.18);}
+  .heat-tile.gauge-tile .tile-export-btn{background:rgba(0,106,83,.08); color:var(--forest-dark);}
+  .heat-tile.gauge-tile .tile-export-btn:hover{background:rgba(0,106,83,.18);}
   .heat-tile.gauge-tile .tile-hit:focus-visible{outline:3px solid var(--focus) !important; outline-offset:-3px !important; box-shadow:none;}
   .heat-tile.gauge-tile .heat-name{font-size:13.5px; padding-right:26px;}
   .heat-tile.gauge-tile.objective-card{border-top:5px solid var(--goal-color, var(--forest)); min-height:230px;}
@@ -757,7 +760,7 @@
   @media (max-width:640px){ .level-summary{grid-template-columns:1fr;} .level-summary .gauge-block{align-items:flex-start; text-align:left;} }
   .grid-label{font-size:11.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--slate); margin:0 0 10px;}
   .grid-label:empty{display:none;}
-  .box-tag:not(.gold){color:#1F64A3;}  /* blue text at 4.5:1+ on white */
+  .box-tag:not(.gold){color:#006A53; border-color:#006A53;}
   .heat-tile.gauge-tile.goal-root-card{min-height:150px;}
   @media (min-width:821px){ .heatmap-grid.goal-roots-grid{display:none;} }
   /* ---------- Goal Area row: mountain, band, gauge block ----------
@@ -812,6 +815,53 @@
   #selected-goal-banner .goal-band{left:-4px; right:-4px;}
   #selected-goal-banner .goal-band .gb-title{font-size:9.5px; letter-spacing:.06em; white-space:nowrap;}
   #selected-goal-banner .goal-band .gb-sub{display:none;}
+  /* ---------- Work System row: same structure as the Goal row ----------
+     Separate panels (not a joined mountain range), each in its Work
+     System's color, under one shared band. Below 820px the row wraps,
+     so each column shows its own small band instead. */
+  #worksystem-card-row.ws-card-grid{position:relative; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:0 10px; padding-bottom:6px;}
+  .ggb-dial{width:100%; display:flex; justify-content:center;}
+  .ggb-dial .gauge-svg{width:100%; max-width:138px; height:auto;}
+  .goal-gauge-block{min-width:0;}
+  .ws-col .ws-top{height:150px; border-radius:12px 12px 0 0; position:relative; display:flex; flex-direction:column; align-items:center;
+    justify-content:flex-start; padding:18px 10px 12px; text-align:center;
+    }
+  .ws-top-icon{width:46px; height:46px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; flex:none;
+    box-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .ws-top-icon svg{width:25px; height:25px; display:block;}
+  .ws-top-name{font-size:13.5px; font-weight:700; line-height:1.25; margin-top:10px;}
+  .ws-top-meta{font-size:11px; font-weight:600; margin-top:auto; padding-top:6px;}
+  .ws-col .goal-gauge-block{border-radius:0 0 12px 12px;}
+  /* Selected Work System: an ink ring and a pointer toward the details
+     below (no grey-out, so every panel stays in brand colors). */
+  .ws-col.goal-col-selected::after{content:""; position:absolute; inset:-5px; border:3px solid #1E1E1E; border-radius:16px; pointer-events:none; z-index:4;}
+  .ws-col.goal-col-selected::before{content:""; position:absolute; left:50%; bottom:-15px; transform:translateX(-50%);
+    border:9px solid transparent; border-top-color:#1E1E1E; pointer-events:none; z-index:4;}
+  #worksystem-card-row.ws-card-grid{padding-bottom:20px;}
+  .ws-col .ws-gauge-block{background:#7FB4A9; color:#1E1E1E; --gauge-hole:#7FB4A9;
+    background-image:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,106,83,.08) 100%);}
+  .ws-col .ws-gauge-block .ggb-cap{background:rgba(255,255,255,.45);}
+  .ws-col .ws-gauge-block .tile-export-btn{background:rgba(255,255,255,.45);}
+  .ws-col .ws-gauge-block .ggb-dial .gauge-svg .g-track{opacity:.22;}
+  .ws-col .goal-band-gap{position:relative;}
+  .ws-band-mini{display:none;}
+  #worksystem-card-row .ws-band{left:-8px; right:-8px;}
+  @media (max-width:1100px){ .ws-top-name{font-size:12px;} .ws-top-meta{font-size:10px;} }
+  @media (max-width:820px){
+    #worksystem-card-row.ws-card-grid{grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px 10px;}
+    #worksystem-card-row .ws-band{display:none;}
+    .ws-col .ws-top{height:auto; min-height:150px;}
+    .ws-band-mini{display:flex; position:absolute; inset:0; align-items:center; justify-content:center; background:#fff;
+      color:var(--forest-dark); font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+      box-shadow:0 1px 0 rgba(0,0,0,.06), 0 3px 8px rgba(0,0,0,.12); z-index:2; pointer-events:none;}
+  }
+  @media (max-width:560px){
+    #worksystem-card-row.ws-card-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
+    .ws-col .goal-gauge-block{height:auto; min-height:170px; padding:16px 8px 34px;}
+    .ws-col .goal-gauge-block .ggb-pct{font-size:22px;}
+    .ws-col .goal-gauge-block .ggb-cap{font-size:10px; padding:3px 8px;}
+    .ws-top-icon{width:40px; height:40px;} .ws-top-icon svg{width:22px; height:22px;}
+  }
   #modal-status-slot{display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;}
 </style>
 </head>
@@ -823,7 +873,7 @@
     <svg class="mark" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <polygon points="4,34 14,14 24,34" fill="#7FB4A9"/>
       <polygon points="14,34 24,10 34,34" fill="#1B8A79"/>
-      <polygon points="24,34 32,18 40,34" fill="#EAF2EF"/>
+      <polygon points="24,34 32,18 40,34" fill="#FFFFFF"/>
     </svg>
     <div class="brand-text">
       <div class="eyebrow">City of Durango</div>
@@ -894,7 +944,7 @@
           </div>
         </div>
         <div class="ref-row">
-          <span class="ref-icon" style="background:var(--teal);"></span>
+          <span class="ref-icon" style="background:#1E1E1E;"></span>
           <div>
             <div class="ref-term">Programs</div>
             <div class="ref-desc">Operational activities and service delivery functions.</div>
@@ -905,7 +955,7 @@
         <h3 class="reference-col-title">Progress Key</h3>
         <p class="reference-col-sub">What each status color means, wherever it appears.</p>
         <div class="ref-row">
-          <span class="ref-icon dot" style="background:#198372;"></span>
+          <span class="ref-icon dot" style="background:#006A53;"></span>
           <div>
             <div class="ref-term">On Track</div>
             <div class="ref-desc">Performance is at or above target, or within an agreed tolerance (e.g. within 5%).</div>
@@ -926,7 +976,7 @@
           </div>
         </div>
         <div class="ref-row">
-          <span class="ref-icon dot" style="background:#9AA6A2;"></span>
+          <span class="ref-icon dot" style="background:#7FB4A9;"></span>
           <div>
             <div class="ref-term">No Data</div>
             <div class="ref-desc">No current measure has been recorded for this item.</div>
@@ -940,7 +990,7 @@
           </div>
         </div>
         <div class="ref-row">
-          <span class="ref-icon dot" style="background:var(--fw-purple);"></span>
+          <span class="ref-icon dot" style="background:#1B8A79;"></span>
           <div>
             <div class="ref-term">⏱ Stale</div>
             <div class="ref-desc">Not updated in over 45 days — treat the badge as unverified until refreshed.</div>
@@ -1052,7 +1102,7 @@
       <svg class="footer-mountains" viewBox="0 0 1200 110" preserveAspectRatio="none" aria-hidden="true">
         <polygon points="0,110 0,70 120,20 260,80 400,10 560,75 700,35 860,90 1000,25 1120,65 1200,40 1200,110" fill="#7FB4A9" opacity="0.35"/>
         <polygon points="0,110 0,90 150,45 300,95 460,40 620,95 780,55 940,100 1100,50 1200,80 1200,110" fill="#1B8A79" opacity="0.55"/>
-        <polygon points="0,110 0,105 200,75 380,105 560,65 760,105 950,80 1200,105 1200,110" fill="#004E3D" opacity="0.9"/>
+        <polygon points="0,110 0,105 200,75 380,105 560,65 760,105 950,80 1200,105 1200,110" fill="#1E1E1E" opacity="0.35"/>
       </svg>
     </div>
   </footer>
@@ -1346,7 +1396,7 @@ function computeTrend(history){
 const TREND_META = {
   improving: { arrow:'▲', color:'#1B8A79', label:'Improving' },
   declining: { arrow:'▼', color:'#C1443B', label:'Declining' },
-  flat:      { arrow:'▬', color:'#9AA6A2', label:'Flat' },
+  flat:      { arrow:'▬', color:'#4B4B4B', label:'Flat' },
 };
 
 function trendArrowHTML(item, kind, id){
@@ -1381,7 +1431,7 @@ function sparklineSVG(history, w=240, h=56){
   ).join('');
   return `
     <svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Status trend over time">
-      <path d="${linePath}" fill="none" stroke="#9AA6A2" stroke-width="1.5" opacity="0.6"/>
+      <path d="${linePath}" fill="none" stroke="#7FB4A9" stroke-width="1.5" opacity="0.8"/>
       ${dots}
     </svg>
   `;
@@ -1406,7 +1456,7 @@ function programStatus(p){ return kpiDrivenStatus(p.id) || p.status || 'no-data'
 // Text color for a solid status-colored chip: dark where white text
 // would fall below 4.5:1 (At Risk gold, No Data grey).
 function statusTextColor(status){
-  return status === 'at-risk' ? '#3a2c05' : status === 'no-data' ? '#1E1E1E' : '#fff';
+  return status === 'at-risk' ? '#1E1E1E' : status === 'no-data' ? '#1E1E1E' : '#fff';
 }
 
 // Goal tiles keep each Goal's own brand color. Text is white when that
@@ -1441,10 +1491,10 @@ function statusBadgeHTML(status){
 }
 
 function statusDotColor(status){
-  return status==='on-track' ? '#198372'
+  return status==='on-track' ? '#006A53'
        : status==='at-risk'  ? '#D9A441'
        : status==='off-track'? '#C1443B'
-       : '#9AA6A2';
+       : '#7FB4A9';
 }
 
 let tooltipRegistry = {};
@@ -1558,8 +1608,8 @@ document.addEventListener('click', ()=>{ hideTooltip(); });
 function gaugeBreakdownHTML(items){
   const groups = [
     { key:'with', label:'With a gauge reading', color:'#006A53', names:[] },
-    { key:'await', label:'Awaiting results', color:'#9AA6A2', names:[] },
-    { key:'none', label:'No Key Service KPIs yet', color:'#DCE6E2', names:[] },
+    { key:'await', label:'Awaiting results', color:'#7FB4A9', names:[] },
+    { key:'none', label:'No Key Service KPIs yet', color:'#FFFFFF', names:[] },
   ];
   items.forEach(item=>{
     const g = gaugeFor(item.id);
@@ -1892,7 +1942,7 @@ function renderDashboardBreadcrumb(){
 function goalPctText(g){
   if(!g.withResult) return '—';
   const v = g.meeting / g.withResult * 100;
-  return Number.isInteger(v) ? `${v}%` : `${v.toFixed(2)}%`;
+  return `${parseFloat(v.toFixed(2))}%`;  // 33.33%, 62.5%, 100%
 }
 
 // One Goal column: mountain (name), gap under the shared band, gauge block.
@@ -1995,18 +2045,32 @@ function workSystemIconSVG(ws){
 }
 
 // One large button per Work System: icon, name, KPI count and status chip.
-function workSystemCardHTML(ws, status, { selected=false } = {}){
+// One Work System column, built like the Goal columns: a panel in the
+// Work System's color with its icon and name, a gap under the shared
+// band, then the gauge block with the dial, percentage and caption.
+function workSystemCardHTML(ws, status, { selected=false, dimmed=false } = {}){
   const gauge = gaugeFor(ws.id);
-  const kpiLabel = plural(gauge.kpis.length, 'Key Service KPI');
+  // Brand colors: forest panel (white text, 6.59:1) and a sage gauge
+  // block (ink text, 7.15:1). The Work System colors in data.json are not used.
+  const c = { bg:'#006A53', fg:'#fff' };
+  const nKs = keyServicesUnderWorkSystem(ws.id).length;
+  const cap = gauge.withResult ? `${gauge.meeting} of ${plural(gauge.withResult, 'KPI')} meeting target` : (gauge.kpis.length ? 'Awaiting results' : 'No KPIs yet');
   return `
-    <div class="heat-tile ws-card${selected ? ' ws-card-selected' : ''}"
-         data-drill-root="${ws.id}">
-      <button type="button" class="tile-hit" aria-label="${escHTML(`Work System: ${ws.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>
-      <button type="button" class="tile-export-btn" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${escHTML(ws.name)} as CSV">⬇</button>
-      <span class="ws-icon">${workSystemIconSVG(ws)}</span>
-      <div class="ws-name">${ws.name}</div>
-      <div class="ws-kpis">${kpiLabel}</div>
-      <div class="ws-foot">${gaugeInlineHTML(gauge, 56)}<div class="ws-gauge-cap" aria-hidden="true">${gauge.withResult ? `${gauge.meeting} of ${gauge.withResult} meeting target` : (gauge.kpis.length ? 'Awaiting results' : 'No KPIs yet')}</div></div>
+    <div class="goal-col ws-col${selected ? ' goal-col-selected' : ''}${dimmed ? ' goal-col-dimmed' : ''}"
+         style="color:${c.fg}; --goal-bg:${c.bg};" data-drill-root="${ws.id}">
+      <div class="ws-top" style="background:${c.bg};">
+        <span class="ws-top-icon" style="color:${c.bg};">${workSystemIconSVG(ws)}</span>
+        <div class="ws-top-name">${escHTML(ws.name)}</div>
+        <div class="ws-top-meta">${plural(nKs, 'Key Service')} · ${plural(gauge.kpis.length, 'KPI')}</div>
+      </div>
+      <div class="goal-band-gap"><span class="ws-band-mini" aria-hidden="true">Target success</span></div>
+      <div class="goal-gauge-block ws-gauge-block">
+        <button type="button" class="tile-hit" aria-label="${escHTML(`Work System: ${ws.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>
+        <button type="button" class="tile-export-btn" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${escHTML(ws.name)} as CSV">⬇</button>
+        <div class="ggb-dial${gauge.withResult ? '' : ' gauge-empty'}" aria-hidden="true">${gaugeSVG(gauge, 138)}</div>
+        <div class="ggb-pct" aria-hidden="true">${goalPctText(gauge)}</div>
+        <div class="ggb-cap" aria-hidden="true">${escHTML(cap)}</div>
+      </div>
     </div>
   `;
 }
@@ -2027,9 +2091,10 @@ function renderWorkSystemCardRow(){
   const sorted = DATA.workSystems;
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = sorted.map(ws=> workSystemCardHTML(ws, null, {
-    selected: selectedId === ws.id,
-  })).join('');
+  container.innerHTML = `<div class="goal-band ws-band"><span class="gb-title">Work System Target Success Indicators</span><span class="gb-sub">Share of Key Service KPIs meeting target</span></div>`
+    + sorted.map(ws=> workSystemCardHTML(ws, null, {
+      selected: selectedId === ws.id,
+    })).join('');
   wireDashboardTiles(container);
 }
 
@@ -2180,7 +2245,7 @@ function renderDashboardHeatmapContent(){
         subtitle: plural(objectivesUnderGoal(g.id).length, 'Objective'),
         dataAttrs:`data-drill-root="${g.id}"`,
         exportKind:'goal', exportId:g.id,
-        extraClass:'objective-card goal-root-card', tileStyle:`--goal-color:${g.color}`,
+        extraClass:'objective-card goal-root-card',
         actionHint:'Open to see its Objectives',
       })).join('');
       wireDashboardTiles(grid);
@@ -2205,7 +2270,7 @@ function renderDashboardHeatmapContent(){
           dataAttrs:`data-drill-objective="${o.id}"`,
           exportKind:'objective', exportId:o.id,
           extraClass:'objective-card',
-          tileStyle: goal ? `--goal-color:${goal.color}` : '',
+          tileStyle: '',
           actionHint:'Open to see its Key Services',
         });
       }).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
@@ -2456,8 +2521,8 @@ function fmtKpiComparison(v, k){
 // outside comparison). The catalog's "Status Based On" column picks which
 // of the two decides the status.
 const KPI_COMPARISONS = [
-  { key:'target',    label:'Target',    stroke:'#5B6B67', dash:'5 4' },
-  { key:'benchmark', label:'Benchmark', stroke:'#7A5FB0', dash:'1.5 4' },
+  { key:'target',    label:'Target',    stroke:'#1E1E1E', dash:'5 4' },
+  { key:'benchmark', label:'Benchmark', stroke:'#1B8A79', dash:'1.5 4' },
 ];
 function kpiBasis(k){ return k.compareTo === 'benchmark' ? 'benchmark' : 'target'; }
 
@@ -2481,7 +2546,23 @@ function kpiDiff(value, comparison, k){
 // line (each point colored by that period's status), the target as a
 // dashed line and the benchmark as a dotted one, whichever exist.
 // Skipped when there is only one period.
-const KPI_BREAKDOWN_COLORS = ['#2F6FA3', '#B26A1E', '#B04A7A', '#4A5A9A', '#8A5A44', '#1B8A79'];
+// Chart series use brand colors only. Lines that need telling apart
+// beyond three colors also change dash pattern. Teal is a line color
+// only; its labels are drawn in forest so small text stays 4.5:1+.
+// Long dashes (9 3) stay distinct from the Target (5 4) and Benchmark
+// (dotted) reference lines.
+const KPI_SERIES = [
+  { stroke:'#006A53', dash:'' },
+  { stroke:'#1E1E1E', dash:'' },
+  { stroke:'#1B8A79', dash:'9 3' },
+  { stroke:'#1E1E1E', dash:'9 3' },
+  { stroke:'#006A53', dash:'9 3' },
+  { stroke:'#1B8A79', dash:'' },
+];
+function kpiSeriesStyle(i){
+  const st = KPI_SERIES[i % KPI_SERIES.length];
+  return { stroke: st.stroke, dash: st.dash, text: st.stroke === '#1B8A79' ? '#006A53' : st.stroke };
+}
 function kpiBreakdownLines(k){
   return (!k.segmentsOnly && Array.isArray(k.segmentSeries)) ? k.segmentSeries.filter(sg => sg.series && sg.series.length) : [];
 }
@@ -2525,35 +2606,35 @@ function kpiChartSVG(k, width){
   // matched to the headline's periods, with the latest value at its end.
   const idx = period => pts.findIndex(p => p.period === period);
   const breakdownLayer = breakdown.map((sg, n) => {
-    const color = KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length];
+    const st = kpiSeriesStyle(n + 1), color = st.stroke;
     const sp = sg.series.filter(p => idx(p.period) >= 0).sort((a,b) => idx(a.period) - idx(b.period));
     if(!sp.length) return '';
     const d = sp.map((p,j) => (j ? 'L' : 'M') + x(idx(p.period)).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
     const last = sp[sp.length - 1];
     const xOf = period => idx(period) >= 0 ? x(idx(period)) : null;
-    return `${kpiSegmentComparisonLines(sg, color, k, xOf, y)}<path d="${d}" fill="none" stroke="${color}" stroke-width="1.75"/>
+    return `${kpiSegmentComparisonLines(sg, color, k, xOf, y)}<path d="${d}" fill="none" stroke="${color}" stroke-width="1.75"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>
       ${sp.map(p => `<circle cx="${x(idx(p.period)).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>`).join('')}
-      <text x="${(x(idx(last.period)) + 8).toFixed(1)}" y="${(y(last.value) + 4 + n * 12 * (breakdown.some((o,m) => m < n && Math.abs(y(o.series[o.series.length-1].value) - y(last.value)) < 12) ? 1 : 0)).toFixed(1)}" font-size="11" font-weight="700" fill="${color}" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(sg.label)} ${escHTML(fmtKpiValue(last.value, k))}</text>`;
+      <text x="${(x(idx(last.period)) + 8).toFixed(1)}" y="${(y(last.value) + 4 + n * 12 * (breakdown.some((o,m) => m < n && Math.abs(y(o.series[o.series.length-1].value) - y(last.value)) < 12) ? 1 : 0)).toFixed(1)}" font-size="11" font-weight="700" fill="${st.text}" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(sg.label)} ${escHTML(fmtKpiValue(last.value, k))}</text>`;
   }).join('');
 
-  const xLabels = pts.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#5B6B67">${escHTML(p.period)}</text>`).join('');
+  const xLabels = pts.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#4B4B4B">${escHTML(p.period)}</text>`).join('');
   const summary = pts.map(p => `${p.period}: ${fmtKpiValue(p.value, k)}`).join(', ')
     + breakdown.map(sg => `; ${sg.label}: ` + sg.series.map(p => `${p.period} ${fmtKpiValue(p.value, k)}`).join(', ')).join('');
 
   return `
     <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHTML(k.name)} over time. ${escHTML(summary)}." font-family="inherit">
-      <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#DCE6E2" stroke-width="1"/>
+      <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#D9E9E5" stroke-width="1"/>
       ${comparisonLayers}${breakdownLayer}${valueLayer}${xLabels}
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
       <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>${breakdown.length ? 'Total' : 'Result'}</span>
-      ${breakdown.map((sg,n) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length]}" stroke-width="1.75"/></svg>${escHTML(sg.label)}</span>`).join('')}
+      ${breakdown.map((sg,n) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${kpiSeriesStyle(n + 1).stroke}" stroke-width="1.75"${kpiSeriesStyle(n + 1).dash ? ` stroke-dasharray="${kpiSeriesStyle(n + 1).dash}"` : ''}/></svg>${escHTML(sg.label)}</span>`).join('')}
       ${breakdown.length ? kpiComparisonLegendHTML(breakdown, 'Segment ') : ''}
       ${lines.map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${c.label}</span>`).join('')}
     </div>`;
 }
 
-const KPI_SEGMENT_COLORS = ['#2F6FA3', '#006A53', '#7A5FB0', '#8A5A44', '#1B8A79', '#5B6B67', '#B04A7A', '#4A5A9A'];
+
 
 // Periods across all segments, in order (plain years sorted numerically).
 function kpiSegmentPeriods(k){
@@ -2576,7 +2657,7 @@ function kpiSegmentComparisonLines(sg, color, k, xOf, y){
 }
 function kpiComparisonLegendHTML(series, prefix = ''){
   return KPI_COMPARISONS.filter(c => series.some(sg => sg.series.some(p => kpiHas(p[c.key]))))
-    .map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="#5B6B67" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${prefix}${prefix ? c.label.toLowerCase() : c.label}</span>`).join('');
+    .map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="#1E1E1E" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${prefix}${prefix ? c.label.toLowerCase() : c.label}</span>`).join('');
 }
 
 // One line per segment, sharing the same axis, colored to match its tile.
@@ -2593,22 +2674,22 @@ function kpiSegmentChartSVG(k, width){
   const x = period => padL + periods.indexOf(period) * (W - padL - padR) / (periods.length - 1);
   const y = v => padT + (hi - v) / (hi - lo) * (H - padT - padB);
   const lines = k.segmentSeries.map((sg, i) => {
-    const color = KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length];
+    const st = kpiSeriesStyle(i), color = st.stroke;
     const pts = [...sg.series].sort((a,b) => periods.indexOf(a.period) - periods.indexOf(b.period));
     const d = pts.map((p,j) => (j ? 'L' : 'M') + x(p.period).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
-    return `${kpiSegmentComparisonLines(sg, color, k, x, y)}<path d="${d}" fill="none" stroke="${color}" stroke-width="2"/>
+    return `${kpiSegmentComparisonLines(sg, color, k, x, y)}<path d="${d}" fill="none" stroke="${color}" stroke-width="2"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>
       ${pts.map(p => `<circle cx="${x(p.period).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="4" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>`).join('')}`;
   }).join('');
-  const xLabels = periods.map(p => `<text x="${x(p).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#5B6B67">${escHTML(p)}</text>`).join('');
-  const yLabels = [hi, lo].map(v => `<text x="${padL - 6}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#5B6B67">${escHTML(fmtKpiNumber(v, k))}</text>`).join('');
+  const xLabels = periods.map(p => `<text x="${x(p).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#4B4B4B">${escHTML(p)}</text>`).join('');
+  const yLabels = [hi, lo].map(v => `<text x="${padL - 6}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#4B4B4B">${escHTML(fmtKpiNumber(v, k))}</text>`).join('');
   const summary = k.segmentSeries.map(sg => { const l = sg.series[sg.series.length - 1]; return `${sg.label} ${fmtKpiValue(l.value, k)} in ${l.period}` + KPI_COMPARISONS.filter(c => kpiHas(l[c.key])).map(c => `, ${c.label.toLowerCase()} ${fmtKpiComparison(l[c.key], k)}`).join(''); }).join('; ');
   return `
     <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escHTML(k.name)} by segment over time. Latest: ${escHTML(summary)}." font-family="inherit">
-      <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#DCE6E2" stroke-width="1"/>
+      <line x1="${padL - 14}" y1="${H - 24}" x2="${W - padR + 14}" y2="${H - 24}" stroke="#D9E9E5" stroke-width="1"/>
       ${lines}${xLabels}${yLabels}
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
-      ${k.segmentSeries.map((sg,i) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length]}" stroke-width="2"/></svg>${escHTML(sg.label)}</span>`).join('')}
+      ${k.segmentSeries.map((sg,i) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${kpiSeriesStyle(i).stroke}" stroke-width="2"${kpiSeriesStyle(i).dash ? ` stroke-dasharray="${kpiSeriesStyle(i).dash}"` : ''}/></svg>${escHTML(sg.label)}</span>`).join('')}
       ${kpiComparisonLegendHTML(k.segmentSeries)}
     </div>`;
 }
@@ -2627,7 +2708,7 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
       const d = kpiDiff(latest.value, v, k);
       return `${c.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong> · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>`;
     }).join('<br>');
-    return `<div class="kpi-seg-tile" style="--seg-color:${KPI_SEGMENT_COLORS[i % KPI_SEGMENT_COLORS.length]}">
+    return `<div class="kpi-seg-tile" style="--seg-color:${kpiSeriesStyle(i).stroke}">
       <span class="kpi-seg-label">${escHTML(sg.label)}</span>
       <span class="kpi-seg-value">${escHTML(fmtKpiValue(latest.value, k))}${latest.note ? '*' : ''}<small>${escHTML(latest.period)}</small></span>
       <span class="kpi-seg-status">${latest.status ? statusBadgeHTML(latest.status) : ''}</span>
@@ -2734,7 +2815,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
   const segAt = (sg, period) => sg.series.find(q => q.period === period);
   const tilesHTML = breakdown.length ? `<div class="kpi-seg-grid">
       ${tile('Total', latest, '#006A53', true)}
-      ${breakdown.map((sg, n) => tile(sg.label, segAt(sg, latest.period) || sg.series[sg.series.length - 1], KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length], false)).join('')}
+      ${breakdown.map((sg, n) => tile(sg.label, segAt(sg, latest.period) || sg.series[sg.series.length - 1], kpiSeriesStyle(n + 1).stroke, false)).join('')}
     </div>` : '';
 
   const tableHTML = `
@@ -2756,7 +2837,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
       <div class="modal-trend-label" style="margin-bottom:0;">${escHTML(latest.period)} breakdown</div>
       ${k.segments.map(sg=>{
         const n = kpiBreakdownLines(k).findIndex(b => b.label === sg.label);
-        const swatch = n >= 0 ? `<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:-1px;background:${KPI_BREAKDOWN_COLORS[n % KPI_BREAKDOWN_COLORS.length]}"></span>` : '';
+        const swatch = n >= 0 ? `<span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:-1px;background:${kpiSeriesStyle(n + 1).stroke}"></span>` : '';
         return `<div class="modal-metric-row"><span class="mm-label">${swatch}${escHTML(sg.label)}</span><span class="mm-value">${escHTML(fmtKpiValue(sg.value, k))}</span></div>`;
       }).join('')}
     </div>` : '';
@@ -3023,7 +3104,7 @@ async function captureHeatmapLevel(view, sectionTitle, gridId='heatmap-grid'){
   await new Promise(r => setTimeout(r, 150));
   const grid = gridId === 'heatmap-grid' ? document.getElementById('goal-drill').querySelector('.drill-col') : document.getElementById(gridId);
   const injected = injectHeatmapSparklines(grid);
-  const canvas = await html2canvas(grid, { scale:2, backgroundColor:'#FBFCFB' });
+  const canvas = await html2canvas(grid, { scale:2, backgroundColor:'#FAFCFC' });
   removeHeatmapSparklines(injected);
   return { canvas, title: sectionTitle };
 }
