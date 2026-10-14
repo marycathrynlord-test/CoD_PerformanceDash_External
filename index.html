@@ -779,13 +779,14 @@
   .goal-mtn{height:150px; position:relative;}
   /* Soft light on the peaks, fading out well above the Goal name. */
   .goal-mtn::before{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%);}
-  .goal-mtn-name{position:absolute; left:12px; right:12px; bottom:16px; font-size:13px; font-weight:700; line-height:1.25; letter-spacing:.005em;}
+  .goal-mtn-text{position:absolute; left:10px; right:10px; bottom:12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:5px;}
+  .goal-mtn-name{font-size:13px; font-weight:700; line-height:1.25; letter-spacing:.005em;}
+  .goal-mtn-meta{font-size:11px; font-weight:600; line-height:1.2;}
   .goal-band-gap{height:40px;}
   .goal-gauge-block{position:static; height:196px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
     padding:20px 10px 14px; text-align:center;
     background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.10) 100%);
     --gauge-hole:var(--goal-bg); --gauge-needle:currentColor;}
-  .goal-col-darktext .goal-gauge-block{background-image:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,0,0,.05) 100%);}
   .goal-col:first-child .goal-gauge-block, #goal-mountain-row .goal-col:nth-child(2) .goal-gauge-block{border-bottom-left-radius:10px;}
   #goal-mountain-row .goal-col:last-child .goal-gauge-block{border-bottom-right-radius:10px;}
   #selected-goal-banner .goal-gauge-block{border-radius:0 0 10px 10px;}
@@ -797,19 +798,17 @@
   .goal-gauge-block .ggb-pct{font-size:28px; font-weight:700; line-height:1; letter-spacing:-.01em; margin-top:4px; font-variant-numeric:tabular-nums;}
   .goal-gauge-block .ggb-cap{font-size:11px; font-weight:600; margin-top:9px; padding:4px 10px; border-radius:100px;
     background:rgba(0,0,0,.16); line-height:1.2;}
-  .goal-col-darktext .goal-gauge-block .ggb-cap{background:rgba(0,0,0,.07);}
   .goal-col .goal-gauge-block .tile-hit{position:absolute; inset:0; z-index:1;}
   .goal-col .goal-gauge-block .tile-export-btn{position:absolute; top:auto; bottom:8px; right:8px; z-index:2;
     width:22px; height:22px; border-radius:50%; font-size:11px; display:flex; align-items:center; justify-content:center;
     background:rgba(255,255,255,.18); color:inherit; opacity:.75; transition:opacity .15s ease, background .15s ease;}
-  .goal-col-darktext .goal-gauge-block .tile-export-btn{background:rgba(0,0,0,.08);}
   .goal-col:hover .goal-gauge-block .tile-export-btn, .goal-col .goal-gauge-block .tile-export-btn:focus-visible{opacity:1;}
   .goal-band{position:absolute; left:-8px; right:-8px; top:150px; height:40px; z-index:3; pointer-events:none;
     display:flex; align-items:center; justify-content:center; gap:12px; background:#fff; color:var(--forest-dark);
     border-radius:6px; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 6px 16px rgba(0,0,0,.14);}
   .goal-band .gb-title{font-size:12px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;}
   .goal-band .gb-sub{font-size:12px; font-weight:500; color:var(--slate); padding-left:12px; border-left:1px solid var(--line);}
-  @media (max-width:1100px){ .goal-mtn-name{font-size:11.5px;} .goal-gauge-block .ggb-pct{font-size:22px;} .goal-band .gb-sub{display:none;} }
+  @media (max-width:1100px){ .goal-mtn-name{font-size:11.5px;} .goal-mtn-meta{font-size:10px;} .goal-gauge-block .ggb-pct{font-size:22px;} .goal-band .gb-sub{display:none;} }
   #selected-goal-banner .goal-col{width:260px;}
   #selected-goal-banner.has-selection{position:relative; width:260px; max-width:100%;}
   #selected-goal-banner .goal-band{left:-4px; right:-4px;}
@@ -837,12 +836,9 @@
   .ws-col.goal-col-selected::after{content:""; position:absolute; inset:-5px; border:3px solid #1E1E1E; border-radius:16px; pointer-events:none; z-index:4;}
   .ws-col.goal-col-selected::before{content:""; position:absolute; left:50%; bottom:-15px; transform:translateX(-50%);
     border:9px solid transparent; border-top-color:#1E1E1E; pointer-events:none; z-index:4;}
-  #worksystem-card-row.ws-card-grid{padding-bottom:20px;}
-  .ws-col .ws-gauge-block{background:#7FB4A9; color:#1E1E1E; --gauge-hole:#7FB4A9;
-    background-image:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,106,83,.08) 100%);}
-  .ws-col .ws-gauge-block .ggb-cap{background:rgba(255,255,255,.45);}
-  .ws-col .ws-gauge-block .tile-export-btn{background:rgba(255,255,255,.45);}
-  .ws-col .ws-gauge-block .ggb-dial .gauge-svg .g-track{opacity:.22;}
+  #worksystem-card-row.ws-card-grid{padding:6px 6px 20px;}
+  #worksystem-card-row .ws-band{top:156px;}
+  .ws-col .ws-gauge-block{background-color:#006A53; color:#fff; --gauge-hole:#006A53;}
   .ws-col .goal-band-gap{position:relative;}
   .ws-band-mini{display:none;}
   #worksystem-card-row .ws-band{left:-8px; right:-8px;}
@@ -1485,6 +1481,15 @@ function readableTileColors(bg){
   return { bg, fg:'#1E1E1E' };
 }
 
+// Darkens a color just until white text on it reaches 4.6:1.
+function darkenForWhite(hex){
+  for(let f = 1; f >= 0.4; f -= 0.01){
+    const c = darkenHex(hex, f);
+    if(contrastRatio('#ffffff', c) >= 4.6) return c;
+  }
+  return '#1E1E1E';
+}
+
 function statusBadgeHTML(status){
   const meta = STATUS_META[status] || STATUS_META['no-data'];
   return `<span class="status-badge status-${status}"><span class="status-dot"></span>${meta.label}</span>`;
@@ -1951,16 +1956,24 @@ function goalPctText(g){
 function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false, dimmed=false, width=null, interactive=true } = {}){
   const gauge = gaugeFor(g.id);
   const c = readableTileColors(g.color);
+  // The gauge block always carries white text and a white dial. A light
+  // Goal color (Safety & Quality of Life's sage) is darkened behind the
+  // gauge until white reaches 4.6:1; the mountain keeps the Goal color.
+  const block = { bg: c.fg === '#fff' ? c.bg : darkenForWhite(c.bg), fg:'#fff' };
+  const nKs = new Set(objectivesUnderGoal(g.id).flatMap(o => keyServicesForObjective(o.id).map(k => k.id))).size;
   const cls = `goal-col${selected ? ' goal-col-selected' : ''}${dimmed ? ' goal-col-dimmed' : ''}${interactive ? '' : ' goal-col-static'}`;
   const clip = `polygon(0% 100%, 0% ${left}%, 50% ${peak}%, 100% ${right}%, 100% 100%)`;
   const cap = gauge.withResult ? `${gauge.meeting} of ${plural(gauge.withResult, 'KPI')} meeting target` : (gauge.kpis.length ? 'Awaiting results' : 'No KPIs yet');
   return `
-    <div class="${cls}${c.fg === '#fff' ? '' : ' goal-col-darktext'}" style="color:${c.fg}; --goal-bg:${c.bg};${width ? ` width:${width}px;` : ''}" ${interactive ? `data-drill-root="${g.id}"` : ''}>
-      <div class="goal-mtn" style="clip-path:${clip}; background:${c.bg};">
-        <div class="goal-mtn-name">${escHTML(g.name)}</div>
+    <div class="${cls}" style="color:#fff; --goal-bg:${block.bg};${width ? ` width:${width}px;` : ''}" ${interactive ? `data-drill-root="${g.id}"` : ''}>
+      <div class="goal-mtn" style="clip-path:${clip}; background:${c.bg}; color:${c.fg};">
+        <div class="goal-mtn-text">
+          <div class="goal-mtn-name">${escHTML(g.name)}</div>
+          <div class="goal-mtn-meta">${plural(nKs, 'Key Service')} · ${plural(gauge.kpis.length, 'KPI')}</div>
+        </div>
       </div>
       <div class="goal-band-gap"></div>
-      <div class="goal-gauge-block" style="background:${c.bg};">
+      <div class="goal-gauge-block" style="background:${block.bg};">
         ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`Goal: ${g.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>` : ''}
         <button type="button" class="tile-export-btn" data-export-kind="goal" data-export-id="${g.id}" title="Export this Goal" aria-label="Export ${escHTML(g.name)} as CSV">⬇</button>
         <div class="ggb-dial${gauge.withResult ? '' : ' gauge-empty'}" aria-hidden="true">${gaugeSVG(gauge, 138)}</div>
@@ -1985,11 +1998,12 @@ function renderGoalMountainRow(){
   }
 
   const goals = sortGoalsCanonical(DATA.goals);
-  const boundaries = [66, 56, 56, 25, 35, 58, 66];
-  const peaks = [38, 44, 15, 2, 46, 56];
+  // Slopes stay above the centered title and counts (about the lower half).
+  const boundaries = [46, 44, 46, 22, 30, 42, 46];
+  const peaks = [26, 30, 10, 2, 26, 32];
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span><span class="gb-sub">Share of Key Service KPIs meeting target</span></div>` + goals.map((g,i)=>{
+  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span></div>` + goals.map((g,i)=>{
     const left = boundaries[i] ?? 40, peak = peaks[i] ?? 30, right = boundaries[i+1] ?? 40;
     return goalMountainTileHTML(g, null, { left, peak, right }, {
       selected: selectedId === g.id,
@@ -2015,7 +2029,7 @@ function renderSelectedGoalBanner(){
   if(!g){ container.innerHTML = ''; container.classList.remove('has-selection'); return; }
 
   container.classList.add('has-selection');
-  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span><span class="gb-sub">Share of Key Service KPIs meeting target</span></div>` + goalMountainTileHTML(
+  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span></div>` + goalMountainTileHTML(
     g, null, { left:55, peak:15, right:55 },
     { selected:true, width:260, interactive:false }
   );
@@ -2091,7 +2105,7 @@ function renderWorkSystemCardRow(){
   const sorted = DATA.workSystems;
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = `<div class="goal-band ws-band"><span class="gb-title">Work System Target Success Indicators</span><span class="gb-sub">Share of Key Service KPIs meeting target</span></div>`
+  container.innerHTML = `<div class="goal-band ws-band"><span class="gb-title">Work System Target Success Indicators</span></div>`
     + sorted.map(ws=> workSystemCardHTML(ws, null, {
       selected: selectedId === ws.id,
     })).join('');
