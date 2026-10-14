@@ -18,6 +18,9 @@
       "owner": "HR Director",
       "source": "Employee Survey",
       "description": "Overall engagement score from the City employee survey, compared with the survey benchmark.",
+      "gaugeKeyServices": [
+        "ks5"
+      ],
       "status": null,
       "onTrackWithinPct": 5,
       "offTrackBeyondPct": 15,
@@ -88,8 +91,11 @@
       "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
-      "drivesStatus": false,
+      "drivesStatus": true,
       "owner": "Safety / Risk Administrator",
+      "gaugeKeyServices": [
+        "ks5"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -106,7 +112,10 @@
       "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
-      "drivesStatus": false,
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks5"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -245,13 +254,19 @@
     {
       "id": "HR-INTPROMO",
       "name": "Retain & Develop: Internal promotion rate",
-      "level": "Program",
-      "attachTo": "p24",
+      "level": "Key Service",
+      "attachTo": "ks5",
+      "alsoUnder": [
+        "p24"
+      ],
       "unit": "number",
       "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
-      "drivesStatus": false,
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks5"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -373,6 +388,9 @@
       "frequency": "Every year",
       "owner": "IT Director",
       "source": "Solar Winds",
+      "gaugeKeyServices": [
+        "ks7"
+      ],
       "status": "on-track",
       "onTrackWithinPct": 5,
       "offTrackBeyondPct": 15,
@@ -438,6 +456,9 @@
       "frequency": "Every year",
       "owner": "IT Director",
       "source": "SysAid",
+      "gaugeKeyServices": [
+        "ks7"
+      ],
       "status": "on-track",
       "onTrackWithinPct": 5,
       "offTrackBeyondPct": 15,
@@ -485,6 +506,9 @@
       "frequency": "Every year",
       "owner": "IT Director",
       "source": "SysAid",
+      "gaugeKeyServices": [
+        "ks7"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -505,6 +529,9 @@
       "frequency": "Every Quarter",
       "owner": "IT Director",
       "source": "KnowBe4",
+      "gaugeKeyServices": [
+        "ks7"
+      ],
       "status": "on-track",
       "onTrackWithinPct": 5,
       "offTrackBeyondPct": 15,
@@ -667,6 +694,9 @@
       "drivesStatus": true,
       "frequency": "Every Year",
       "owner": "Library Director",
+      "gaugeKeyServices": [
+        "ks17"
+      ],
       "status": null,
       "segmentsOnly": true,
       "onTrackWithinPct": 0,
@@ -810,6 +840,9 @@
       "drivesStatus": true,
       "frequency": "Every Year",
       "owner": "Library Director",
+      "gaugeKeyServices": [
+        "ks17"
+      ],
       "status": "on-track",
       "onTrackWithinPct": 0,
       "offTrackBeyondPct": 0,
@@ -1012,6 +1045,9 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "gaugeKeyServices": [
+        "ks2"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1043,6 +1079,9 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "gaugeKeyServices": [
+        "ks2"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1060,6 +1099,9 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "gaugeKeyServices": [
+        "ks2"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1077,6 +1119,9 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "gaugeKeyServices": [
+        "ks2"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1094,6 +1139,9 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "gaugeKeyServices": [
+        "ks2"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1111,6 +1159,9 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "gaugeKeyServices": [
+        "ks12"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1131,6 +1182,9 @@
       "frequency": "Every year",
       "owner": "Public Information Officer",
       "source": "Instagram, Facebook, LinkedIn, TikTok",
+      "gaugeKeyServices": [
+        "ks3"
+      ],
       "status": null,
       "segmentsOnly": true,
       "onTrackWithinPct": 0,
@@ -1292,6 +1346,9 @@
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
+      "gaugeKeyServices": [
+        "ks3"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1310,6 +1367,9 @@
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
+      "gaugeKeyServices": [
+        "ks3"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1328,6 +1388,9 @@
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
+      "gaugeKeyServices": [
+        "ks3"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1377,6 +1440,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Parking Manager",
+      "gaugeKeyServices": [
+        "ks14"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1458,6 +1524,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Multimodal Manager",
+      "gaugeKeyServices": [
+        "ks14"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1477,6 +1546,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Multimodal Manager",
+      "gaugeKeyServices": [
+        "ks14"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1529,6 +1601,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
+      "gaugeKeyServices": [
+        "ks8"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1580,6 +1655,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
+      "gaugeKeyServices": [
+        "ks9"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1599,6 +1677,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
+      "gaugeKeyServices": [
+        "ks9"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1666,6 +1747,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
+      "gaugeKeyServices": [
+        "ks20"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1714,6 +1798,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1730,6 +1817,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1746,6 +1836,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1766,6 +1859,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1782,6 +1878,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -1798,6 +1897,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -2105,6 +2207,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -2204,9 +2309,1052 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "gaugeKeyServices": [
+        "ks11"
+      ],
       "status": null,
       "pending": true,
       "series": []
     }
-  ]
+  ],
+  "framework": {
+    "meetingTargetStatuses": [
+      "at-risk",
+      "on-track"
+    ],
+    "objectiveAlignment": {
+      "ks1": [
+        "ob1",
+        "ob2",
+        "ob3"
+      ],
+      "ks2": [
+        "ob2",
+        "ob16",
+        "ob17"
+      ],
+      "ks3": [
+        "ob2",
+        "ob16",
+        "ob17"
+      ],
+      "ks4": [
+        "ob1",
+        "ob2"
+      ],
+      "ks5": [
+        "ob18",
+        "ob19",
+        "ob20"
+      ],
+      "ks6": [
+        "ob1",
+        "ob7"
+      ],
+      "ks7": [
+        "ob1",
+        "ob10",
+        "ob11",
+        "ob14",
+        "ob15",
+        "ob17"
+      ],
+      "ks8": [
+        "ob4",
+        "ob6",
+        "ob9"
+      ],
+      "ks9": [
+        "ob5",
+        "ob6"
+      ],
+      "ks10": [
+        "ob3",
+        "ob9",
+        "ob12"
+      ],
+      "ks11": [
+        "ob7",
+        "ob8",
+        "ob13"
+      ],
+      "ks12": [
+        "ob1",
+        "ob7"
+      ],
+      "ks13": [
+        "ob3",
+        "ob10",
+        "ob11",
+        "ob12",
+        "ob15"
+      ],
+      "ks14": [
+        "ob10",
+        "ob11",
+        "ob15",
+        "ob16"
+      ],
+      "ks15": [
+        "ob1",
+        "ob11",
+        "ob12",
+        "ob14"
+      ],
+      "ks16": [
+        "ob10",
+        "ob13"
+      ],
+      "ks17": [
+        "ob8",
+        "ob16",
+        "ob17"
+      ],
+      "ks18": [
+        "ob3",
+        "ob9"
+      ],
+      "ks20": [
+        "ob8",
+        "ob16"
+      ]
+    },
+    "descriptions": {
+      "g1": "Organizational Stewardship addresses the key infrastructure and foundational processes in the organization that serve as a framework for success, ensuring the organization has the resources and approaches in place to support strategic and operational focus. This goal area ensures the integration of organizational efforts and critical factors for short-term success and long-term sustainability.",
+      "g2": "Innovative Housing & Economic Development (IHED) aims to advance the city’s housing and economic landscape through strategic partnerships and innovative solutions that bridge the affordability gap and support a multigenerational community. This goal area strives to propel economic progress by encouraging regional collaboration, entrepreneurship, and business growth, underpinned by city-supported initiatives. It also aims to enhance Durango’s unique charm and economic competitiveness by promoting community involvement, strategic infrastructure development, and robust public-private collaborations.",
+      "g3": "Safety & Quality of Life (SQL) focuses on fostering a safe and vibrant community by ensuring the continuous enhancement of police, emergency response, and code enforcement services. This goal area emphasizes the importance of sustainable cultural, artistic, literary, and recreational programs that meet diverse community needs, and the ongoing stewardship of parks, trails, and natural lands to enhance the community’s quality of life.",
+      "g4": "Reliable Infrastructure & Community Connectivity (RICC) focuses on establishing a resilient and efficient infrastructure network that supports safe and accessible transportation, innovative utility management, and reliable IT systems. This goal area is committed to enhancing the city’s transportation infrastructure, ensuring compliance with environmental standards, maintaining the regional airport as a key aviation hub, and improving existing infrastructure.",
+      "g5": "Engaged & Informed Community (EIC) is dedicated to creating a vibrant civic culture by championing systematic approaches to community engagement, education, and outreach. EIC is focused on cultivating effective communication channels that offer open and accessible information, thereby empowering residents to be actively involved in community affairs and contributing to well-connected and informed citizens.",
+      "g6": "Strategic Workforce Development (SWD) is dedicated to enhancing the skills, capabilities, and satisfaction of Durango’s employees. By investing in comprehensive training programs and career development opportunities, SWD aims to build a resilient and adaptable workforce. This goal area underpins the strategic deployment of human resources, ensuring alignment with the city’s long-term objectives and immediate operational needs, thereby strengthening the foundation for sustainable growth and innovation.",
+      "ob1": "Ensure a financially sustainable and innovation-led framework that thrives on building effective partnerships to alleviate city costs, and harnesses the power of technology for efficiency.",
+      "ob2": "Foster strong community group partnerships through effective communication and a commitment to diversity, equity, and inclusivity efforts while focusing on increased accessibility of services for underserved communities.",
+      "ob3": "Advance a systematic approach toward environmental sustainability through focused efforts to conserve resources and mitigate environmental stressors by meeting or exceeding local, state, and national standards.",
+      "ob4": "Cultivate innovative housing solutions and partnerships to advance the development of a variety of housing options to support a multigenerational and mixed-income community by narrowing the gap between income levels and housing affordability.",
+      "ob5": "Stimulate economic progress and resiliency through strategic collaboration, nurturing entrepreneurship and supporting business growth through well-designed City services and programs.",
+      "ob6": "Preserve and enhance Durango’s distinctive appeal and competitive edge as an attractive community by engaging in community-driven planning, strategic infrastructure investments, and partnerships between the public and private sectors.",
+      "ob7": "Ensure the seamless operation and continual enhancement of police, code enforcement, 911 communications, and contracted emergency services to advance public safety measures, and cooperative emergency preparedness to reinforce community trust to reduce targeted crime rates and enhance the overall sense of safety.",
+      "ob8": "Provide sustainable and inclusive arts, literacy, culture, and recreation opportunities by listening to the community’s diverse needs.",
+      "ob9": "Continue the ongoing maintenance, preservation, and acquisition of quality parks, trails, and natural lands.",
+      "ob10": "Provide consistently safe, reliable, and accessible mobility and transportation services throughout the community.",
+      "ob11": "Invest in transportation and infrastructure systems that maximize safety, mobility, innovation, accessibility, and user satisfaction.",
+      "ob12": "Uphold a continuous, high-efficiency system for managing water, wastewater, and stormwater systems that adhere to strict compliance with environmental regulations.",
+      "ob13": "Maintain and enhance DRO’s status as the key regional hub for aviation services by delivering safe, efficient, and sustainable airport operations and promoting a competitive airline environment.",
+      "ob14": "Provide resources supporting maintenance, expansion, and ensuring reliable and secure IT infrastructure management.",
+      "ob15": "Continue planned expansion of City surface transportation system and maintain existing assets within Right of Way",
+      "ob16": "Champion a systematic approach where community engagement, education, outreach and communication thrive as cornerstones of civic involvement.",
+      "ob17": "Cultivate and leverage communication systems through convenient, open, and accessible information.",
+      "ob18": "Foster a workplace culture designed to attract and retain diverse, skilled and engaged staff members, which enhances employee satisfaction, engagement and performance by offering an environment reflective of the City’s commitment to excellence and strategic alignment.",
+      "ob19": "Ensure a comprehensive career progression strategy that readies employees for key roles and leadership positions in alignment with the City’s long-term goals.",
+      "ob20": "Facilitate workforce preparedness through management of City processes, capacity and capability, ensuring optimization of staff skill levels designed to meet operational needs and evolving municipal demands."
+    },
+    "gauges": {
+      "g1": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "CLERK-SPECCOURT",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "CLERK-SPECCOURT",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "g2": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-REGULATEDUNITS",
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ],
+        "kpis": [
+          "PROS-REGULATEDUNITS",
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ]
+      },
+      "g3": {
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
+        "awaiting": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "CLERK-SPECCOURT",
+          "LIB-CIRCULATION",
+          "PROS-ALLCOMMEVENTS",
+          "PROS-REGULATEDUNITS"
+        ],
+        "kpis": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "CLERK-SPECCOURT",
+          "LIB-CIRCULATION",
+          "LIB-VISITS",
+          "PROS-ALLCOMMEVENTS",
+          "PROS-REGULATEDUNITS"
+        ]
+      },
+      "g4": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "g5": {
+        "meeting": 4,
+        "withResult": 4,
+        "percent": 100,
+        "awaiting": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "LIB-CIRCULATION",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PROS-ALLCOMMEVENTS",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "LIB-CIRCULATION",
+          "LIB-VISITS",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PROS-ALLCOMMEVENTS",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "g6": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ],
+        "kpis": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ]
+      },
+      "ob1": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "CLERK-SPECCOURT",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "CLERK-SPECCOURT",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ob2": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ],
+        "kpis": [
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ]
+      },
+      "ob3": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ob4": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-REGULATEDUNITS"
+        ],
+        "kpis": [
+          "PROS-REGULATEDUNITS"
+        ]
+      },
+      "ob5": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ],
+        "kpis": [
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ]
+      },
+      "ob6": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-REGULATEDUNITS",
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ],
+        "kpis": [
+          "PROS-REGULATEDUNITS",
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ]
+      },
+      "ob7": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "CLERK-SPECCOURT"
+        ],
+        "kpis": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "CLERK-SPECCOURT"
+        ]
+      },
+      "ob8": {
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
+        "awaiting": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "LIB-CIRCULATION",
+          "PROS-ALLCOMMEVENTS"
+        ],
+        "kpis": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "LIB-CIRCULATION",
+          "LIB-VISITS",
+          "PROS-ALLCOMMEVENTS"
+        ]
+      },
+      "ob9": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-REGULATEDUNITS"
+        ],
+        "kpis": [
+          "PROS-REGULATEDUNITS"
+        ]
+      },
+      "ob10": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ob11": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ob12": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ob13": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING"
+        ],
+        "kpis": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING"
+        ]
+      },
+      "ob14": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ob15": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ob16": {
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
+        "awaiting": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "LIB-CIRCULATION",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PROS-ALLCOMMEVENTS",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ],
+        "kpis": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT",
+          "LIB-CIRCULATION",
+          "LIB-VISITS",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PROS-ALLCOMMEVENTS",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ]
+      },
+      "ob17": {
+        "meeting": 4,
+        "withResult": 4,
+        "percent": 100,
+        "awaiting": [
+          "LIB-CIRCULATION",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "LIB-CIRCULATION",
+          "LIB-VISITS",
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ob18": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ],
+        "kpis": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ]
+      },
+      "ob19": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ],
+        "kpis": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ]
+      },
+      "ob20": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ],
+        "kpis": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ]
+      },
+      "ws1": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ],
+        "kpis": [
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ]
+      },
+      "ws2": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO",
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO",
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ws3": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-REGULATEDUNITS",
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ],
+        "kpis": [
+          "PROS-REGULATEDUNITS",
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ]
+      },
+      "ws4": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "CLERK-SPECCOURT"
+        ],
+        "kpis": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING",
+          "CLERK-SPECCOURT"
+        ]
+      },
+      "ws5": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT"
+        ],
+        "kpis": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT"
+        ]
+      },
+      "ws6": {
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
+        "awaiting": [
+          "LIB-CIRCULATION",
+          "PROS-ALLCOMMEVENTS"
+        ],
+        "kpis": [
+          "LIB-CIRCULATION",
+          "LIB-VISITS",
+          "PROS-ALLCOMMEVENTS"
+        ]
+      },
+      "ks1": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks2": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC"
+        ],
+        "kpis": [
+          "CLERK-VOTERTURNOUT",
+          "CLERK-CORARESPRATE",
+          "CLERK-AGENDAPOST",
+          "CLERK-LIQMARJLIC",
+          "CLERK-BIZLIC"
+        ]
+      },
+      "ks3": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ],
+        "kpis": [
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-NEWSRELEASE",
+          "PIO-VIEWERSHIP"
+        ]
+      },
+      "ks4": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks5": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ],
+        "kpis": [
+          "HR-EMPENG",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "HR-INTPROMO"
+        ]
+      },
+      "ks6": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks7": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "IT-TIXSLA"
+        ],
+        "kpis": [
+          "IT-UPTIME",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-PHISHRATE"
+        ]
+      },
+      "ks8": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-REGULATEDUNITS"
+        ],
+        "kpis": [
+          "PROS-REGULATEDUNITS"
+        ]
+      },
+      "ks9": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ],
+        "kpis": [
+          "PROS-URAINCOME",
+          "PROS-OCCRATE"
+        ]
+      },
+      "ks10": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks11": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING"
+        ],
+        "kpis": [
+          "PD-VIOLENTPROPCRIME",
+          "PD-TRAFFICINJURY",
+          "PD-FATALCRASH",
+          "PD-RESPONSETIME",
+          "PD-CALLVOLUME",
+          "PD-CRIMECLEARANCE",
+          "911-DISPATCHTIME",
+          "911-STAFFING"
+        ]
+      },
+      "ks12": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "CLERK-SPECCOURT"
+        ],
+        "kpis": [
+          "CLERK-SPECCOURT"
+        ]
+      },
+      "ks13": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks14": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT"
+        ],
+        "kpis": [
+          "TRAN-VACRATE",
+          "TRAN-CRASHDATA",
+          "TRAN-BIKEANDSWLINFT"
+        ]
+      },
+      "ks15": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks16": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks17": {
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
+        "awaiting": [
+          "LIB-CIRCULATION"
+        ],
+        "kpis": [
+          "LIB-CIRCULATION",
+          "LIB-VISITS"
+        ]
+      },
+      "ks18": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
+      },
+      "ks20": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PROS-ALLCOMMEVENTS"
+        ],
+        "kpis": [
+          "PROS-ALLCOMMEVENTS"
+        ]
+      }
+    }
+  }
 }

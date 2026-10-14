@@ -47,31 +47,31 @@
   ],
 
   "keyServices": [
-    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "goals": ["g1"], "objectives": ["ob1, ob2, ob3"], "status": "on-track" },
-    { "id": "ks2", "name": "City Clerk & Records Management", "workSystem": "ws1", "goals": ["g1"], "objectives": ["ob2, ob16, ob17"], "status": "on-track" },
-    { "id": "ks3", "name": "Public Information & Community Engagement", "workSystem": "ws1", "goals": ["g5", "g1"], "objectives": ["ob16, ob17, ob2"], "status": "at-risk" },
-    { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1, ob2"], "status": "on-track" },
-    { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2", "goals": ["g6", "g1"], "objectives": ["ob18, ob19, ob20"], "status": "at-risk" },
-    { "id": "ks6", "name": "Legal Services", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1, ob7"], "status": "on-track" },
-    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1, ob14, ob17, ob10, ob11, ob15"],  "status": "off-track" },
-    { "id": "ks8", "name": "Community Development & Planning", "workSystem": "ws3", "goals": ["g2"],  "objectives": ["ob4, ob6, ob9"], "status": "on-track" },
-    { "id": "ks9", "name": "Economic Prosperity & Business Support", "workSystem": "ws3", "goals": ["g2"],  "objectives": ["ob5, ob6"],  "status": "on-track" },
-    { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3", "goals": ["g1", "g4"],  "objectives": ["ob3, ob9, ob12"], "status": "at-risk" },
-    { "id": "ks11", "name": "Public Safety Services", "workSystem": "ws4", "goals": ["g3"],  "objectives": ["ob7, ob8, ob13"], "status": "on-track" },
-    { "id": "ks12", "name": "Municipal Court", "workSystem": "ws4", "goals": ["g3"],  "objectives": ["ob7, ob1"], "status": "on-track" },
-    { "id": "ks13", "name": "Public Works & Municipal Services", "workSystem": "ws5", "goals": ["g4"],  "objectives": ["ob10, ob11, ob12, ob3, ob15"], "status": "on-track" },
-    { "id": "ks14", "name": "Transit Services", "workSystem": "ws5",  "objectives": ["ob10, ob11, ob15, ob16"], "goals": ["g4"],
+    { "id": "ks1", "name": "Administrative Leadership & Governance", "workSystem": "ws1", "goals": ["g1"], "objectives": ["ob1", "ob2", "ob3"], "status": "on-track" },
+    { "id": "ks2", "name": "City Clerk & Records Management", "workSystem": "ws1", "goals": ["g1"], "objectives": ["ob2", "ob16", "ob17"], "status": "on-track" },
+    { "id": "ks3", "name": "Public Information & Community Engagement", "workSystem": "ws1", "goals": ["g5", "g1"], "objectives": ["ob16", "ob17", "ob2"], "status": "at-risk" },
+    { "id": "ks4", "name": "Financial Management & Accountability", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1", "ob2"], "status": "on-track" },
+    { "id": "ks5", "name": "Human Resources & Workforce Development", "workSystem": "ws2", "goals": ["g6", "g1"], "objectives": ["ob18", "ob19", "ob20"], "status": "at-risk" },
+    { "id": "ks6", "name": "Legal Services", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1", "ob7"], "status": "on-track" },
+    { "id": "ks7", "name": "Information Technology Services", "workSystem": "ws2", "goals": ["g1"], "objectives": ["ob1", "ob14", "ob17", "ob10", "ob11", "ob15"],  "status": "off-track" },
+    { "id": "ks8", "name": "Community Development & Planning", "workSystem": "ws3", "goals": ["g2"],  "objectives": ["ob4", "ob6", "ob9"], "status": "on-track" },
+    { "id": "ks9", "name": "Economic Prosperity & Business Support", "workSystem": "ws3", "goals": ["g2"],  "objectives": ["ob5", "ob6"],  "status": "on-track" },
+    { "id": "ks10", "name": "Sustainability & Environmental Stewardship", "workSystem": "ws3", "goals": ["g1", "g4"],  "objectives": ["ob3", "ob9", "ob12"], "status": "at-risk" },
+    { "id": "ks11", "name": "Public Safety Services", "workSystem": "ws4", "goals": ["g3"],  "objectives": ["ob7", "ob8", "ob13"], "status": "on-track" },
+    { "id": "ks12", "name": "Municipal Court", "workSystem": "ws4", "goals": ["g3"],  "objectives": ["ob7", "ob1"], "status": "on-track" },
+    { "id": "ks13", "name": "Public Works & Municipal Services", "workSystem": "ws5", "goals": ["g4"],  "objectives": ["ob10", "ob11", "ob12", "ob3", "ob15"], "status": "on-track" },
+    { "id": "ks14", "name": "Transit Services", "workSystem": "ws5",  "objectives": ["ob10", "ob11", "ob15", "ob16"], "goals": ["g4"],
       "details": {
         "description": "Oversees fixed-route, paratransit, and micromobility services connecting residents across Durango.",
         "owner": "Transit Manager",
         "lastUpdated": "2026-06-20"
       }
     },
-    { "id": "ks15", "name": "Asset Management", "workSystem": "ws5", "goals": ["g4"],  "objectives": ["ob11, ob12, ob14, ob1"], "status": "at-risk" },
-    { "id": "ks16", "name": "Airport Operations", "workSystem": "ws5", "goals": ["g4"],  "objectives": ["ob13, ob10"], "status": "on-track" },
-    { "id": "ks17", "name": "Library & Learning Services", "workSystem": "ws6", "goals": ["g3"],  "objectives": ["ob8, ob16, ob17"], "status": "on-track" },
-    { "id": "ks18", "name": "Parks & Open Space Management", "workSystem": "ws6", "goals": ["g3"],  "objectives": ["ob9, ob3"], "status": "on-track" },
-    { "id": "ks20", "name": "Recreation & Community Programs", "workSystem": "ws6", "goals": ["g3"], "objectives": ["ob8, ob16"],  "status": "at-risk" }
+    { "id": "ks15", "name": "Asset Management", "workSystem": "ws5", "goals": ["g4"],  "objectives": ["ob11", "ob12", "ob14", "ob1"], "status": "at-risk" },
+    { "id": "ks16", "name": "Airport Operations", "workSystem": "ws5", "goals": ["g4"],  "objectives": ["ob13", "ob10"], "status": "on-track" },
+    { "id": "ks17", "name": "Library & Learning Services", "workSystem": "ws6", "goals": ["g3"],  "objectives": ["ob8", "ob16", "ob17"], "status": "on-track" },
+    { "id": "ks18", "name": "Parks & Open Space Management", "workSystem": "ws6", "goals": ["g3"],  "objectives": ["ob9", "ob3"], "status": "on-track" },
+    { "id": "ks20", "name": "Recreation & Community Programs", "workSystem": "ws6", "goals": ["g3"], "objectives": ["ob8", "ob16"],  "status": "at-risk" }
   ],
 
   "programs": [
@@ -194,8 +194,6 @@
 
     { "id": "p80", "name": "Airfield and Terminal Operations", "keyservice": "ks16", "status": "on-track" },
     { "id": "p81", "name": "Aviation Services", "keyservice": "ks16", "status": "on-track" },
-    { "id": "p113", "name": "Airfield Service", "keyservice": "ks16" },
-    { "id": "p114", "name": "Terminal and Landside Service", "keyservice": "ks16" },
 
 
     { "id": "p82", "name": "Circulation Services", "keyservice": "ks17", "status": "on-track" },

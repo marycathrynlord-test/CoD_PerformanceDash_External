@@ -687,6 +687,78 @@
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
   }
+
+  /* ---------- Gauges: share of Key Service KPIs meeting target ----------
+     A half-circle "gas gauge" with a needle. One neutral color: the gauge
+     shows a share, not a status, so it is never red/gold/green. Drawn in
+     currentColor so it reads on white cards and on colored Goal tiles. */
+  .gauge-svg{display:block; overflow:visible;}
+  .gauge-svg .g-track{stroke:currentColor; opacity:.22;}
+  .gauge-svg .g-fill{stroke:currentColor;}
+  .gauge-svg .g-needle{stroke:currentColor;}
+  .gauge-svg .g-hub{fill:currentColor;}
+  .gauge-svg .g-tick{stroke:currentColor; opacity:.55;}
+  .gauge-empty .gauge-svg .g-needle, .gauge-empty .gauge-svg .g-hub{display:none;}
+  .gauge-block{display:flex; flex-direction:column; align-items:center; text-align:center; color:var(--forest);}
+  .gauge-block .gauge-pct{font-size:26px; font-weight:700; line-height:1; margin-top:2px; color:var(--forest-dark);}
+  .gauge-block .gauge-cap{font-size:12px; font-weight:600; color:var(--slate); margin-top:5px; line-height:1.35; max-width:220px;}
+  .gauge-block .gauge-await{font-size:11.5px; color:var(--slate); margin-top:2px;}
+  .gauge-inline{display:inline-flex; align-items:center; gap:7px; font-weight:700;}
+  .gauge-inline .gauge-pct{font-size:14px; line-height:1;}
+
+  /* Goal mountain tiles: gauge in the meadow band, in the tile's own text color */
+  .heat-foot-mountain .gauge-inline{color:inherit;}
+  .heat-tile.goal-tile .heat-foot-mountain{bottom:9px;}
+
+  /* Work System buttons */
+  .ws-foot .gauge-inline{color:var(--forest);}
+  .ws-foot .gauge-inline .gauge-pct{color:var(--forest-dark); font-size:16px;}
+  .ws-gauge-cap{font-size:11px; font-weight:600; color:var(--slate); margin-top:4px;}
+  .heat-tile.ws-card.ws-card-selected .ws-foot .gauge-inline,
+  .heat-tile.ws-card.ws-card-selected .ws-foot .gauge-inline .gauge-pct{color:var(--white);}
+  .heat-tile.ws-card.ws-card-selected .ws-gauge-cap{color:var(--mist);}
+
+  /* White gauge cards: Key Services (both views) and Objectives */
+  .heatmap-grid .heat-tile.gauge-tile{
+    background:var(--white); color:var(--forest-dark); border:1.5px solid var(--line);
+    min-height:150px; justify-content:flex-start; gap:4px;
+  }
+  .heatmap-grid .heat-tile.gauge-tile:hover{border-color:var(--sage); box-shadow:0 8px 20px rgba(0,106,83,.16);}
+  .heat-tile.gauge-tile .heat-type{color:var(--teal-ink);}
+  .heat-tile.gauge-tile .heat-subtitle{color:var(--slate); font-size:11px; margin:2px 0 0;}
+  .heat-tile.gauge-tile .gt-gauge{margin-top:auto; padding-top:10px; display:flex; align-items:center; gap:10px; color:var(--forest);}
+  .heat-tile.gauge-tile .gt-gauge .gauge-pct{font-size:20px; font-weight:700; color:var(--forest-dark); line-height:1;}
+  .heat-tile.gauge-tile .gt-gauge .gt-cap{font-size:11px; font-weight:600; color:var(--slate); line-height:1.35;}
+  .heat-tile.gauge-tile .tile-export-btn{background:rgba(0,78,61,.08); color:var(--forest-dark);}
+  .heat-tile.gauge-tile .tile-export-btn:hover{background:rgba(0,78,61,.18);}
+  .heat-tile.gauge-tile .tile-hit:focus-visible{outline:3px solid var(--focus) !important; outline-offset:-3px !important; box-shadow:none;}
+  .heat-tile.gauge-tile .heat-name{font-size:13.5px; padding-right:26px;}
+  .heat-tile.gauge-tile.objective-card{border-top:5px solid var(--goal-color, var(--forest)); min-height:230px;}
+  .heat-tile.gauge-tile .gt-def{font-size:12.5px; font-weight:400; color:var(--ink); line-height:1.55; margin-top:6px;}
+  .heatmap-grid.objective-grid{grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:14px;}
+  .heatmap-grid.ks-grid{grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px;}
+  @media (min-width:900px){ .explorer-split.has-detail .heatmap-grid.ks-grid{grid-template-columns:1fr;} }
+
+  /* The selected Goal / Objective / Work System / Key Service: its
+     council-adopted definition (Goals and Objectives) beside its gauge. */
+  .level-summary{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:center;
+    padding:20px 20px 18px; border-bottom:1px solid var(--line);}
+  .level-summary:empty{display:none;}
+  .level-summary .ls-type{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--teal-ink);}
+  .level-summary .ls-name{margin:4px 0 0; font-size:20px; font-weight:700; color:var(--forest-dark); line-height:1.25;}
+  .level-summary .ls-def{margin:10px 0 0; font-size:14px; line-height:1.65; color:var(--ink); max-width:860px;}
+  .level-summary .ls-src{margin:8px 0 0; font-size:11.5px; color:var(--slate);}
+  .level-summary .ls-awaiting{margin:10px 0 0; font-size:12.5px; color:var(--slate);}
+  .level-summary .ls-awaiting summary{cursor:pointer; font-weight:600; color:var(--teal-ink);}
+  .level-summary .ls-awaiting ul{margin:6px 0 0; padding-left:18px; line-height:1.6;}
+  .level-summary .gauge-block{min-width:170px;}
+  @media (max-width:640px){ .level-summary{grid-template-columns:1fr;} .level-summary .gauge-block{align-items:flex-start; text-align:left;} }
+  .grid-label{font-size:11.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--slate); margin:0 0 10px;}
+  .grid-label:empty{display:none;}
+  .box-tag:not(.gold){color:#1F64A3;}  /* blue text at 4.5:1+ on white */
+  .heat-tile.gauge-tile.goal-root-card{min-height:150px;}
+  @media (min-width:821px){ .heatmap-grid.goal-roots-grid{display:none;} }
+  #modal-status-slot{display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;}
 </style>
 </head>
 <body>
@@ -807,6 +879,13 @@
           </div>
         </div>
         <div class="ref-row">
+          <span class="ref-icon dot" style="background:var(--forest);"></span>
+          <div>
+            <div class="ref-term">Gauge</div>
+            <div class="ref-desc">The share of Key Service KPIs meeting their target (On Track or At Risk). Shown for Goals, Objectives, Work Systems and Key Services. KPIs that don't have a result yet aren't counted. Programs keep their status color.</div>
+          </div>
+        </div>
+        <div class="ref-row">
           <span class="ref-icon dot" style="background:var(--fw-purple);"></span>
           <div>
             <div class="ref-term">⏱ Stale</div>
@@ -838,7 +917,7 @@
     <div class="section-head">
       <div class="eyebrow">Explore the City's Work</div>
       <h2 id="explorer-heading">Strategic Plan Goals → Objectives</h2>
-      <p id="explorer-subhead">Pick a Goal to see the Objectives that support it. Objectives marked with KPIs can be opened.</p>
+      <p id="explorer-subhead">Pick a Goal to see its Objectives, then an Objective to see the Key Services that support it.</p>
     </div>
 
     <div class="root-mode-toggle" id="root-mode-toggle"></div>
@@ -854,10 +933,11 @@
       <div class="drill-col-head" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <div class="heatmap-breadcrumb" id="heatmap-breadcrumb"></div>
       </div>
+      <div class="level-summary" id="level-summary"></div>
       <div class="explorer-split" id="explorer-split">
         <div class="explorer-detail" id="explorer-detail" style="display:none;"></div>
         <div class="heatmap-body">
-          <div class="modal-trend-label" id="explorer-children-label" style="display:none;"></div>
+          <h3 class="grid-label" id="explorer-children-label"></h3>
           <div class="heatmap-grid" id="heatmap-grid"></div>
         </div>
       </div>
@@ -979,6 +1059,11 @@ async function loadData(){
    also be tagged to Strategic Plan Objectives (objectives). The file
    is optional: without it the dashboard behaves exactly as before. */
 let KPI_BY_ITEM = {};
+// Built by build_kpi_data.py from the workbook: which Key Services
+// support which Objectives, the council-adopted Goal and Objective
+// definitions, and the gauge counts for every Goal, Objective, Work
+// System and Key Service.
+let FRAMEWORK = { gauges:{}, objectiveAlignment:{}, descriptions:{} };
 
 async function loadKpiData(){
   KPI_BY_ITEM = {};
@@ -986,6 +1071,7 @@ async function loadKpiData(){
     const res = await fetch('kpi-data.json', { cache: 'no-store' });
     if(!res.ok) return;
     const file = await res.json();
+    if(file.framework) FRAMEWORK = Object.assign(FRAMEWORK, file.framework);
     (file.kpis || []).forEach(k=>{
       const hasSeries = Array.isArray(k && k.series) && k.series.length;
       const hasSegments = k && k.segmentsOnly && Array.isArray(k.segmentSeries) && k.segmentSeries.some(sg => sg.series && sg.series.length);
@@ -993,16 +1079,12 @@ async function loadKpiData(){
       (KPI_BY_ITEM[k.attachTo] = KPI_BY_ITEM[k.attachTo] || []).push(k);
       // "Also Show Under" in the spreadsheet: the same KPI is listed under
       // further Work Systems, Key Services or Programs as well (and, with
-      // Drives Status = Yes, sets the color of those Key Services/Programs).
+      // Drives Status = Yes, sets the color of those Programs).
       (Array.isArray(k.alsoUnder) ? k.alsoUnder : []).forEach(id=>{
         if(id !== k.attachTo) (KPI_BY_ITEM[id] = KPI_BY_ITEM[id] || []).push(k);
       });
-      // Objective IDs in that same column: the same KPI is
-      // listed under those Strategic Plan Objectives too, and its status
-      // counts toward each of those Objectives (see objectiveStatus).
-      (Array.isArray(k.objectives) ? k.objectives : []).forEach(obId=>{
-        (KPI_BY_ITEM[obId] = KPI_BY_ITEM[obId] || []).push(k);
-      });
+      // Objective IDs in that column are no longer used: an Objective
+      // reaches its KPIs through the Key Services aligned to it.
     });
   } catch(err){
     console.warn('kpi-data.json could not be loaded; showing the dashboard without KPI numbers.', err);
@@ -1023,6 +1105,102 @@ function kpiCountLabel(id){
 function kpiDrivenStatus(id){
   const driving = kpisFor(id).filter(k => k.drivesStatus && k.status);
   return driving.length ? rollupStatus(driving.map(k => k.status)) : null;
+}
+
+/* ---------- Gauges ----------
+   Every gauge counts Key Service KPIs only (a KPI whose Level is Key
+   Service, or that is also shown under a Key Service). Meeting target =
+   On Track or At Risk. KPIs without a result yet are listed as awaiting
+   and left out of the percentage. The counts are worked out by
+   build_kpi_data.py; the page only draws them. */
+const EMPTY_GAUGE = { meeting:0, withResult:0, percent:null, awaiting:[], kpis:[] };
+function gaugeFor(id){ return (FRAMEWORK.gauges && FRAMEWORK.gauges[id]) || EMPTY_GAUGE; }
+function definitionFor(id){ return (FRAMEWORK.descriptions && FRAMEWORK.descriptions[id]) || ''; }
+function plural(n, one, many){ return `${n} ${n === 1 ? one : (many || one + 's')}`; }
+
+// Key Services aligned to an Objective: from the workbook's Objective
+// Alignment sheet (via kpi-data.json), falling back to data.json.
+function keyServicesForObjective(obId){
+  const al = FRAMEWORK.objectiveAlignment || {};
+  const useAl = Object.keys(al).length > 0;
+  return DATA.keyServices.filter(ks => (useAl ? (al[ks.id] || []) : (Array.isArray(ks.objectives) ? ks.objectives : [])).includes(obId));
+}
+
+function gaugeCaption(g){
+  if(!g.kpis.length) return 'No Key Service KPIs yet';
+  if(!g.withResult) return `${plural(g.kpis.length, 'Key Service KPI')} awaiting results`;
+  return `${g.meeting} of ${plural(g.withResult, 'Key Service KPI')} meeting target`;
+}
+function gaugeAwaitingText(g){
+  return (g.withResult && g.awaiting.length) ? `${g.awaiting.length} more awaiting results` : '';
+}
+function gaugePctText(g){ return g.percent === null || g.percent === undefined ? '—' : `${g.percent}%`; }
+// Full sentence for screen readers (the drawing itself is hidden from them).
+function gaugeSpoken(g){
+  const pct = g.percent === null || g.percent === undefined ? 'No gauge yet' : `${g.percent}% of Key Service KPIs meeting target`;
+  const extra = gaugeAwaitingText(g);
+  return `${pct}. ${gaugeCaption(g)}${extra ? '. ' + extra : ''}`;
+}
+
+// Half-circle gauge with a needle, 0% at the left and 100% at the right.
+function gaugeSVG(g, width){
+  const w = width || 120, h = Math.round(w * 0.6);
+  const cx = 60, cy = 58, r = 46;
+  const pct = (g.percent === null || g.percent === undefined) ? null : Math.max(0, Math.min(100, g.percent));
+  const arc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+  const ticks = [0, 25, 50, 75, 100].map(t => {
+    const a = Math.PI * (1 - t / 100);
+    const x1 = cx + Math.cos(a) * (r + 7), y1 = cy - Math.sin(a) * (r + 7);
+    const x2 = cx + Math.cos(a) * (r + 11), y2 = cy - Math.sin(a) * (r + 11);
+    return `<line class="g-tick" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke-width="1.6" stroke-linecap="round"/>`;
+  }).join('');
+  let needle = '';
+  if(pct !== null){
+    const a = Math.PI * (1 - pct / 100);
+    const nx = cx + Math.cos(a) * (r - 14), ny = cy - Math.sin(a) * (r - 14);
+    needle = `<line class="g-needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke-width="3.2" stroke-linecap="round"/><circle class="g-hub" cx="${cx}" cy="${cy}" r="5"/>`;
+  }
+  return `<svg class="gauge-svg" width="${w}" height="${h}" viewBox="0 -12 120 76" aria-hidden="true" focusable="false">
+    <path class="g-track" d="${arc}" fill="none" stroke-width="11" stroke-linecap="round"/>
+    ${pct ? `<path class="g-fill" d="${arc}" fill="none" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="${pct} 100"/>` : ''}
+    ${ticks}${needle}
+  </svg>`;
+}
+
+// Large gauge with its caption (level summaries).
+function gaugeBlockHTML(g){
+  const extra = gaugeAwaitingText(g);
+  return `<div class="gauge-block${g.withResult ? '' : ' gauge-empty'}" role="img" aria-label="${escHTML(gaugeSpoken(g))}">
+    ${gaugeSVG(g, 150)}
+    <div class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</div>
+    <div class="gauge-cap" aria-hidden="true">${escHTML(gaugeCaption(g))}</div>
+    ${extra ? `<div class="gauge-await" aria-hidden="true">${escHTML(extra)}</div>` : ''}
+  </div>`;
+}
+// Small gauge + percent, for tiles (the tile's button carries the spoken text).
+function gaugeInlineHTML(g, width){
+  return `<span class="gauge-inline${g.withResult ? '' : ' gauge-empty'}" aria-hidden="true">${gaugeSVG(g, width || 44)}<span class="gauge-pct">${gaugePctText(g)}</span></span>`;
+}
+
+// White card with a gauge: Key Services (both views) and Objectives.
+function gaugeTileHTML({ typeLabel, name, gauge, subtitle='', definition='', dataAttrs='', exportKind='', exportId='', extraClass='', tileStyle='', interactive=true, actionHint='' }){
+  const exportBtnHTML = exportKind
+    ? `<button type="button" class="tile-export-btn" data-export-kind="${exportKind}" data-export-id="${exportId}" title="Export this ${typeLabel}" aria-label="Export ${escHTML(name)} as CSV">⬇</button>`
+    : '';
+  const spoken = `${typeLabel}: ${name}. ${gaugeSpoken(gauge)}${subtitle ? '. ' + subtitle : ''}${actionHint ? '. ' + actionHint : ''}`;
+  return `
+    <div class="heat-tile gauge-tile${extraClass ? ' ' + extraClass : ''}${interactive ? '' : ' heat-tile-static'}"${tileStyle ? ` style="${tileStyle}"` : ''} ${dataAttrs}>
+      ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(spoken)}"></button>` : ''}
+      ${exportBtnHTML}
+      <div class="heat-type">${typeLabel}</div>
+      <div class="heat-name">${escHTML(name)}</div>
+      ${subtitle ? `<div class="heat-subtitle">${escHTML(subtitle)}</div>` : ''}
+      ${definition ? `<div class="gt-def">${escHTML(definition)}</div>` : ''}
+      <div class="gt-gauge${gauge.withResult ? '' : ' gauge-empty'}" aria-hidden="true">
+        ${gaugeSVG(gauge, 64)}
+        <div><div class="gauge-pct">${gaugePctText(gauge)}</div><div class="gt-cap">${escHTML(gaugeCaption(gauge))}</div></div>
+      </div>
+    </div>`;
 }
 
 function escHTML(val){
@@ -1158,43 +1336,9 @@ function rollupStatus(statuses){
 
 function programStatus(p){ return kpiDrivenStatus(p.id) || p.status || 'no-data'; }
 
-// Key Services carry their OWN distinct status — they are a "yellow box"
-// (distinct measures) in the framework, not an aggregate of Programs.
-// The Programs↔Key Service link is alignment only (dashed arrow), so it
-// intentionally does not feed into this.
-function keyServiceStatus(ks){
-  return kpiDrivenStatus(ks.id) || ks.status || 'no-data';
-}
-
-// Objectives DO aggregate from their Programs — this is the one real
-// "solid arrow" on the policy side of the framework. A Program can now
-// belong to more than one Objective, so this checks array membership.
-//
-// KPIs shown under an Objective ("Also Show Under Objective" in the
-// spreadsheet) count too: the Objective takes the worst status among its
-// tagged Programs and those KPIs. Without this, an Objective with real
-// KPI results would still read "No Data".
-function objectiveStatus(ob){
-  const progs = DATA.programs.filter(p => Array.isArray(p.objectives) && p.objectives.includes(ob.id));
-  const kpiStatuses = kpisFor(ob.id).map(k => k.status).filter(Boolean);
-  const all = [...progs.map(programStatus), ...kpiStatuses];
-  return all.length ? rollupStatus(all) : 'no-data';
-}
-
-function workSystemStatus(ws){
-  const services = DATA.keyServices.filter(k => k.workSystem === ws.id);
-  return rollupStatus(services.map(keyServiceStatus));
-}
-
-// A Strategic Plan Goal's status comes from its Objectives only (each
-// Objective in turn rolls up the Programs aligned to it). Goals and
-// Objectives are the policy side of the dashboard; Work Systems and Key
-// Services are the operational side, and the two are deliberately not
-// connected: no Key Service feeds into, or is listed under, a Goal.
-function goalProgramViewStatus(g){
-  const objs = DATA.objectives.filter(o => o.goal === g.id);
-  return rollupStatus(objs.map(objectiveStatus));
-}
+// Goals, Objectives, Work Systems and Key Services no longer carry a
+// status color: they show a gauge (gaugeFor) instead. Only Programs keep
+// a status, set by their KPIs (Drives Status) or by data.json.
 
 // Text color for a solid status-colored chip: dark where white text
 // would fall below 4.5:1 (At Risk gold, No Data grey).
@@ -1270,8 +1414,8 @@ function showTooltip(target, tipId){
 
   tooltip.innerHTML = `
     <div class="tt-head">
-      <span class="status-dot" style="background:${statusDotColor(info.status)}"></span>
-      ${STATUS_META[info.status].label} (${info.names.length})
+      <span class="status-dot" style="background:${info.color || statusDotColor(info.status)}"></span>
+      ${info.label || STATUS_META[info.status].label} (${info.names.length})
     </div>
     <ul class="tt-list">${info.names.map(n=>`<li>${n}</li>`).join('')}</ul>
   `;
@@ -1345,6 +1489,33 @@ function wireStatusTooltips(scope){
 // touch devices have no hover-out event to rely on.
 document.addEventListener('click', ()=>{ hideTooltip(); });
 
+// At-a-glance breakdown for gauged levels: how many have a gauge
+// reading, how many are still waiting for results, and how many have
+// no Key Service KPIs at all. Hover/focus lists the names (with %).
+function gaugeBreakdownHTML(items){
+  const groups = [
+    { key:'with', label:'With a gauge reading', color:'#006A53', names:[] },
+    { key:'await', label:'Awaiting results', color:'#9AA6A2', names:[] },
+    { key:'none', label:'No Key Service KPIs yet', color:'#DCE6E2', names:[] },
+  ];
+  items.forEach(item=>{
+    const g = gaugeFor(item.id);
+    if(g.withResult) groups[0].names.push(`${item.name} — ${g.percent}%`);
+    else if(g.kpis.length) groups[1].names.push(item.name);
+    else groups[2].names.push(item.name);
+  });
+  const rows = groups.filter(gr => gr.names.length).map(gr=>{
+    const tipId = `tip-${tooltipCounter++}`;
+    tooltipRegistry[tipId] = { status:'no-data', label:gr.label, color:gr.color, names:gr.names };
+    return `
+      <span class="mini-status" data-tip-id="${tipId}" tabindex="0" aria-label="${escHTML(gr.label)}: ${escHTML(gr.names.join(', '))}">
+        <span class="status-dot" style="background:${gr.color}; box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)"></span>
+        ${gr.names.length} ${gr.key === 'with' ? 'with a reading' : gr.key === 'await' ? 'awaiting results' : 'no KPIs yet'}
+      </span>`;
+  }).join('');
+  return `<div class="stat-breakdown">${rows}</div>`;
+}
+
 function renderStatusLegend(){
   document.getElementById('status-legend').innerHTML = Object.entries(STATUS_META)
     .map(([status,meta]) => `<span class="item"><span class="status-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusDotColor(status)}"></span>${meta.label}</span>`)
@@ -1354,10 +1525,10 @@ function renderStatusLegend(){
 /* ---------- At-a-glance stats ---------- */
 function renderStats(){
   const stats = [
-    { n: DATA.goals.length, l: 'Strategic Plan Goals', breakdown: statusBreakdownHTML(DATA.goals, goalProgramViewStatus) },
-    { n: DATA.objectives.length, l: 'Objectives', breakdown: statusBreakdownHTML(DATA.objectives, objectiveStatus) },
-    { n: DATA.workSystems.length, l: 'Work Systems', breakdown: statusBreakdownHTML(DATA.workSystems, workSystemStatus) },
-    { n: DATA.keyServices.length, l: 'Key Services', breakdown: statusBreakdownHTML(DATA.keyServices, keyServiceStatus) },
+    { n: DATA.goals.length, l: 'Strategic Plan Goals', breakdown: gaugeBreakdownHTML(DATA.goals) },
+    { n: DATA.objectives.length, l: 'Objectives', breakdown: gaugeBreakdownHTML(DATA.objectives) },
+    { n: DATA.workSystems.length, l: 'Work Systems', breakdown: gaugeBreakdownHTML(DATA.workSystems) },
+    { n: DATA.keyServices.length, l: 'Key Services', breakdown: gaugeBreakdownHTML(DATA.keyServices) },
     { n: DATA.programs.length, l: 'Programs', breakdown: statusBreakdownHTML(DATA.programs, programStatus) },
     
   ];
@@ -1377,32 +1548,42 @@ function renderStats(){
    surfacing what actually needs attention before anyone clicks anything. */
 function renderHeadline(){
   const banner = document.getElementById('headline-banner');
-  const offGoals = DATA.goals.filter(g=>goalProgramViewStatus(g)==='off-track');
-  const riskGoals = DATA.goals.filter(g=>goalProgramViewStatus(g)==='at-risk');
-  const troubled = offGoals.length + riskGoals.length;
-
-  // Name the Objectives behind the count, worst first.
-  const offObjs = DATA.objectives.filter(o=>objectiveStatus(o)==='off-track');
-  const riskObjs = DATA.objectives.filter(o=>objectiveStatus(o)==='at-risk');
-  const driverItems = [...offObjs, ...riskObjs];
-  const drivers = driverItems.slice(0,3).map(o=>o.name);
+  // City-wide: every Key Service KPI, counted once, using the same rule
+  // as the gauges (On Track or At Risk = meeting target).
+  const byId = {};
+  Object.values(KPI_BY_ITEM).flat().forEach(k => { byId[k.id] = k; });
+  const meetingSet = new Set(FRAMEWORK.meetingTargetStatuses || ['on-track', 'at-risk']);
+  const seen = new Set(); let meeting = 0, withResult = 0, awaiting = 0;
+  DATA.keyServices.forEach(ks=>{
+    gaugeFor(ks.id).kpis.forEach(id=>{
+      if(seen.has(id)) return; seen.add(id);
+      const st = byId[id] && byId[id].status;
+      if(st){ withResult++; if(meetingSet.has(st)) meeting++; } else awaiting++;
+    });
+  });
 
   let icon, cls, html;
-  if(troubled === 0){
-    icon = '✓'; cls = 'clear';
-    html = `<strong>All ${DATA.goals.length} Strategic Plan Goals are On Track</strong> this quarter — no immediate action needed.`;
+  if(!seen.size){
+    icon = '•'; cls = 'caution';
+    html = 'No Key Service KPIs have been set up yet, so the gauges are empty.';
+  } else if(!withResult){
+    icon = '•'; cls = 'caution';
+    html = `<strong>${plural(seen.size, 'Key Service KPI')}</strong> are set up; their gauges will fill in as results are entered.`;
   } else {
-    icon = offGoals.length > 0 ? '⚠' : '•';
-    cls = offGoals.length > 0 ? 'critical' : 'caution';
-    const driverText = drivers.length
-      ? ` ${driverItems.length} Objective${driverItems.length!==1?'s need':' needs'} attention${driverItems.length > drivers.length ? ', including' : ':'} <strong>${drivers.join(', ')}</strong>.`
-      : '';
-    html = `<strong>${troubled} of ${DATA.goals.length} Strategic Plan Goals</strong> show elevated risk this quarter
-      (${offGoals.length} Off Track, ${riskGoals.length} At Risk).${driverText}`;
+    const pct = Math.round(meeting / withResult * 100);
+    icon = pct === 100 ? '✓' : '•';
+    cls = pct === 100 ? 'clear' : 'caution';
+    const lowest = sortGoalsCanonical(DATA.goals)
+      .flatMap(g => objectivesUnderGoal(g.id))
+      .filter(o => gaugeFor(o.id).withResult && gaugeFor(o.id).percent < 100)
+      .sort((a,b) => gaugeFor(a.id).percent - gaugeFor(b.id).percent)
+      .slice(0, 3);
+    html = `<strong>${meeting} of ${plural(withResult, 'Key Service KPI')} with results (${pct}%)</strong> are meeting their target.`
+      + (awaiting ? ` ${plural(awaiting, 'more is', 'more are')} awaiting results.` : '')
+      + (lowest.length ? ` Lowest Objective gauge${lowest.length === 1 ? '' : 's'}: <strong>${lowest.map(o => `${escHTML(o.name)} (${gaugeFor(o.id).percent}%)`).join(', ')}</strong>.` : '');
   }
-
   banner.className = `headline-banner ${cls}`;
-  banner.innerHTML = `<span class="hb-icon">${icon}</span><span>${html}</span>`;
+  banner.innerHTML = `<span class="hb-icon" aria-hidden="true">${icon}</span><span>${html}</span>`;
 }
 
 // Strategic Plan Goals are always shown in this fixed order, regardless
@@ -1483,21 +1664,6 @@ function renderGoalRidgeMotif(){
 
 function goalSortWeight(status){
   return status==='off-track' ? 0 : status==='at-risk' ? 1 : status==='on-track' ? 2 : 3;
-}
-
-// A Goal's makeup by Objective —
-// composition is by Objective (each Objective's own Program-rolled status),
-// kept as a visually separate bar rather than merged into the one above.
-function goalObjectiveCompositionBar(g){
-  const objs = DATA.objectives.filter(o=>o.goal===g.id);
-  const counts = { 'on-track':0, 'at-risk':0, 'off-track':0, 'no-data':0 };
-  objs.forEach(o=>counts[objectiveStatus(o)]++);
-  const total = objs.length;
-  if(total === 0) return `<div class="bar-track-wide"><span class="bar-seg" style="width:100%;background:var(--line)"></span></div>`;
-  const segs = Object.entries(counts).filter(([,n])=>n>0).map(([status,n])=>
-    `<span class="bar-seg" style="width:${(n/total*100).toFixed(1)}%;background:${statusDotColor(status)}" title="${n} ${STATUS_META[status].label}"></span>`
-  ).join('');
-  return `<div class="bar-track-wide">${segs}</div>`;
 }
 
 function primaryMetricHTML(item){
@@ -1604,11 +1770,11 @@ function updateExplorerHeading(){
   const sub = document.getElementById('explorer-subhead');
   if(!heading || !sub) return;
   if(dashboardView.rootMode === 'goal'){
-    heading.textContent = 'Strategic Plan Goals → Objectives';
-    sub.textContent = "Pick a Goal to see the Objectives that support it. Objectives marked with KPIs can be opened."
+    heading.textContent = 'Strategic Plan Goals → Objectives → Key Services';
+    sub.textContent = "Pick a Goal to see its Objectives, then an Objective to see the Key Services that support it. Each gauge shows the share of Key Service KPIs meeting their target."
   } else {
     heading.textContent = 'Work Systems → Key Services → Programs';
-    sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs.";
+    sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs. Gauges show the share of Key Service KPIs meeting their target; Programs keep their status color.";
   }
 }
 
@@ -1625,7 +1791,7 @@ function renderDashboardBreadcrumb(){
   if(dashboardView.level === 'objective'){
     const o = DATA.objectives.find(oo=>oo.id===dashboardView.objectiveId);
     parts.push(`<span class="sep">›</span>`);
-    parts.push(`<button class="crumb current" data-crumb="objective">${o ? o.name : 'Objective'}</button>`);
+    parts.push(`<button class="crumb current" data-crumb="objective">${o ? escHTML(o.name) : 'Objective'}</button>`);
   }
 
   if(dashboardView.level === 'keyservice'){
@@ -1642,6 +1808,7 @@ function renderDashboardBreadcrumb(){
       const level = btn.dataset.crumb;
       if(level === 'roots') dashboardView = { rootMode: dashboardView.rootMode, level:'roots' };
       else if(level === 'root') dashboardView = { rootMode: dashboardView.rootMode, level:'root', rootId: dashboardView.rootId };
+      else return;
       renderDashboardHeatmap();
     });
   });
@@ -1658,8 +1825,7 @@ function renderDashboardBreadcrumb(){
 // differently-colored parts of the same tile. `selected`/`dimmed` drive
 // the persistent-row highlight-vs-grey-out behavior.
 function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false, dimmed=false, width=null, interactive=true } = {}){
-  const statusColor = statusDotColor(status);
-  const statusText = statusTextColor(status);
+  const gauge = gaugeFor(g.id);
   const tileColors = readableTileColors(g.color);
   const cls = `goal-tile${selected ? ' goal-tile-selected' : ''}${dimmed ? ' goal-tile-dimmed' : ''}`;
   const widthStyle = width ? `width:${width}px;` : '';
@@ -1668,15 +1834,15 @@ function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false
   // "On Track / At Risk / Off Track" badge below, not the shape.
   const clip = `polygon(0% 100%, 0% ${left}%, 50% ${peak}%, 100% ${right}%, 100% 100%)`;
   return `
-    <div class="heat-tile status-${status} ${cls}"
+    <div class="heat-tile ${cls}"
          style="clip-path:${clip}; background:${tileColors.bg}; color:${tileColors.fg}; ${widthStyle}"
          ${interactive ? `data-drill-root="${g.id}"` : ''}>
-      ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`Goal: ${g.name}. ${STATUS_META[status].label}`)}"${selected ? ' aria-current="true"' : ''}></button>` : ''}
+      ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`Goal: ${g.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>` : ''}
       <button type="button" class="tile-export-btn" data-export-kind="goal" data-export-id="${g.id}" title="Export this Goal" aria-label="Export ${escHTML(g.name)} as CSV">⬇</button>
       <div class="heat-name-mountain">${g.name}</div>
       <div class="heat-foot-mountain">
         <span class="heat-type-mountain">Goal</span>
-        <span class="heat-status-highlight" style="background:${statusColor}; color:${statusText};">${STATUS_META[status].label}</span>
+        ${gaugeInlineHTML(gauge, 44)}
       </div>
     </div>
   `;
@@ -1702,8 +1868,7 @@ function renderGoalMountainRow(){
 
   container.innerHTML = goals.map((g,i)=>{
     const left = boundaries[i] ?? 40, peak = peaks[i] ?? 30, right = boundaries[i+1] ?? 40;
-    const status = goalProgramViewStatus(g);
-    return goalMountainTileHTML(g, status, { left, peak, right }, {
+    return goalMountainTileHTML(g, null, { left, peak, right }, {
       selected: selectedId === g.id,
       dimmed: selectedId !== null && selectedId !== g.id,
     });
@@ -1726,10 +1891,9 @@ function renderSelectedGoalBanner(){
   const g = DATA.goals.find(gg=>gg.id===dashboardView.rootId);
   if(!g){ container.innerHTML = ''; container.classList.remove('has-selection'); return; }
 
-  const status = goalProgramViewStatus(g);
   container.classList.add('has-selection');
   container.innerHTML = goalMountainTileHTML(
-    g, status, { left:55, peak:15, right:55 },
+    g, null, { left:55, peak:15, right:55 },
     { selected:true, width:260, interactive:false }
   );
   // Decorative context card — not part of the click-driven grid, so
@@ -1759,16 +1923,17 @@ function workSystemIconSVG(ws){
 
 // One large button per Work System: icon, name, KPI count and status chip.
 function workSystemCardHTML(ws, status, { selected=false } = {}){
-  const kpiLabel = kpiCountLabel(ws.id);
+  const gauge = gaugeFor(ws.id);
+  const kpiLabel = plural(gauge.kpis.length, 'Key Service KPI');
   return `
     <div class="heat-tile ws-card${selected ? ' ws-card-selected' : ''}"
          data-drill-root="${ws.id}">
-      <button type="button" class="tile-hit" aria-label="${escHTML(`Work System: ${ws.name}. ${STATUS_META[status].label}${kpiLabel ? '. ' + kpiLabel : ''}`)}"${selected ? ' aria-current="true"' : ''}></button>
+      <button type="button" class="tile-hit" aria-label="${escHTML(`Work System: ${ws.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>
       <button type="button" class="tile-export-btn" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${escHTML(ws.name)} as CSV">⬇</button>
       <span class="ws-icon">${workSystemIconSVG(ws)}</span>
       <div class="ws-name">${ws.name}</div>
-      ${kpiLabel ? `<div class="ws-kpis">${kpiLabel}</div>` : ''}
-      <div class="ws-foot"><span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${statusTextColor(status)};">${STATUS_META[status].label}</span></div>
+      <div class="ws-kpis">${kpiLabel}</div>
+      <div class="ws-foot">${gaugeInlineHTML(gauge, 56)}<div class="ws-gauge-cap" aria-hidden="true">${gauge.withResult ? `${gauge.meeting} of ${gauge.withResult} meeting target` : (gauge.kpis.length ? 'Awaiting results' : 'No KPIs yet')}</div></div>
     </div>
   `;
 }
@@ -1785,10 +1950,11 @@ function renderWorkSystemCardRow(){
     return;
   }
 
-  const sorted = [...DATA.workSystems].sort((a,b)=>goalSortWeight(workSystemStatus(a)) - goalSortWeight(workSystemStatus(b)));
+  // Fixed order (as in data.json), so the buttons don't jump around as results change.
+  const sorted = DATA.workSystems;
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = sorted.map(ws=> workSystemCardHTML(ws, workSystemStatus(ws), {
+  container.innerHTML = sorted.map(ws=> workSystemCardHTML(ws, null, {
     selected: selectedId === ws.id,
   })).join('');
   wireDashboardTiles(container);
@@ -1800,6 +1966,13 @@ function renderWorkSystemCardRow(){
 // Services or Programs). In Goal View it is the selected Objective, at
 // full width, since nothing sits underneath an Objective. Nothing is
 // shown when the item has none of these.
+function childLabelText(){
+  const v = dashboardView;
+  if(v.level === 'root') return v.rootMode === 'goal' ? 'Objectives under this Goal' : 'Key Services';
+  if(v.level === 'objective') return 'Key Services supporting this Objective';
+  if(v.level === 'keyservice') return 'Programs';
+  return '';
+}
 function renderExplorerDetail(){
   const box = document.getElementById('explorer-detail');
   const childLabel = document.getElementById('explorer-children-label');
@@ -1812,8 +1985,6 @@ function renderExplorerDetail(){
       item = DATA.keyServices.find(k=>k.id===dashboardView.ksId);
       childWord = 'Programs';
     }
-  } else if(dashboardView.level === 'objective'){
-    item = DATA.objectives.find(o=>o.id===dashboardView.objectiveId);
   }
   const hasChildren = !!childWord;
 
@@ -1849,8 +2020,39 @@ function renderExplorerDetail(){
   const split = document.getElementById('explorer-split');
   split.classList.toggle('has-detail', !!html);
   split.classList.toggle('no-children', !!html && !hasChildren);
-  childLabel.textContent = html ? childWord : '';
-  childLabel.style.display = html ? '' : 'none';
+  childLabel.textContent = childLabelText();
+}
+
+// The selected item's name, council-adopted definition (Goals and
+// Objectives) and its gauge, shown above what sits underneath it.
+function renderLevelSummary(){
+  const box = document.getElementById('level-summary');
+  if(!box) return;
+  let type = '', item = null;
+  if(dashboardView.level === 'root'){
+    if(dashboardView.rootMode === 'goal'){ type = 'Strategic Plan Goal'; item = DATA.goals.find(g=>g.id===dashboardView.rootId); }
+    else { type = 'Work System'; item = DATA.workSystems.find(w=>w.id===dashboardView.rootId); }
+  } else if(dashboardView.level === 'objective'){
+    type = 'Objective'; item = DATA.objectives.find(o=>o.id===dashboardView.objectiveId);
+  } else if(dashboardView.level === 'keyservice'){
+    type = 'Key Service'; item = DATA.keyServices.find(k=>k.id===dashboardView.ksId);
+  }
+  if(!item){ box.innerHTML = ''; return; }
+  const g = gaugeFor(item.id);
+  const def = definitionFor(item.id);
+  const adopted = type === 'Strategic Plan Goal' || type === 'Objective';
+  const byId = {};
+  Object.values(KPI_BY_ITEM).flat().forEach(k => { byId[k.id] = k; });
+  const awaitingNames = g.awaiting.map(id => byId[id] ? byId[id].name : id);
+  box.innerHTML = `
+    <div>
+      <div class="ls-type">${type}</div>
+      <h3 class="ls-name">${escHTML(item.name)}</h3>
+      ${def ? `<p class="ls-def">${escHTML(def)}</p>` : ''}
+      ${def && adopted ? `<p class="ls-src">Definition adopted by City Council in the 2024 Strategic Plan.</p>` : ''}
+      ${awaitingNames.length ? `<details class="ls-awaiting"><summary>${plural(awaitingNames.length, 'Key Service KPI')} awaiting results</summary><ul>${awaitingNames.map(n=>`<li>${escHTML(n)}</li>`).join('')}</ul></details>` : ''}
+    </div>
+    ${gaugeBlockHTML(g)}`;
 }
 
 // Re-fit the on-page KPI charts when the window is resized.
@@ -1884,53 +2086,89 @@ function renderDashboardHeatmap(){
 function renderDashboardHeatmapContent(){
   renderRootModeToggle();
   renderDashboardBreadcrumb();
+  renderLevelSummary();
   renderExplorerDetail();
   renderGoalMountainRow();
   renderSelectedGoalBanner();
   renderWorkSystemCardRow();
   const grid = document.getElementById('heatmap-grid');
-  grid.classList.remove('mountain-grid');
+  grid.classList.remove('mountain-grid', 'objective-grid', 'ks-grid', 'goal-roots-grid');
 
   if(dashboardView.level === 'roots'){
     // Nothing to show here for either mode — the persistent row above
     // (mountain range or Work System cards) IS the roots-level content now; the
     // secondary grid stays empty until something is actually selected.
+    // Narrow screens hide the mountain row, so the Goals are listed here
+    // as cards instead (hidden again on wide screens by CSS).
+    if(dashboardView.rootMode === 'goal'){
+      grid.classList.add('ks-grid', 'goal-roots-grid');
+      grid.innerHTML = sortGoalsCanonical(DATA.goals).map(g=>gaugeTileHTML({
+        typeLabel:'Goal', name:g.name, gauge:gaugeFor(g.id),
+        subtitle: plural(objectivesUnderGoal(g.id).length, 'Objective'),
+        dataAttrs:`data-drill-root="${g.id}"`,
+        exportKind:'goal', exportId:g.id,
+        extraClass:'objective-card goal-root-card', tileStyle:`--goal-color:${g.color}`,
+        actionHint:'Open to see its Objectives',
+      })).join('');
+      wireDashboardTiles(grid);
+      return;
+    }
     grid.innerHTML = '';
     return;
   }
 
   if(dashboardView.level === 'root'){
     if(dashboardView.rootMode === 'goal'){
-      // A Goal's Objectives. An Objective that has KPIs tagged to it can be
-      // opened to see them; the others are informational, not clickable.
-      const objs = objectivesUnderGoal(dashboardView.rootId)
-        .sort((a,b)=>goalSortWeight(objectiveStatus(a)) - goalSortWeight(objectiveStatus(b)));
-      grid.innerHTML = objs.map(o=>heatTileHTML({
-        typeLabel:'Objective', name:o.name, status:objectiveStatus(o), trendItem:null,
-        subtitle:kpiCountLabel(o.id),
-        interactive:kpisFor(o.id).length > 0,
-        dataAttrs:kpisFor(o.id).length ? `data-drill-objective="${o.id}"` : '',
-        exportKind:'objective', exportId:o.id,
-      })).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
+      // A Goal's Objectives, each with its adopted definition and gauge.
+      const goal = DATA.goals.find(g=>g.id===dashboardView.rootId);
+      const objs = objectivesUnderGoal(dashboardView.rootId);
+      grid.classList.add('objective-grid');
+      grid.innerHTML = objs.map(o=>{
+        const n = keyServicesForObjective(o.id).length;
+        return gaugeTileHTML({
+          typeLabel:'Objective', name:o.name, gauge:gaugeFor(o.id),
+          subtitle: plural(n, 'Key Service'),
+          definition: definitionFor(o.id),
+          dataAttrs:`data-drill-objective="${o.id}"`,
+          exportKind:'objective', exportId:o.id,
+          extraClass:'objective-card',
+          tileStyle: goal ? `--goal-color:${goal.color}` : '',
+          actionHint:'Open to see its Key Services',
+        });
+      }).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
       wireDashboardTiles(grid);
       return;
     }
-    // Work System View: this level is Key Services.
-    const services = keyServicesUnderWorkSystem(dashboardView.rootId)
-      .sort((a,b)=>goalSortWeight(keyServiceStatus(a)) - goalSortWeight(keyServiceStatus(b)));
-    grid.innerHTML = services.map(ks=>heatTileHTML({
-      typeLabel:'Key Service', name:ks.name, status:keyServiceStatus(ks), trendItem:ks, subtitle:kpiCountLabel(ks.id),
+    // Work System View: this level is Key Services, each with its gauge.
+    const services = keyServicesUnderWorkSystem(dashboardView.rootId);
+    grid.classList.add('ks-grid');
+    grid.innerHTML = services.map(ks=>gaugeTileHTML({
+      typeLabel:'Key Service', name:ks.name, gauge:gaugeFor(ks.id),
+      subtitle: plural(programsUnderKeyService(ks.id).length, 'Program'),
       dataAttrs:`data-drill-ks="${ks.id}"`,
       exportKind:'ks', exportId:ks.id,
+      actionHint:'Open to see its KPIs and Programs',
     })).join('') || `<div class="heatmap-empty">No Key Services recorded here yet.</div>`;
     wireDashboardTiles(grid);
     return;
   }
 
   if(dashboardView.level === 'objective'){
-    // Goal View: the selected Objective's KPIs are shown by
-    // renderExplorerDetail; nothing sits underneath an Objective.
-    grid.innerHTML = '';
+    // Goal View: the Key Services aligned to this Objective. Each opens
+    // its KPIs in the pop-up. Programs are not part of this view.
+    const services = keyServicesForObjective(dashboardView.objectiveId);
+    grid.classList.add('ks-grid');
+    grid.innerHTML = services.map(ks=>{
+      const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
+      return gaugeTileHTML({
+        typeLabel:'Key Service', name:ks.name, gauge:gaugeFor(ks.id),
+        subtitle: ws ? ws.name : '',
+        dataAttrs:`data-open-detail="ks" data-id="${ks.id}"`,
+        exportKind:'ks', exportId:ks.id,
+        actionHint:'Open to see its KPIs',
+      });
+    }).join('') || `<div class="heatmap-empty">No Key Services are aligned to this Objective yet.</div>`;
+    wireDashboardTiles(grid);
     return;
   }
 
@@ -2001,49 +2239,6 @@ function wireDashboardTiles(scope){
   wireTileExportButtons(scope);
 }
 
-/* ---------- Objective hover tooltip on Program align-tags ----------
-   Reuses the same tooltip element as the status-breakdown cards, so
-   hovering an Objective tag on a Program shows that Objective's real,
-   full rollup (status + every Program under it) without navigating
-   anywhere. */
-function wireObjectiveTooltips(scope){
-  scope.querySelectorAll('[data-obj-tip]').forEach(el=>{
-    const show = ()=>{
-      const ob = DATA.objectives.find(o=>o.id===el.dataset.objTip);
-      if(!ob) return;
-      const progs = DATA.programs.filter(p=>Array.isArray(p.objectives) && p.objectives.includes(ob.id));
-      const status = objectiveStatus(ob);
-      const tooltip = document.getElementById('hover-tooltip');
-      tooltip.innerHTML = `
-        <div class="tt-head"><span class="status-dot" style="background:${statusDotColor(status)}"></span>${ob.name}</div>
-        <ul class="tt-list">${progs.map(p=>`<li>${p.name} — ${STATUS_META[programStatus(p)].label}</li>`).join('') || '<li>No Programs recorded yet.</li>'}</ul>
-      `;
-      const rect = el.getBoundingClientRect();
-      tooltip.style.left = `${rect.left}px`;
-      tooltip.style.top = `${rect.bottom + 8}px`;
-      tooltip.classList.add('visible');
-      markTooltipShown(el);
-      requestAnimationFrame(()=>{
-        const tRect = tooltip.getBoundingClientRect();
-        if(tRect.right > window.innerWidth - 12){ tooltip.style.left = `${Math.max(12, window.innerWidth - tRect.width - 12)}px`; }
-      });
-    };
-    el.setAttribute('tabindex','0');
-    el.addEventListener('mouseenter', show);
-    el.addEventListener('mouseleave', scheduleHideTooltip);
-    el.addEventListener('focus', show);
-    el.addEventListener('blur', hideTooltip);
-    // Touch devices have no hover — tap to toggle instead.
-    el.addEventListener('click', e=>{
-      e.stopPropagation();
-      const tooltip = document.getElementById('hover-tooltip');
-      const isOpenForThis = tooltip.classList.contains('visible') && tooltip.dataset.ownerId === el.dataset.objTip;
-      if(isOpenForThis){ hideTooltip(); }
-      else{ show(); tooltip.dataset.ownerId = el.dataset.objTip; }
-    });
-  });
-}
-
 function wireAccordions(scope){
   scope.querySelectorAll('.node-header').forEach(h=>{
     h.addEventListener('click', ()=>{
@@ -2075,14 +2270,16 @@ function openDetailModal(kind, id){
   if(!item) return;
 
   const label = kind === 'ks' ? 'Key Service' : 'Program';
-  const status = kind === 'ks' ? keyServiceStatus(item) : programStatus(item);
+  const status = kind === 'ks' ? null : programStatus(item);
   const d = item.details || {};
 
   const tagEl = document.getElementById('modal-tag');
   tagEl.textContent = label;
   tagEl.classList.toggle('gold', kind === 'program');
 
-  document.getElementById('modal-status-slot').innerHTML = statusBadgeHTML(status);
+  document.getElementById('modal-status-slot').innerHTML = kind === 'ks'
+    ? `<span class="gauge-inline" style="color:var(--forest)" role="img" aria-label="${escHTML(gaugeSpoken(gaugeFor(item.id)))}">${gaugeSVG(gaugeFor(item.id), 40)}<span class="gauge-pct" aria-hidden="true" style="color:var(--forest-dark)">${gaugePctText(gaugeFor(item.id))}</span></span><span style="font-size:12px;color:var(--slate);font-weight:600;" aria-hidden="true">${escHTML(gaugeCaption(gaugeFor(item.id)))}</span>`
+    : statusBadgeHTML(status);
   document.getElementById('modal-title').textContent = item.name;
   const itemKpis = kpisFor(item.id);
   const descEl = document.getElementById('modal-desc');
@@ -2120,11 +2317,11 @@ function openDetailModal(kind, id){
   }
 
   const relatedBox = document.getElementById('modal-related');
-  if(kind === 'ks'){
+  if(kind === 'ks' && dashboardView.rootMode !== 'goal'){
     const relatedProgs = DATA.programs.filter(p=>p.keyservice===item.id);
     if(relatedProgs.length){
       relatedBox.innerHTML = `
-        <div class="modal-trend-label">Related Programs <span style="text-transform:none;font-weight:500;">(alignment only, not a rollup)</span></div>
+        <div class="modal-trend-label">Programs <span style="text-transform:none;font-weight:500;">(not counted in the gauge)</span></div>
         ${relatedProgs.map(p=>`
           <div class="modal-meta-row" style="align-items:center; margin-bottom:6px;">
             <button class="detail-btn" data-related-program="${p.id}" style="text-align:left; flex:1;">${p.name}</button>
@@ -2601,44 +2798,49 @@ function renderExportScopeSelect(){
    The small, subtle "⬇" on every tile — exports just that one item as
    a one-row CSV, matching the same column layout as the full export
    so the two are easy to combine or compare. */
+function gaugeCols(id){
+  const g = gaugeFor(id);
+  return [g.percent === null || g.percent === undefined ? '' : g.percent, g.meeting, g.withResult, g.awaiting.length];
+}
 function buildSingleItemRow(kind, id){
   const trendLabel = item => { const t = computeTrend(item.history); return t ? TREND_META[t].label : ''; };
 
   if(kind === 'workSystem'){
     const ws = DATA.workSystems.find(w=>w.id===id);
     if(!ws) return null;
-    return ['Work System', ws.name, workSystemStatus(ws), '', '', '', ''];
+    return ['Work System', ws.name, '', '', '', '', '', ...gaugeCols(ws.id), ''];
   }
   if(kind === 'ks'){
     const ks = DATA.keyServices.find(k=>k.id===id);
     if(!ks) return null;
     const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
-    return ['Key Service', ks.name, keyServiceStatus(ks), trendLabel(ks), '', ws ? ws.name : '', ks.statusUpdated || ''];
+    return ['Key Service', ks.name, '', '', '', ws ? ws.name : '', '', ...gaugeCols(ks.id), definitionFor(ks.id)];
   }
   if(kind === 'goal'){
     const g = DATA.goals.find(gg=>gg.id===id);
     if(!g) return null;
-    return ['Goal', g.name, goalProgramViewStatus(g), '', '', '', ''];
+    return ['Goal', g.name, '', '', '', '', '', ...gaugeCols(g.id), definitionFor(g.id)];
   }
   if(kind === 'objective'){
     const o = DATA.objectives.find(oo=>oo.id===id);
     if(!o) return null;
     const g = DATA.goals.find(gg=>gg.id===o.goal);
-    return ['Objective', o.name, objectiveStatus(o), '', g ? g.name : '', '', ''];
+    return ['Objective', o.name, '', '', g ? g.name : '', '', '', ...gaugeCols(o.id), definitionFor(o.id)];
   }
   if(kind === 'program'){
     const p = DATA.programs.find(pp=>pp.id===id);
     if(!p) return null;
     const ks = DATA.keyServices.find(k=>k.id===p.keyservice);
-    return ['Program', p.name, programStatus(p), trendLabel(p), '', ks ? ks.name : '', ''];
+    return ['Program', p.name, STATUS_META[programStatus(p)].label, trendLabel(p), '', ks ? ks.name : '', '', '', '', '', '', ''];
   }
   return null;
 }
 
+const EXPORT_HEADER = ['Type','Name','Status (Programs)','Trend','Goal','Work System / Key Service','Last Updated','Gauge % meeting target','KPIs meeting target','KPIs with results','KPIs awaiting results','Definition'];
 function exportSingleItemCSV(kind, id){
   const row = buildSingleItemRow(kind, id);
   if(!row) return;
-  const header = ['Type','Name','Status','Trend','Goal','Work System / Key Service','Last Updated'];
+  const header = EXPORT_HEADER;
   const csv = [header, row].map(r => r.map(csvEscape).join(',')).join('\r\n');
   downloadBlob(csv, `durango-${slugify(row[1])}-${todayStamp()}.csv`, 'text/csv;charset=utf-8;');
 }
@@ -2661,16 +2863,17 @@ function wireTileExportButtons(scope){
 
 function exportCSV(){
   const scope = getExportScope();
-  const rows = [['Type','Name','Status','Goal']];
+  const rows = [['Type','Name','Goal','Gauge % meeting target','KPIs meeting target','KPIs with results','KPIs awaiting results','Key Services aligned','Definition']];
 
   const scopedGoals = scope === 'all' ? sortGoalsCanonical(DATA.goals) : DATA.goals.filter(g=>g.id===scope);
 
-  // Goals and their Objectives only — Key Services are not part of the
-  // Strategic Plan side of the dashboard.
+  // Goal View: Goals, their Objectives, and the Key Services aligned to
+  // each Objective. Programs are not part of the Goal View.
   scopedGoals.forEach(g=>{
-    rows.push(['Goal', g.name, goalProgramViewStatus(g), '']);
+    rows.push(['Goal', g.name, '', ...gaugeCols(g.id), '', definitionFor(g.id)]);
     objectivesUnderGoal(g.id).forEach(o=>{
-      rows.push(['Objective', o.name, objectiveStatus(o), g.name]);
+      const ks = keyServicesForObjective(o.id);
+      rows.push(['Objective', o.name, g.name, ...gaugeCols(o.id), ks.map(k=>k.name).join('; '), definitionFor(o.id)]);
     });
   });
 
@@ -2745,7 +2948,7 @@ async function captureHeatmapLevel(view, sectionTitle, gridId='heatmap-grid'){
   dashboardView = view;
   renderDashboardHeatmap();
   await new Promise(r => setTimeout(r, 150));
-  const grid = document.getElementById(gridId);
+  const grid = gridId === 'heatmap-grid' ? document.getElementById('goal-drill').querySelector('.drill-col') : document.getElementById(gridId);
   const injected = injectHeatmapSparklines(grid);
   const canvas = await html2canvas(grid, { scale:2, backgroundColor:'#FBFCFB' });
   removeHeatmapSparklines(injected);
@@ -2865,9 +3068,9 @@ function wireExportMenu(){
    the right tool here), and restartable anytime via the header button. */
 const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
-  { target: '#headline-banner', title: 'Start with the headline', body: 'One computed sentence tells you what needs attention right now, generated from the data below — not hand-typed.' },
-  { target: '#stat-grid', title: 'At a glance', body: 'These cards break down everything the City tracks. Hover any status line to see exactly which items make it up.' },
-  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Toggle between the Strategic Plan Goal View (Goals → Objectives) and the Work System View (Work Systems → Key Services → Programs).' },
+  { target: '#headline-banner', title: 'Start with the headline', body: 'One computed sentence: how many Key Service KPIs are meeting their target City-wide, and which Objectives have the lowest gauges.' },
+  { target: '#stat-grid', title: 'At a glance', body: 'These cards count everything the City tracks. Hover any line to see exactly which items make it up.' },
+  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. Each gauge shows the share of Key Service KPIs meeting their target.' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
 ];
 
