@@ -135,6 +135,10 @@
     box-shadow:0 20px 60px rgba(0,0,0,.25);
   }
   .modal-overlay.open .modal-panel{ transform:translateY(0); }
+  /* Pop-ups that hold KPI results use most of the screen, so each chart
+     can sit beside its table instead of being squeezed into 520px. */
+  .modal-panel.modal-wide{ max-width:1120px; max-height:92vh; padding:32px 36px 30px; }
+  @media (max-width:600px){ .modal-panel.modal-wide{ padding:24px 18px 22px; } .modal-overlay{ padding:10px; } }
   .modal-close{
     position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%;
     border:1px solid var(--line); background:var(--white); color:var(--slate); cursor:pointer;
@@ -270,6 +274,19 @@
   /* Segment-only KPIs (no single headline number): one tile per segment,
      side by side, each with its own latest value and status. */
   .kpi-bysegment{font-size:11.5px; color:var(--slate); background:rgba(127,180,169,0.14); border:1px dashed #7FB4A9; border-radius:6px; padding:3px 9px; font-style:italic;}
+  .seg-hover{cursor:pointer; outline:none;}
+  .seg-hover .seg-hover-ring{opacity:0; transition:opacity .15s ease;}
+  .seg-hover:hover .seg-hover-ring, .seg-hover:focus-visible .seg-hover-ring{opacity:1;}
+  .seg-hover:focus-visible .seg-hover-ring{stroke:#1E1E1E; stroke-width:2.5;}
+  .seg-hover-hint{font-style:italic; color:var(--slate);}
+  .hover-tooltip.wide{max-width:320px; width:max-content;}
+  .tt-seg-sub{font-size:10.5px; color:var(--slate); text-align:right; margin:-4px 0 4px;}
+  .tt-seg-list{list-style:none; margin:0; padding:0;}
+  .tt-seg-list li{display:grid; grid-template-columns:minmax(0,1fr) auto 44px; gap:10px; align-items:baseline; padding:3px 0; border-top:1px solid var(--line); font-size:11.5px;}
+  .tt-seg-name{color:var(--ink);}
+  .tt-seg-val{font-weight:700; color:var(--forest-dark); text-align:right;}
+  .tt-seg-chg{font-size:11px; font-weight:700; text-align:right; color:var(--slate); white-space:nowrap;}
+  .tt-seg-chg.up{color:#006A53;} .tt-seg-chg.down{color:#8A2E26;}
   .kpi-seg-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(138px, 1fr)); gap:10px; margin-top:12px;}
   .kpi-seg-tile{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--white); display:flex; flex-direction:column; gap:6px; border-top:3px solid var(--seg-color, #006A53);}
   .kpi-seg-label{font-size:12.5px; font-weight:700; color:var(--forest-dark);}
@@ -1583,7 +1600,7 @@ let tooltipOwner = null;
 function hideTooltip(){
   clearTimeout(tooltipHideTimer);
   const tooltip = document.getElementById('hover-tooltip');
-  tooltip.classList.remove('visible');
+  tooltip.classList.remove('visible', 'wide');
   tooltip.removeAttribute('role');
   if(tooltipOwner){ tooltipOwner.removeAttribute('aria-describedby'); tooltipOwner = null; }
 }
@@ -2475,9 +2492,19 @@ function openDetailModal(kind, id){
     </div>
   `).join('');
 
+  // Wide pop-up when there are KPI results to show; size charts to fit it
+  // (overlay padding 24px each side, panel padding 36px each side).
+  const panelEl = document.querySelector('#modal-overlay .modal-panel');
+  const wide = itemKpis.some(k => !k.pending);
+  panelEl.classList.toggle('modal-wide', wide);
+  const vw = window.innerWidth;
+  const panelInner = wide ? Math.min(1120, vw - (vw <= 600 ? 20 : 48)) - (vw <= 600 ? 36 : 72) : 464;
+  const modalChartBeside = wide && panelInner >= 720;
+  const modalChartWidth = wide ? Math.max(240, Math.round(modalChartBeside ? (panelInner - 32) * 1.2 / 2.2 : panelInner)) : undefined;
+
   document.getElementById('modal-kpis').innerHTML = itemKpis.length
     ? `<div class="modal-trend-label">${itemKpis.length === 1 ? 'Key performance indicator' : 'Key performance indicators'}</div>`
-      + itemKpis.map(k => kpiBlockHTML(k)).join('')
+      + itemKpis.map(k => kpiBlockHTML(k, modalChartWidth, modalChartBeside)).join('')
     : '';
 
   const trendBox = document.getElementById('modal-trend');
@@ -2602,9 +2629,74 @@ function kpiSeriesStyle(i){
   const st = KPI_SERIES[i % KPI_SERIES.length];
   return { stroke: st.stroke, dash: st.dash, text: st.stroke === '#1B8A79' ? '#006A53' : st.stroke };
 }
-function kpiBreakdownLines(k){
+// A few segments (e.g. Digital and Physical) get their own line and card.
+// More than that turns the chart into spaghetti, so the chart shows the
+// Total only, and each Total dot opens a hover box with every segment.
+const KPI_MAX_BREAKDOWN_LINES = 4;
+function kpiAllSegments(k){
   return (!k.segmentsOnly && Array.isArray(k.segmentSeries)) ? k.segmentSeries.filter(sg => sg.series && sg.series.length) : [];
 }
+function kpiManySegments(k){ return kpiAllSegments(k).length > KPI_MAX_BREAKDOWN_LINES; }
+function kpiBreakdownLines(k){
+  return kpiManySegments(k) ? [] : kpiAllSegments(k);
+}
+
+// Many segments: each Total dot on the chart opens a hover box listing
+// every segment's value for that period, highest first (no extra lines).
+const SEG_TIPS = {};
+function kpiSegmentTipHTML(k, p, prevPeriod){
+  const rows = kpiAllSegments(k).map(sg => {
+    const q = sg.series.find(x => x.period === p.period);
+    const prev = prevPeriod ? sg.series.find(x => x.period === prevPeriod) : null;
+    return q ? { label: sg.label, value: q.value, prev: prev ? prev.value : null } : null;
+  }).filter(Boolean).sort((a, b) => b.value - a.value);
+  const change = r => {
+    if(r.prev == null) return '<span class="tt-seg-chg"></span>';
+    const diff = r.value - r.prev;
+    const good = k.higherIsBetter === false ? diff < 0 : diff > 0;
+    return `<span class="tt-seg-chg ${diff === 0 ? '' : good ? 'up' : 'down'}">${diff > 0 ? '▲' : diff < 0 ? '▼' : ''}${diff ? ' ' + escHTML(fmtKpiValue(Math.abs(diff), k)) : '0'}</span>`;
+  };
+  return `
+    <div class="tt-head"><span class="status-dot" style="background:#006A53"></span>${escHTML(p.period)} · ${escHTML(fmtKpiValue(p.value, k))} total</div>
+    ${prevPeriod ? `<div class="tt-seg-sub">Change since ${escHTML(prevPeriod)}</div>` : ''}
+    <ol class="tt-seg-list">${rows.map(r => `<li><span class="tt-seg-name">${escHTML(r.label)}</span><span class="tt-seg-val">${escHTML(fmtKpiValue(r.value, k))}</span>${prevPeriod ? change(r) : ''}</li>`).join('')}</ol>`;
+}
+function showSegTip(el){
+  const html = SEG_TIPS[el.dataset.segTip];
+  if(!html) return;
+  const tooltip = document.getElementById('hover-tooltip');
+  tooltip.innerHTML = html;
+  tooltip.classList.add('wide');
+  if(tooltip.dataset.ownerId !== el.dataset.segTip || !tooltip.classList.contains('visible')) tooltip.dataset.shownAt = Date.now();
+  tooltip.dataset.ownerId = el.dataset.segTip;
+  const rect = el.getBoundingClientRect();
+  tooltip.style.left = `${rect.left + rect.width / 2 - 20}px`;
+  tooltip.style.top = `${rect.bottom + 8}px`;
+  tooltip.classList.add('visible');
+  markTooltipShown(el);
+  requestAnimationFrame(()=>{
+    const t = tooltip.getBoundingClientRect();
+    if(t.right > window.innerWidth - 12) tooltip.style.left = `${Math.max(12, window.innerWidth - t.width - 12)}px`;
+    if(t.bottom > window.innerHeight - 12) tooltip.style.top = `${Math.max(12, rect.top - t.height - 8)}px`;
+  });
+}
+document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest('[data-seg-tip]'); if(el) showSegTip(el); });
+document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('[data-seg-tip]'); if(el && !el.contains(e.relatedTarget)) scheduleHideTooltip(); });
+document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest('[data-seg-tip]'); if(el) showSegTip(el); });
+document.addEventListener('focusout', e => { if(e.target.closest && e.target.closest('[data-seg-tip]')) hideTooltip(); });
+document.addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('[data-seg-tip]');
+  if(!el) return;
+  e.stopPropagation();
+  const tooltip = document.getElementById('hover-tooltip');
+  // A tap fires hover/focus first, which already opened the box: keep it open.
+  const justOpened = Date.now() - Number(tooltip.dataset.shownAt || 0) < 500;
+  if(tooltip.classList.contains('visible') && tooltip.dataset.ownerId === el.dataset.segTip && !justOpened) hideTooltip(); else showSegTip(el);
+}, true);
+document.addEventListener('keydown', e => {
+  const el = e.target.closest && e.target.closest('[data-seg-tip]');
+  if(el && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); showSegTip(el); }
+});
 
 function kpiChartSVG(k, width){
   const pts = k.series;
@@ -2619,6 +2711,7 @@ function kpiChartSVG(k, width){
   const padR = endLabels.length ? Math.max(30, 16 + Math.max(...endLabels.map(t => t.length)) * 6.8) : 30;
   const lines = KPI_COMPARISONS.filter(c => pts.some(p => kpiHas(p[c.key])));
   const breakdown = kpiBreakdownLines(k);
+  const segTips = kpiManySegments(k);
   const all = pts.flatMap(p => [p.value, ...lines.map(c => p[c.key]).filter(kpiHas)])
     .concat(breakdown.flatMap(sg => sg.series.flatMap(p => [p.value, ...KPI_COMPARISONS.map(c => p[c.key]).filter(kpiHas)])));
   let lo = Math.min(...all), hi = Math.max(...all);
@@ -2637,7 +2730,15 @@ function kpiChartSVG(k, width){
       // Put the number below the point when a target/benchmark line sits above it.
       const below = lines.some(c => kpiHas(p[c.key]) && p.value < p[c.key]);
       const ly = y(p.value) + (below ? 18 : -10);
-      return `<circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="5" fill="${p.status ? statusDotColor(p.status) : '#006A53'}" stroke="#fff" stroke-width="2"><title>${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title></circle>
+      const dot = `<circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="5" fill="${p.status ? statusDotColor(p.status) : '#006A53'}" stroke="#fff" stroke-width="2">${segTips ? '' : `<title>${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))}</title>`}</circle>`;
+      let point = dot;
+      if(segTips){
+        const key = `${k.id}|${p.period}`;
+        SEG_TIPS[key] = kpiSegmentTipHTML(k, p, i ? pts[i - 1].period : null);
+        point = `<g class="seg-hover" tabindex="0" role="button" data-seg-tip="${escHTML(key)}" aria-label="${escHTML(p.period)}: ${escHTML(fmtKpiValue(p.value, k))} total. Show counts by location.">
+          <circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="14" fill="transparent"/><circle class="seg-hover-ring" cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="9" fill="none" stroke="#006A53" stroke-width="1.5"/>${dot}</g>`;
+      }
+      return `${point}
       <text x="${x(i).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1E1E1E" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>`;
     }).join('')}`;
 
@@ -2666,7 +2767,8 @@ function kpiChartSVG(k, width){
       ${comparisonLayers}${breakdownLayer}${valueLayer}${xLabels}
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
-      <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>${breakdown.length ? 'Total' : 'Result'}</span>
+      <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>${breakdown.length || segTips ? 'Total' : 'Result'}</span>
+      ${segTips ? `<span class="seg-hover-hint">Hover or tap a point to see each location</span>` : ''}
       ${breakdown.map((sg,n) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${kpiSeriesStyle(n + 1).stroke}" stroke-width="1.75"${kpiSeriesStyle(n + 1).dash ? ` stroke-dasharray="${kpiSeriesStyle(n + 1).dash}"` : ''}/></svg>${escHTML(sg.label)}</span>`).join('')}
       ${breakdown.length ? kpiComparisonLegendHTML(breakdown, 'Segment ') : ''}
       ${lines.map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${c.label}</span>`).join('')}
@@ -2871,7 +2973,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
     </table>
     </div>`;
 
-  const segmentsHTML = (!breakdown.length && k.segments && k.segments.length) ? `
+  const segmentsHTML = kpiManySegments(k) ? '' : (!breakdown.length && k.segments && k.segments.length) ? `
     <div class="kpi-segments">
       <div class="modal-trend-label" style="margin-bottom:0;">${escHTML(latest.period)} breakdown</div>
       ${k.segments.map(sg=>{
