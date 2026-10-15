@@ -1168,7 +1168,7 @@
     },
     {
       "id": "PIO-ENGRATE",
-      "name": "Social media engagement rate",
+      "name": "Social media engagement rate (FB, IG, TT)",
       "level": "Program",
       "attachTo": "p12",
       "alsoUnder": [
@@ -1272,39 +1272,6 @@
           ]
         },
         {
-          "label": "LinkedIn",
-          "series": [
-            {
-              "period": "2022",
-              "value": 8,
-              "target": 21.2,
-              "benchmark": 2.7,
-              "status": "off-track"
-            },
-            {
-              "period": "2023",
-              "value": 16.8,
-              "target": 21.2,
-              "benchmark": 2.7,
-              "status": "off-track"
-            },
-            {
-              "period": "2024",
-              "value": 20.6,
-              "target": 21.2,
-              "benchmark": 2.7,
-              "status": "off-track"
-            },
-            {
-              "period": "2025",
-              "value": 14.34,
-              "target": 21.2,
-              "benchmark": 3.1,
-              "status": "off-track"
-            }
-          ]
-        },
-        {
           "label": "TikTok",
           "series": [
             {
@@ -1354,27 +1321,6 @@
       "series": []
     },
     {
-      "id": "PIO-NEWSRELEASE",
-      "name": "Number of news releases posted within 24 hr of the meetings or event happening",
-      "level": "Program",
-      "attachTo": "p11",
-      "alsoUnder": [
-        "ks3"
-      ],
-      "unit": "number",
-      "decimals": 0,
-      "higherIsBetter": true,
-      "compareTo": "target",
-      "drivesStatus": true,
-      "frequency": "Every year",
-      "gaugeKeyServices": [
-        "ks3"
-      ],
-      "status": null,
-      "pending": true,
-      "series": []
-    },
-    {
       "id": "PIO-VIEWERSHIP",
       "name": "Website views + social media post link clicks + news letter open rate",
       "level": "Program",
@@ -1396,23 +1342,8 @@
       "series": []
     },
     {
-      "id": "PIO-POSTLINKS",
-      "name": "Number of post link clicks",
-      "level": "Program",
-      "attachTo": "p12",
-      "unit": "number",
-      "decimals": 0,
-      "higherIsBetter": true,
-      "compareTo": "target",
-      "drivesStatus": true,
-      "frequency": "Every year",
-      "status": null,
-      "pending": true,
-      "series": []
-    },
-    {
       "id": "PIO-AUDIENCEGROWTH",
-      "name": "Social media audience growth",
+      "name": "Social media audience growth (GB, IG, TT)",
       "level": "Program",
       "attachTo": "p12",
       "unit": "number",
@@ -1506,8 +1437,562 @@
       "compareTo": "target",
       "drivesStatus": false,
       "status": null,
-      "pending": true,
-      "series": []
+      "segmentsOnly": true,
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [],
+      "segmentSeries": [
+        {
+          "label": "E. 2nd Ave. and E. 15th St.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 135.333333,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 117.666667,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 99.5,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 142.857143,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 172.119048,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 170.269841,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 205.68254,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 148,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 233,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "E. 32nd St. and N. Main Ave.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 102.166667,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 117.166667,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 83.333333,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 84,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 125.47619,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 71.777778,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 88.541667,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 77,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 76,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "CR 250 and Florida Rd.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 54.5,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 58.5,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 63.166667,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 77.166667,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 66.119048,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 82.15873,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 46,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 75,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 75,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "E. 3rd Ave./E. 15th St./Florida Rd.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 61.5,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 114,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 72.833333,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 81.857143,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 101.738095,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 110.650794,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 116.166667,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 105,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 155,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "W. 3rd St. & W. Park Ave.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 135.333333,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 141.833333,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 157.666667,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 165.428571,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 175.380952,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 156.857143,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 163.587302,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 152,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 225,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "22nd St. and N. Main Ave.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 95.5,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 102,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 98,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 127.285714,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 72.761905,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 84.571429,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 57,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 60,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 100,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "Camino del Rio and 9th St.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 136.833333,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 133.166667,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 137.5,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 165.857143,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 152.642857,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 166.825397,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 113.2,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 118,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 129,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "Three Srpings Blvd @ Hwy160",
+          "series": [
+            {
+              "period": "2009",
+              "value": 4.833333,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 2.666667,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 5.333333,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 5.333333,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 4.5,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 5.142857,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 4.628571,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 8,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 3,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "E. College Dr. and E. 8th Ave.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 107.666667,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 95.333333,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 96.166667,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 104.333333,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 60.642857,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 85.301587,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 91.333333,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 92,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 118,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "HAWK @ W. 12st St. & Camino del rio",
+          "series": [
+            {
+              "period": "2009",
+              "value": 0,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 0,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 0,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 83.833333,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 69.071429,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 102.047619,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 100.968254,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 81,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 98,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "E. 8th Ave and E. 3rd St.",
+          "series": [
+            {
+              "period": "2009",
+              "value": 0,
+              "status": null
+            },
+            {
+              "period": "2011",
+              "value": 0,
+              "status": null
+            },
+            {
+              "period": "2013",
+              "value": 0,
+              "status": null
+            },
+            {
+              "period": "2015",
+              "value": 77.333333,
+              "status": null
+            },
+            {
+              "period": "2017",
+              "value": 65.666667,
+              "status": null
+            },
+            {
+              "period": "2019",
+              "value": 90.84127,
+              "status": null
+            },
+            {
+              "period": "2021",
+              "value": 106.333333,
+              "status": null
+            },
+            {
+              "period": "2023",
+              "value": 99,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 85,
+              "status": null
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "TRAN-CRASHDATA",
@@ -1549,6 +2034,132 @@
       "gaugeKeyServices": [
         "ks14"
       ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-RIDERSHIP",
+      "name": "Ridership (segmented by route)",
+      "level": "Program",
+      "attachTo": "p69",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-CUSTSAT",
+      "name": "Customer Satisfaction Ridership Survey",
+      "level": "Program",
+      "attachTo": "p69",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-MILEAGE",
+      "name": "Vehicle Mileage and hours total alongside cost",
+      "level": "Program",
+      "attachTo": "p69",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-TRIPDELIVER",
+      "name": "Trips Delivered/ ridership by type",
+      "level": "Program",
+      "attachTo": "p70",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-METDEMAND",
+      "name": "met demand",
+      "level": "Program",
+      "attachTo": "p72",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-DESTANDORIGIN",
+      "name": "Destination and Origin",
+      "level": "Program",
+      "attachTo": "p72",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-DEPENDENCY",
+      "name": "Transit Dependency",
+      "level": "Program",
+      "attachTo": "p73",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-PASSTYPE",
+      "name": "Pass type",
+      "level": "Program",
+      "attachTo": "p74",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-FAREBOX",
+      "name": "Farebox Revenue",
+      "level": "Program",
+      "attachTo": "p74",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
       "status": null,
       "pending": true,
       "series": []
@@ -1601,12 +2212,61 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
+      "footnote": "Counts homes with a formal affordability agreement on record with the City, by the year each property was completed. Mixed-income developments count only their income-restricted units. Another 114+ units are planned through City partnerships but not yet built.",
       "gaugeKeyServices": [
         "ks8"
       ],
       "status": null,
-      "pending": true,
-      "series": []
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [
+        {
+          "period": "2015",
+          "value": 516,
+          "status": null
+        },
+        {
+          "period": "2018",
+          "value": 552,
+          "status": null
+        },
+        {
+          "period": "2019",
+          "value": 605,
+          "status": null
+        },
+        {
+          "period": "2021",
+          "value": 645,
+          "status": null
+        },
+        {
+          "period": "2022",
+          "value": 654,
+          "status": null
+        },
+        {
+          "period": "2023",
+          "value": 672,
+          "status": null
+        },
+        {
+          "period": "2024",
+          "value": 672,
+          "status": null
+        },
+        {
+          "period": "2025",
+          "value": 792,
+          "status": null
+        },
+        {
+          "period": "2026",
+          "value": 792,
+          "status": null
+        }
+      ],
+      "segments": []
     },
     {
       "id": "PROS-GRANTAWARDED",
@@ -2461,7 +3121,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP",
           "IT-TIXSLA"
         ],
@@ -2474,7 +3133,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP",
           "IT-UPTIME",
           "IT-PITSURV",
@@ -2584,7 +3242,6 @@
           "PROS-ALLCOMMEVENTS",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP",
           "IT-TIXSLA"
         ],
@@ -2602,7 +3259,6 @@
           "PROS-ALLCOMMEVENTS",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP",
           "IT-UPTIME",
           "IT-PITSURV",
@@ -2655,7 +3311,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ],
         "kpis": [
@@ -2666,7 +3321,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ]
       },
@@ -2907,7 +3561,6 @@
           "PROS-ALLCOMMEVENTS",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ],
         "kpis": [
@@ -2924,7 +3577,6 @@
           "PROS-ALLCOMMEVENTS",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ]
       },
@@ -2941,7 +3593,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP",
           "IT-TIXSLA"
         ],
@@ -2955,7 +3606,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP",
           "IT-UPTIME",
           "IT-PITSURV",
@@ -3026,7 +3676,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ],
         "kpis": [
@@ -3037,7 +3686,6 @@
           "CLERK-BIZLIC",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ]
       },
@@ -3167,13 +3815,11 @@
         "awaiting": [
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ],
         "kpis": [
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-NEWSRELEASE",
           "PIO-VIEWERSHIP"
         ]
       },
