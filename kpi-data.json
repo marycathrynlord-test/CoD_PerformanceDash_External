@@ -1436,11 +1436,89 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "frequency": "Every 2 years",
+      "footnote": "Total of average bike and pedestrian counts at 11 intersections, counted every two years. Shown from 2015, the first year all 11 locations were counted.",
       "status": null,
-      "segmentsOnly": true,
       "onTrackWithinPct": 5,
       "offTrackBeyondPct": 15,
-      "series": [],
+      "series": [
+        {
+          "period": "2015",
+          "value": 1115.285714,
+          "status": null
+        },
+        {
+          "period": "2017",
+          "value": 1066.119048,
+          "status": null
+        },
+        {
+          "period": "2019",
+          "value": 1126.444444,
+          "status": null
+        },
+        {
+          "period": "2021",
+          "value": 1093.441667,
+          "status": null
+        },
+        {
+          "period": "2023",
+          "value": 1015,
+          "status": null
+        },
+        {
+          "period": "2025",
+          "value": 1297,
+          "status": null
+        }
+      ],
+      "segments": [
+        {
+          "label": "E. 2nd Ave. and E. 15th St.",
+          "value": 233
+        },
+        {
+          "label": "E. 32nd St. and N. Main Ave.",
+          "value": 76
+        },
+        {
+          "label": "CR 250 and Florida Rd.",
+          "value": 75
+        },
+        {
+          "label": "E. 3rd Ave./E. 15th St./Florida Rd.",
+          "value": 155
+        },
+        {
+          "label": "W. 3rd St. & W. Park Ave.",
+          "value": 225
+        },
+        {
+          "label": "22nd St. and N. Main Ave.",
+          "value": 100
+        },
+        {
+          "label": "Camino del Rio and 9th St.",
+          "value": 129
+        },
+        {
+          "label": "Three Springs Blvd @ Hwy 160",
+          "value": 3
+        },
+        {
+          "label": "E. College Dr. and E. 8th Ave.",
+          "value": 118
+        },
+        {
+          "label": "HAWK @ W. 12th St. & Camino del Rio",
+          "value": 98
+        },
+        {
+          "label": "E. 8th Ave and E. 3rd St.",
+          "value": 85
+        }
+      ],
       "segmentSeries": [
         {
           "label": "E. 2nd Ave. and E. 15th St.",
@@ -1793,7 +1871,7 @@
           ]
         },
         {
-          "label": "Three Srpings Blvd @ Hwy160",
+          "label": "Three Springs Blvd @ Hwy 160",
           "series": [
             {
               "period": "2009",
@@ -1893,23 +1971,8 @@
           ]
         },
         {
-          "label": "HAWK @ W. 12st St. & Camino del rio",
+          "label": "HAWK @ W. 12th St. & Camino del Rio",
           "series": [
-            {
-              "period": "2009",
-              "value": 0,
-              "status": null
-            },
-            {
-              "period": "2011",
-              "value": 0,
-              "status": null
-            },
-            {
-              "period": "2013",
-              "value": 0,
-              "status": null
-            },
             {
               "period": "2015",
               "value": 83.833333,
@@ -1945,21 +2008,6 @@
         {
           "label": "E. 8th Ave and E. 3rd St.",
           "series": [
-            {
-              "period": "2009",
-              "value": 0,
-              "status": null
-            },
-            {
-              "period": "2011",
-              "value": 0,
-              "status": null
-            },
-            {
-              "period": "2013",
-              "value": 0,
-              "status": null
-            },
             {
               "period": "2015",
               "value": 77.333333,
