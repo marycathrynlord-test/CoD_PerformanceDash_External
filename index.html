@@ -24,7 +24,7 @@
     --line:#D9E9E5;      /* sage, 30% tint */
     --slate:#4B4B4B;     /* ink, 80% tint: secondary text, 8.9:1 on white */
     --white:#FFFFFF;
-    --radius:10px;
+    --radius:4px;
     --fw-gold:#7FB4A9;   /* framework legend colors, now brand */
     --fw-blue:#006A53;
     --fw-purple:#1B8A79;
@@ -65,6 +65,21 @@
   .titleband .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:4px;}
   .titleband h1{font-size:clamp(22px,2.4vw,28px);font-weight:700;margin:0 0 4px;color:var(--forest-dark);letter-spacing:-.01em;}
   .titleband p{margin:0;color:var(--slate);font-size:14px;max-width:820px;line-height:1.5;}
+
+  /* ---------- Embedded page look: sits inside the City website's own
+     header and footer, so no app header/footer here; page tools sit
+     beside the title as quiet outline buttons. ---------- */
+  body{background:#FFFFFF;}
+  .titleband{display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:12px 24px;}
+  .titleband-text{flex:1 1 520px; min-width:0;}
+  .page-tools{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding-top:18px;}
+  .page-tools .tour-restart-btn{background:#FFFFFF; color:var(--forest-dark); border:1px solid var(--forest); border-radius:3px; font-weight:600;}
+  .page-tools .tour-restart-btn:hover{background:var(--mist);}
+  .page-tools .datepill{background:none; border:none; color:var(--slate); padding:7px 4px; font-size:12.5px;}
+  .page-tools .sample-tag{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#8A6414; background:rgba(217,164,65,.16); border:1px solid rgba(217,164,65,.45); padding:4px 8px; border-radius:3px;}
+  .page-tools :focus-visible{outline-color:var(--focus) !important;}
+  .kpi-block, .stat-card, .drill-col, .key-bar, .reference-col{box-shadow:none;}
+  .modal-panel{border-radius:6px;}
 
   /* ---------- Load / error states ---------- */
   #load-state{max-width:1280px;margin:0 auto;padding:60px 28px;text-align:center;color:var(--slate);font-size:14px;}
@@ -314,6 +329,10 @@
   .kpi-total-tile{background:rgba(0,106,83,0.05);}
   .kpi-total-tile .kpi-seg-value{font-size:26px;}
   .kpi-table td.kpi-total-col{font-weight:700;}
+  .kpi-table-long tr.kpi-period-start td{border-top:2px solid var(--line);}
+  .kpi-table-long tr.kpi-total-row td{font-weight:700;}
+  .kpi-table-long td:nth-child(2){text-align:left;}
+  .kpi-table-long th:nth-child(2){text-align:left;}
 
   /* ---------- Work System View: the selected Work System's or Key
      Service's own description and KPIs, shown on the page itself,
@@ -918,33 +937,7 @@
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
 
-<header>
-  <div class="brand">
-    <svg class="mark" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <polygon points="4,34 14,14 24,34" fill="#7FB4A9"/>
-      <polygon points="14,34 24,10 34,34" fill="#1B8A79"/>
-      <polygon points="24,34 32,18 40,34" fill="#FFFFFF"/>
-    </svg>
-    <div class="brand-text">
-      <div class="eyebrow">City of Durango</div>
-      <div class="title">Performance Dashboard - Organizational View</div>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="header-export" id="header-export">
-      <button class="tour-restart-btn" id="export-menu-btn" aria-controls="export-dropdown" aria-expanded="false"><span aria-hidden="true">⬇</span> Export <span aria-hidden="true">▾</span></button>
-      <div class="export-dropdown" id="export-dropdown" hidden>
-        <label class="export-dropdown-label" for="export-scope-select">Scope</label>
-        <select id="export-scope-select" class="export-select" style="width:100%;"></select>
-        <button class="export-dropdown-item" id="export-csv-btn"><span aria-hidden="true">⬇</span> Export as CSV</button>
-        <button class="export-dropdown-item" id="export-pdf-btn"><span aria-hidden="true">⬇</span> Export as PDF</button>
-      </div>
-    </div>
-    <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour"><span aria-hidden="true">❓</span> Take the tour</button>
-    <span class="datepill" id="today-pill">Loading date…</span>
-    <span class="livepill"><span class="dot" aria-hidden="true"></span>Sample Data</span>
-  </div>
-</header>
+
 
 <div id="load-state">Loading dashboard data…</div>
 <div id="error-state"></div>
@@ -954,9 +947,25 @@
 <div id="sr-status" class="sr-only" role="status" aria-live="polite"></div>
 
   <div class="titleband">
-    <div class="eyebrow" id="period-label">FY2026 · Performance Snapshot</div>
-    <h1>How the City of Durango is Performing</h1>
-    <p>Key Performance Indicators (KPIs) show whether the City is moving in the right direction on its strategic goals.</p>
+    <div class="titleband-text">
+      <div class="eyebrow" id="period-label">FY2026 · Performance Snapshot</div>
+      <h1>How the City of Durango is Performing</h1>
+      <p>Key Performance Indicators (KPIs) show whether the City is moving in the right direction on its strategic goals.</p>
+    </div>
+    <div class="page-tools">
+      <div class="header-export" id="header-export">
+      <button class="tour-restart-btn" id="export-menu-btn" aria-controls="export-dropdown" aria-expanded="false"><span aria-hidden="true">⬇</span> Export <span aria-hidden="true">▾</span></button>
+      <div class="export-dropdown" id="export-dropdown" hidden>
+        <label class="export-dropdown-label" for="export-scope-select">Scope</label>
+        <select id="export-scope-select" class="export-select" style="width:100%;"></select>
+        <button class="export-dropdown-item" id="export-csv-btn"><span aria-hidden="true">⬇</span> Export as CSV</button>
+        <button class="export-dropdown-item" id="export-pdf-btn"><span aria-hidden="true">⬇</span> Export as PDF</button>
+      </div>
+    </div>
+    <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour">Take the tour</button>
+    <span class="datepill" id="today-pill">Loading date…</span>
+    <span class="sample-tag">Sample data</span>
+    </div>
   </div>
 
   <!-- KEY: status colors always visible; full definitions fold out (closed by default) -->
@@ -1065,8 +1074,6 @@
     <div class="stat-grid" id="stat-grid"></div>
   </div>
 
-  <!-- HEADLINE SYNTHESIS -->
-  <div class="headline-banner" id="headline-banner" style="margin-top:28px;"></div>
 
   <!-- Unified explorer: toggle between Strategic Plan Goal View and Work System View -->
   <div class="section" id="goal-drill">
@@ -1138,26 +1145,7 @@
     </div>
   </div>
 
-  <footer>
-    <div class="footer-panel">
-      <div class="footer-inner">
-        <div>
-          <h3>City of Durango</h3>
-          <p>Organizational Excellence · 949 E. 2nd Avenue, Durango, CO 81301</p>
-        </div>
-        <div class="contact-grid">
-          <div><span>Phone</span>(970) XXX-XXXX</div>
-          <div><span>Website</span>durangoco.gov</div>
-          <div><span>Email</span>X@durangoco.gov</div>
-        </div>
-      </div>
-      <svg class="footer-mountains" viewBox="0 0 1200 110" preserveAspectRatio="none" aria-hidden="true">
-        <polygon points="0,110 0,70 120,20 260,80 400,10 560,75 700,35 860,90 1000,25 1120,65 1200,40 1200,110" fill="#7FB4A9" opacity="0.35"/>
-        <polygon points="0,110 0,90 150,45 300,95 460,40 620,95 780,55 940,100 1100,50 1200,80 1200,110" fill="#1B8A79" opacity="0.55"/>
-        <polygon points="0,110 0,105 200,75 380,105 560,65 760,105 950,80 1200,105 1200,110" fill="#1E1E1E" opacity="0.35"/>
-      </svg>
-    </div>
-  </footer>
+
 
 </div>
 
@@ -1722,6 +1710,7 @@ function renderStats(){
    surfacing what actually needs attention before anyone clicks anything. */
 function renderHeadline(){
   const banner = document.getElementById('headline-banner');
+  if(!banner) return;   // summary banner removed from the page
   // City-wide: every Key Service KPI, counted once, using the same rule
   // as the gauges (On Track or At Risk = meeting target).
   const byId = {};
@@ -2954,41 +2943,18 @@ function kpiSegmentChartSVG(k, width){
 function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
   const basis = kpiBasis(k);
   const basisLabel = basis === 'benchmark' ? 'Benchmark' : 'Target';
-  const tiles = k.segmentSeries.map((sg, i) => {
+  const cards = kpiOrderCards(k.segmentSeries.map((sg, i) => {
     const latest = sg.series[sg.series.length - 1];
-    const comps = KPI_COMPARISONS.map(c => {
-      const v = latest[c.key];
-      if(!kpiHas(v)) return `${c.label} <span class="kpi-notset">not set</span>`;
-      const d = kpiDiff(latest.value, v, k);
-      return `${c.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong> · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>`;
-    }).join('<br>');
-    return `<div class="kpi-seg-tile" style="--seg-color:${kpiSeriesStyle(i).stroke}">
-      <span class="kpi-seg-label">${escHTML(sg.label)}</span>
-      <span class="kpi-seg-value">${escHTML(fmtKpiValue(latest.value, k))}${latest.note ? '*' : ''}<small>${escHTML(latest.period)}</small></span>
-      <span class="kpi-seg-status">${latest.status ? statusBadgeHTML(latest.status) : ''}</span>
-      <span class="kpi-seg-meta">${comps}</span>
-    </div>`;
-  }).join('');
-
+    return { label: sg.label, point: latest, value: latest.value, color: kpiSeriesStyle(i).stroke, isTotal: kpiIsTotalLabel(sg.label), series: sg.series };
+  }));
+  const tiles = cards.map(c => kpiCardHTML(k, c)).join('');
   const periods = kpiSegmentPeriods(k);
-  const cell = (sg, period) => {
-    const p = sg.series.find(q => q.period === period);
-    if(!p) return '<td>—</td>';
-    const d = kpiDiff(p.value, p[basis], k);
-    return `<td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}" title="${escHTML(basisLabel)}: ${kpiHas(p[basis]) ? escHTML(fmtKpiComparison(p[basis], k)) : 'not set'}">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}${d ? `<span class="sr-only"> (${escHTML(d.phrase)} ${basisLabel.toLowerCase()})</span><span aria-hidden="true"> ${d.good ? '▲' : '▼'}</span>` : ''}</td>`;
-  };
-  const tableHTML = `
-    <div class="kpi-table-wrap">
-    <table class="kpi-table">
-      <thead><tr><th scope="col">Period</th>${k.segmentSeries.map(sg => `<th scope="col">${escHTML(sg.label)}</th>`).join('')}</tr></thead>
-      <tbody>${[...periods].reverse().map(period => `<tr><td>${escHTML(period)}</td>${k.segmentSeries.map(sg => cell(sg, period)).join('')}</tr>`).join('')}</tbody>
-    </table>
-    </div>`;
+  const tableHTML = kpiLongTableHTML(k, cards, periods);
 
   const noteLines = [];
   k.segmentSeries.forEach(sg => sg.series.forEach(p => { if(p.note) noteLines.push(`* ${escHTML(sg.label)}, ${escHTML(p.period)}: ${escHTML(p.note)}`); }));
   if(k.footnote) noteLines.push(escHTML(k.footnote));
-  const facts = [`Green or red: compared with each segment's own ${basisLabel.toLowerCase()}`, k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
+  const facts = [`Each segment is compared with its own ${basisLabel.toLowerCase()}`, k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
   noteLines.push(facts.join(' · '));
 
   const chartHTML = kpiSegmentChartSVG(k, chartWidth);
@@ -3007,6 +2973,60 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
           ${chartHTML ? kpiTableToggleHTML(tableHTML) : tableHTML}
         </div>
       </div>
+    </div>`;
+}
+
+// Cards: the Total always first, then the segments from highest to
+// lowest latest value. (Chart lines keep their own fixed colors, so a
+// card's top border always matches its line.)
+const kpiIsTotalLabel = l => /^(total|overall)$/i.test(String(l).trim());
+function kpiOrderCards(cards){
+  return [...cards].sort((a, b) => (b.isTotal - a.isTotal) || (b.value - a.value));
+}
+// A simple card: name, latest value and its status. The Total card also
+// shows how it compares with its Target and Benchmark; every segment's
+// own comparisons are in the data table.
+function kpiCardHTML(k, c){
+  const comps = c.isTotal ? KPI_COMPARISONS.map(cmp => {
+    const v = c.point[cmp.key];
+    if(!kpiHas(v)) return `${cmp.label} <span class="kpi-notset">not set${cmp.key === kpiBasis(k) ? ', so no status' : ''}</span>`;
+    const d = kpiDiff(c.point.value, v, k);
+    return `${cmp.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong> · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>`;
+  }).join('<br>') : '';
+  return `<div class="kpi-seg-tile${c.isTotal ? ' kpi-total-tile' : ''}" style="--seg-color:${c.color}">
+      <span class="kpi-seg-label">${escHTML(c.label)}</span>
+      <span class="kpi-seg-value">${escHTML(fmtKpiValue(c.point.value, k))}${c.point.note ? '*' : ''}<small>${escHTML(c.point.period)}</small></span>
+      <span class="kpi-seg-status">${c.point.status ? statusBadgeHTML(c.point.status) : ''}</span>
+      ${comps ? `<span class="kpi-seg-meta">${comps}</span>` : ''}
+    </div>`;
+}
+// Data table with every series: one row per period and series, newest
+// period first, Total first within each period, then the segments in
+// card order. Target/Benchmark columns only appear if any row has one.
+function kpiLongTableHTML(k, rows, periods){
+  const basis = kpiBasis(k);
+  const notSet = '<span class="kpi-notset">Not set</span>';
+  const all = rows.flatMap(r => r.series);
+  const showComp = KPI_COMPARISONS.filter(c => all.some(p => kpiHas(p[c.key])));
+  const showDiff = all.some(p => kpiHas(p[basis]));
+  const body = [...periods].reverse().map(period => {
+    const here = rows.map(r => ({ r, p: r.series.find(q => q.period === period) })).filter(x => x.p);
+    return here.map(({ r, p }, i) => {
+      const d = kpiDiff(p.value, p[basis], k);
+      return `<tr class="${i === 0 ? 'kpi-period-start' : ''}${r.isTotal ? ' kpi-total-row' : ''}">
+        <td>${i === 0 ? escHTML(period) : '<span class="sr-only">' + escHTML(period) + '</span>'}</td>
+        <td>${p.status ? `<span class="status-dot" style="background:${statusDotColor(p.status)};width:7px;height:7px;display:inline-block;border-radius:50%;margin-right:6px;" aria-hidden="true"></span>` : ''}${escHTML(r.label)}</td>
+        <td>${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</td>
+        ${showComp.map(c => `<td>${kpiHas(p[c.key]) ? escHTML(fmtKpiComparison(p[c.key], k)) : notSet}</td>`).join('')}
+        ${showDiff ? `<td class="${d ? (d.good ? 'kpi-up' : 'kpi-down') : ''}">${d ? escHTML(d.text) : '—'}</td>` : ''}</tr>`;
+    }).join('');
+  }).join('');
+  return `
+    <div class="kpi-table-wrap">
+    <table class="kpi-table kpi-table-long">
+      <thead><tr><th scope="col">Period</th><th scope="col">Measure</th><th scope="col">Result</th>${showComp.map(c => `<th scope="col">${c.label}</th>`).join('')}${showDiff ? `<th scope="col">vs ${basis}</th>` : ''}</tr></thead>
+      <tbody>${body}</tbody>
+    </table>
     </div>`;
 }
 
@@ -3051,6 +3071,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
 
   const notSet = '<span class="kpi-notset">Not set</span>';
   const breakdown = kpiBreakdownLines(k);
+  const segAt = (sg, period) => sg.series.find(q => q.period === period);
 
   // With segments: a card each for the Total and every segment, above the
   // graph, colored to match its line. The Total card carries the KPI's
@@ -3070,14 +3091,25 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
       ${comps ? `<span class="kpi-seg-meta">${comps}</span>` : ''}
     </div>`;
   };
-  const segAt = (sg, period) => sg.series.find(q => q.period === period);
   const tilesHTML = breakdown.length ? `<div class="kpi-seg-grid">
       ${tile('Total', latest, '#006A53', true)}
       ${breakdown.map((sg, n) => tile(sg.label, segAt(sg, latest.period) || sg.series[sg.series.length - 1], kpiSeriesStyle(n + 1).stroke, false)).join('')}
     </div>` : '';
 
-  const tableSegs = kpiAllSegments(k).length <= KPI_MAX_TABLE_SEGMENTS ? kpiAllSegments(k) : [];
-  const tableHTML = `
+  const segs = kpiAllSegments(k);
+  const cards = segs.length ? kpiOrderCards([
+    { label: k.unit === 'percent' ? 'Overall' : 'Total', point: latest, value: latest.value, color: '#006A53', isTotal: true, series: k.series },
+    ...segs.map((sg, n) => {
+      const pt = segAt(sg, latest.period) || sg.series[sg.series.length - 1];
+      const lineIdx = breakdown.indexOf(sg);
+      return { label: sg.label, point: pt, value: pt.value, color: lineIdx >= 0 ? kpiSeriesStyle(lineIdx + 1).stroke : '#7FB4A9', isTotal: false, series: sg.series };
+    })
+  ]) : [];
+  // Cards only when there are a few segments; 11 count locations would be
+  // a wall of cards (they are in the hover box and the table instead).
+  const showCards = segs.length > 0 && segs.length <= KPI_MAX_BREAKDOWN_LINES;
+  const tableSegs = [];
+  const tableHTML = segs.length ? kpiLongTableHTML(k, cards, k.series.map(p => p.period)) : `
     <div class="kpi-table-wrap">
     <table class="kpi-table">
       <thead><tr><th scope="col">Period</th>${tableSegs.map(sg => `<th scope="col">${escHTML(sg.label)}</th>`).join('')}<th scope="col">${tableSegs.length ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result'}</th><th scope="col">Target</th><th scope="col">Benchmark</th><th scope="col">vs ${basisLabel.toLowerCase()}</th></tr></thead>
@@ -3115,10 +3147,10 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
     <div class="kpi-block">
       <div class="kpi-head">
         <span class="kpi-name">${escHTML(k.name)}</span>
-        ${k.status ? statusBadgeHTML(k.status) : ''}
+        ${k.status && !showCards ? statusBadgeHTML(k.status) : ''}
       </div>
       ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
-      ${`
+      ${showCards ? `<div class="kpi-seg-grid">${cards.map(c => kpiCardHTML(k, c)).join('')}</div>` : `
       <div class="kpi-figure"><span class="kpi-big">${escHTML(fmtKpiValue(latest.value, k))}</span><span class="kpi-context">${escHTML(latest.period)}</span></div>
       <div class="kpi-compare">${chipsHTML}</div>`}
       <div class="kpi-body${!chartHTML ? ' kpi-body-nochart' : ''}">
@@ -3487,7 +3519,6 @@ function wireExportMenu(){
 const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
   { target: '#key-bar', title: 'Read the colors', body: 'Green, gold and red mean the same thing everywhere on the page. Hover a color for a one-line meaning, or open "What do these mean?" for the full definitions.' },
-  { target: '#headline-banner', title: 'Start with the headline', body: 'One computed sentence: how many Key Service KPIs are meeting their target City-wide, and which Objectives have the lowest gauges.' },
   { target: '#stat-grid', title: 'At a glance', body: 'These cards count everything the City tracks. Hover any line to see exactly which items make it up.' },
   { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. Each gauge shows the share of Key Service KPIs meeting their target.' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
