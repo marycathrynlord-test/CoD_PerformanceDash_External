@@ -332,7 +332,7 @@
     },
     {
       "id": "HR-COMPANDBEN",
-      "name": "Exit survey: satisfaction with compensation and benefits",
+      "name": "Employee Engagement Survey: satisfaction with compensation and benefits",
       "level": "Program",
       "attachTo": "p25",
       "unit": "number",
@@ -377,6 +377,9 @@
       "name": "Employee engagement score",
       "level": "Key Service",
       "attachTo": "ks5",
+      "alsoUnder": [
+        "p24"
+      ],
       "objectives": [
         "ob18"
       ],
@@ -974,7 +977,7 @@
         "ks17"
       ],
       "unit": "number",
-      "decimals": 2,
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
@@ -983,52 +986,57 @@
       "gaugeKeyServices": [
         "ks17"
       ],
-      "status": null,
-      "segmentsOnly": true,
+      "status": "off-track",
       "onTrackWithinPct": 0,
       "offTrackBeyondPct": 0,
-      "series": [],
-      "segmentSeries": [
+      "series": [
         {
-          "label": "Total",
-          "series": [
-            {
-              "period": "2021",
-              "value": 143,
-              "target": 150,
-              "benchmark": 150,
-              "status": "off-track"
-            },
-            {
-              "period": "2022",
-              "value": 146,
-              "target": 150,
-              "benchmark": 150,
-              "status": "off-track"
-            },
-            {
-              "period": "2023",
-              "value": 47,
-              "target": 150,
-              "benchmark": 150,
-              "status": "off-track"
-            },
-            {
-              "period": "2024",
-              "value": 122,
-              "target": 150,
-              "benchmark": 150,
-              "status": "off-track"
-            },
-            {
-              "period": "2025",
-              "value": 112,
-              "target": 150,
-              "benchmark": 150,
-              "status": "off-track"
-            }
-          ]
+          "period": "2021",
+          "value": 143,
+          "target": 150,
+          "benchmark": 150,
+          "status": "off-track"
         },
+        {
+          "period": "2022",
+          "value": 146,
+          "target": 150,
+          "benchmark": 150,
+          "status": "off-track"
+        },
+        {
+          "period": "2023",
+          "value": 47,
+          "target": 150,
+          "benchmark": 150,
+          "status": "off-track"
+        },
+        {
+          "period": "2024",
+          "value": 122,
+          "target": 150,
+          "benchmark": 150,
+          "status": "off-track"
+        },
+        {
+          "period": "2025",
+          "value": 112,
+          "target": 150,
+          "benchmark": 150,
+          "status": "off-track"
+        }
+      ],
+      "segments": [
+        {
+          "label": "Digital",
+          "value": 54
+        },
+        {
+          "label": "Physical",
+          "value": 58
+        }
+      ],
+      "segmentSeries": [
         {
           "label": "Digital",
           "series": [
@@ -1177,7 +1185,7 @@
     },
     {
       "id": "LIB-REFQUEST",
-      "name": "Reference questions",
+      "name": "Reference Questions - 5 segments (avg. per month, manually counted one day per mo)",
       "level": "Program",
       "attachTo": "p84",
       "unit": "number",
@@ -1232,7 +1240,7 @@
         "ks17"
       ],
       "unit": "number",
-      "decimals": 2,
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
@@ -1330,6 +1338,9 @@
       "name": "Case Closure Rate by clearance code (cleared by arrest, inactive, etc.) - solvability percent - amount that ended in arrest vs the rest",
       "level": "Program",
       "attachTo": "p102",
+      "alsoUnder": [
+        "p50"
+      ],
       "unit": "number",
       "decimals": 2,
       "higherIsBetter": true,
@@ -1375,7 +1386,7 @@
     },
     {
       "id": "PD-COMPLAINTS",
-      "name": "Complaints (dog off leash in certain parks, ART, e-bikes, etc.) AND TRENDS",
+      "name": "Complaints (dog off leash in certain parks, ART, e-bikes, etc.)",
       "level": "Program",
       "attachTo": "p51",
       "unit": "number",
@@ -1445,6 +1456,9 @@
       "name": "Digital forensics processing (internal and external) - includes devices for other agencies",
       "level": "Program",
       "attachTo": "p102",
+      "alsoUnder": [
+        "p50"
+      ],
       "unit": "number",
       "decimals": 2,
       "higherIsBetter": true,
@@ -1528,6 +1542,9 @@
       "name": "In custody felony reviews - increase in felony arrests by patrol",
       "level": "Program",
       "attachTo": "p102",
+      "alsoUnder": [
+        "p50"
+      ],
       "unit": "number",
       "decimals": 2,
       "higherIsBetter": true,
@@ -1698,7 +1715,7 @@
     },
     {
       "id": "PIO-AUDIENCEGROWTH",
-      "name": "Social media audience growth (GB, IG, TT)",
+      "name": "Social media audience growth (FB, IG, TT)",
       "level": "Program",
       "attachTo": "p12",
       "unit": "number",
@@ -1846,7 +1863,7 @@
     },
     {
       "id": "PIO-SEECLICKFIX",
-      "name": "See Click Fix requests",
+      "name": "SeeClickFix requests",
       "level": "Program",
       "attachTo": "p11",
       "alsoUnder": [
@@ -1961,6 +1978,9 @@
       "name": "Total Nights on Tour Sales (annual)",
       "level": "Program",
       "attachTo": "p40",
+      "alsoUnder": [
+        "p43"
+      ],
       "unit": "number",
       "decimals": 2,
       "higherIsBetter": true,
@@ -1978,7 +1998,8 @@
       "level": "Key Service",
       "attachTo": "ks9",
       "alsoUnder": [
-        "p100"
+        "p100",
+        "p43"
       ],
       "unit": "percent",
       "decimals": 2,
@@ -2120,7 +2141,8 @@
       "level": "Key Service",
       "attachTo": "ks9",
       "alsoUnder": [
-        "p100"
+        "p100",
+        "p40"
       ],
       "unit": "percent",
       "decimals": 2,
@@ -2141,6 +2163,10 @@
       "name": "Visitor Spend (Annual Year over Year)",
       "level": "Program",
       "attachTo": "p40",
+      "alsoUnder": [
+        "p43",
+        "ks9"
+      ],
       "unit": "number",
       "decimals": 2,
       "higherIsBetter": true,
@@ -2148,6 +2174,9 @@
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
+      "gaugeKeyServices": [
+        "ks9"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -2157,6 +2186,9 @@
       "name": "Welcome Center Door Count",
       "level": "Program",
       "attachTo": "p40",
+      "alsoUnder": [
+        "p43"
+      ],
       "unit": "number",
       "decimals": 2,
       "higherIsBetter": true,
@@ -2879,11 +2911,17 @@
       "name": "Transit Dependency",
       "level": "Program",
       "attachTo": "p73",
+      "alsoUnder": [
+        "ks14"
+      ],
       "unit": "number",
       "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "gaugeKeyServices": [
+        "ks14"
+      ],
       "status": null,
       "pending": true,
       "series": []
@@ -3023,6 +3061,737 @@
       "status": null,
       "pending": true,
       "series": []
+    },
+    {
+      "id": "PIO-PUBCOMMENT",
+      "name": "Number of public comment for regular CC meetings",
+      "level": "Program",
+      "attachTo": "p13",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PIO-NUMBOARDS",
+      "name": "Number of boards",
+      "level": "Program",
+      "attachTo": "p13",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PIO-BOARDVOLUNTEERS",
+      "name": "Number of volunteers on boards",
+      "level": "Program",
+      "attachTo": "p13",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "IT-LIAISONSURV",
+      "name": "IT Liaison Survey",
+      "level": "Key Service",
+      "attachTo": "ks7",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks7"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "IT-APPTICKETS",
+      "name": "Tickets per Application",
+      "level": "Program",
+      "attachTo": "p32",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "IT-ADDRSLA",
+      "name": "Address Requests within SLA",
+      "level": "Program",
+      "attachTo": "p33",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "IT-NENANEW",
+      "name": "New Address NENA Compliance",
+      "level": "Program",
+      "attachTo": "p33",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "IT-NENAOVERALL",
+      "name": "NENA Compliance (overall)",
+      "level": "Program",
+      "attachTo": "p33",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "IT-CRITTICKETS",
+      "name": "Critical Ticket Count",
+      "level": "Program",
+      "attachTo": "p34",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-ANNEXACRES",
+      "name": "Acres of land annexed and sorted by zone",
+      "level": "Key Service",
+      "attachTo": "ks8",
+      "alsoUnder": [
+        "p35"
+      ],
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks8"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-PERMIT48",
+      "name": "Building permits issued within 48 hours",
+      "level": "Key Service",
+      "attachTo": "ks8",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks8"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-LANDUSEDAYS",
+      "name": "Land use permits: Median number of days for application submittal to approval/completion (extreme outliers) - pre app, sign permits, limited use permits",
+      "level": "Key Service",
+      "attachTo": "ks8",
+      "alsoUnder": [
+        "p36"
+      ],
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks8"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-PREAPPSLA",
+      "name": "Median number of days for application submittal to approval/completion (extreme outliers) - pre app in two weeks/or other SLA",
+      "level": "Program",
+      "attachTo": "p36",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-REVIEW21",
+      "name": "% of applications with a complete review within 21 days",
+      "level": "Program",
+      "attachTo": "p36",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-QUICKPERMIT48",
+      "name": "% of solar, roofing, windows, siding permits issued in 48 hours",
+      "level": "Program",
+      "attachTo": "p36",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-DWELLINGGROWTH",
+      "name": "Dwelling units created each year/existing units = percent increase",
+      "level": "Program",
+      "attachTo": "p37",
+      "alsoUnder": [
+        "p35"
+      ],
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-ADUCOMPLY",
+      "name": "ADU Owner Occupancy Compliance",
+      "level": "Program",
+      "attachTo": "p37",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COMDEV-ALTCERTS",
+      "name": "Percent of alteration certificates completed within the 3rd avenue district",
+      "level": "Program",
+      "attachTo": "p38",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PD-COMPLAINTTRENDS",
+      "name": "Trends in complaints vs historical (code enforcement)",
+      "level": "Program",
+      "attachTo": "p51",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COURT-TRAFFICCASES",
+      "name": "Traffic Court number of cases",
+      "level": "Program",
+      "attachTo": "p55",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COURT-JUVCASES",
+      "name": "Juvenile Court number of cases",
+      "level": "Program",
+      "attachTo": "p55",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "COURT-CRIMCASES",
+      "name": "Criminal Court number of cases",
+      "level": "Program",
+      "attachTo": "p55",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "TRAN-TOTALRIDERSHIP",
+      "name": "Total Transit Ridership (fixed, para, and micro)",
+      "level": "Key Service",
+      "attachTo": "ks14",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks14"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-PARKBUDGETACRE",
+      "name": "Ops/capital budget per acre of park space (overlay CoD population)",
+      "level": "Key Service",
+      "attachTo": "ks18",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks18"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-OSBUDGET1000",
+      "name": "Ops/capital budget per 1,000 acres of open space (overlay CoD population)",
+      "level": "Key Service",
+      "attachTo": "ks18",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks18"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-QUALITYSURVEY",
+      "name": "Community survey: quality of experience results",
+      "level": "Key Service",
+      "attachTo": "ks18",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks18"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-RESPERPARK",
+      "name": "Number of Residents per Park",
+      "level": "Program",
+      "attachTo": "p88",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-PARKACRES1000",
+      "name": "Acres of Parkland per 1,000 Residents",
+      "level": "Program",
+      "attachTo": "p88",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-CREMVSBURIAL",
+      "name": "Cremations vs full burial - point in time moving forward",
+      "level": "Program",
+      "attachTo": "p116",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-CEMSALES",
+      "name": "Cemetery Plot + Grave Opening Sales",
+      "level": "Program",
+      "attachTo": "p116",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-TRAILMILES",
+      "name": "Miles of Trails",
+      "level": "Program",
+      "attachTo": "p89",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-LNHPASSRET",
+      "name": "Pass Retention - Lake Nighthorse",
+      "level": "Program",
+      "attachTo": "p117",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-LNHCAPACITY",
+      "name": "Program Capacity - Lake Nighthorse",
+      "level": "Program",
+      "attachTo": "p117",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-OSSURVEY",
+      "name": "Community survey: Parks results",
+      "level": "Program",
+      "attachTo": "p118",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-OSFTEBUDGET",
+      "name": "FTEs per 1,000 acres of open space + ops/capital budget per 1,000 acres of open space",
+      "level": "Program",
+      "attachTo": "p118",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-TREECANOPY",
+      "name": "Tree count + canopy coverage",
+      "level": "Program",
+      "attachTo": "p125",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "PR-TREERISK",
+      "name": "Percentage of trees that require pruning that are in the high risk category",
+      "level": "Program",
+      "attachTo": "p125",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-PASSRETTOTAL",
+      "name": "Total pass retention",
+      "level": "Key Service",
+      "attachTo": "ks20",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks20"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-CAPTOTAL",
+      "name": "Total program capacity",
+      "level": "Key Service",
+      "attachTo": "ks20",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks20"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-SURVEY",
+      "name": "Community survey results (with service population or another metric)",
+      "level": "Key Service",
+      "attachTo": "ks20",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks20"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-SOCIALENG",
+      "name": "Social media engagement rate - P&R channels only",
+      "level": "Key Service",
+      "attachTo": "ks20",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": true,
+      "gaugeKeyServices": [
+        "ks20"
+      ],
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-PASSRETRC",
+      "name": "Pass Retention - Rec Center",
+      "level": "Program",
+      "attachTo": "p92",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-CAPRC",
+      "name": "Program Capacity - Rec Center",
+      "level": "Program",
+      "attachTo": "p92",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-CAPYOUTH",
+      "name": "Program Capacity - Youth/Teen Rec",
+      "level": "Program",
+      "attachTo": "p94",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-CAPADULT",
+      "name": "Program Capacity - Adult/Senior Rec",
+      "level": "Program",
+      "attachTo": "p96",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-PASSRETCH",
+      "name": "Pass Retention - Chapman",
+      "level": "Program",
+      "attachTo": "p119",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-CAPCH",
+      "name": "Program Capacity - Chapman",
+      "level": "Program",
+      "attachTo": "p119",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-CAPGYM",
+      "name": "Program Capacity - Gymnastics",
+      "level": "Program",
+      "attachTo": "p120",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
+    },
+    {
+      "id": "REC-CAPCHILD",
+      "name": "Program Capacity - Child Care",
+      "level": "Program",
+      "attachTo": "p121",
+      "unit": "number",
+      "decimals": 0,
+      "higherIsBetter": true,
+      "compareTo": "target",
+      "drivesStatus": false,
+      "status": null,
+      "pending": true,
+      "series": []
     }
   ],
   "framework": {
@@ -3034,10 +3803,11 @@
       "ks1": [
         "ob1",
         "ob2",
-        "ob3"
+        "ob19",
+        "ob20"
       ],
       "ks2": [
-        "ob2",
+        "ob5",
         "ob16",
         "ob17"
       ],
@@ -3048,7 +3818,8 @@
       ],
       "ks4": [
         "ob1",
-        "ob2"
+        "ob17",
+        "ob20"
       ],
       "ks5": [
         "ob18",
@@ -3057,74 +3828,60 @@
       ],
       "ks6": [
         "ob1",
-        "ob7"
+        "ob7",
+        "ob20"
       ],
       "ks7": [
         "ob1",
-        "ob10",
-        "ob11",
         "ob14",
-        "ob15",
-        "ob17"
+        "ob20"
       ],
       "ks8": [
         "ob4",
+        "ob5",
         "ob6",
-        "ob9"
+        "ob18"
       ],
       "ks9": [
+        "ob1",
         "ob5",
         "ob6"
       ],
       "ks10": [
-        "ob3",
-        "ob9",
-        "ob12"
+        "ob3"
       ],
       "ks11": [
-        "ob7",
-        "ob8",
-        "ob13"
+        "ob7"
       ],
       "ks12": [
-        "ob1",
         "ob7"
       ],
       "ks13": [
         "ob3",
-        "ob10",
         "ob11",
         "ob12",
         "ob15"
       ],
       "ks14": [
         "ob10",
-        "ob11",
-        "ob15",
-        "ob16"
+        "ob15"
       ],
       "ks15": [
-        "ob1",
-        "ob11",
         "ob12",
         "ob14"
       ],
       "ks16": [
-        "ob10",
         "ob13"
       ],
       "ks17": [
         "ob8",
-        "ob16",
         "ob17"
       ],
       "ks18": [
-        "ob3",
         "ob9"
       ],
       "ks20": [
-        "ob8",
-        "ob16"
+        "ob8"
       ]
     },
     "descriptions": {
@@ -3161,31 +3918,27 @@
         "withResult": 3,
         "percent": 100,
         "awaiting": [
-          "CLERK-SPECCOURT",
-          "CLERK-AGENDAPOST",
-          "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
-          "CLERK-LIQMARJLIC",
-          "CLERK-VOTERTURNOUT",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP",
-          "IT-TIXSLA"
+          "IT-TIXSLA",
+          "IT-LIAISONSURV",
+          "PROS-OCCRATE",
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ],
         "kpis": [
-          "CLERK-SPECCOURT",
-          "CLERK-AGENDAPOST",
-          "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
-          "CLERK-LIQMARJLIC",
-          "CLERK-VOTERTURNOUT",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP",
           "IT-PHISHRATE",
           "IT-PITSURV",
           "IT-TIXSLA",
-          "IT-UPTIME"
+          "IT-UPTIME",
+          "IT-LIAISONSURV",
+          "PROS-OCCRATE",
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ]
       },
       "g2": {
@@ -3193,20 +3946,38 @@
         "withResult": 0,
         "percent": null,
         "awaiting": [
+          "CLERK-AGENDAPOST",
+          "CLERK-BIZLIC",
+          "CLERK-CORARESPRATE",
+          "CLERK-LIQMARJLIC",
+          "CLERK-VOTERTURNOUT",
           "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ],
         "kpis": [
+          "CLERK-AGENDAPOST",
+          "CLERK-BIZLIC",
+          "CLERK-CORARESPRATE",
+          "CLERK-LIQMARJLIC",
+          "CLERK-VOTERTURNOUT",
           "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ]
       },
       "g3": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
           "911-DISPATCHTIME",
           "911-STAFFING",
@@ -3217,9 +3988,14 @@
           "PD-TRAFFICINJURY",
           "PD-VIOLENTPROPCRIME",
           "CLERK-SPECCOURT",
-          "LIB-CIRCULATION",
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY",
           "PROS-ALLCOMMEVENTS",
-          "PROS-REGULATEDUNITS"
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ],
         "kpis": [
           "911-DISPATCHTIME",
@@ -3233,8 +4009,14 @@
           "CLERK-SPECCOURT",
           "LIB-CIRCULATION",
           "LIB-VISITS",
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY",
           "PROS-ALLCOMMEVENTS",
-          "PROS-REGULATEDUNITS"
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ]
       },
       "g4": {
@@ -3242,115 +4024,31 @@
         "withResult": 3,
         "percent": 100,
         "awaiting": [
-          "911-DISPATCHTIME",
-          "911-STAFFING",
-          "PD-CALLVOLUME",
-          "PD-CRIMECLEARANCE",
-          "PD-FATALCRASH",
-          "PD-RESPONSETIME",
-          "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME",
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
+          "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
-          "IT-TIXSLA"
+          "TRAN-TOTALRIDERSHIP",
+          "IT-TIXSLA",
+          "IT-LIAISONSURV"
         ],
         "kpis": [
-          "911-DISPATCHTIME",
-          "911-STAFFING",
-          "PD-CALLVOLUME",
-          "PD-CRIMECLEARANCE",
-          "PD-FATALCRASH",
-          "PD-RESPONSETIME",
-          "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME",
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
+          "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
+          "TRAN-TOTALRIDERSHIP",
           "IT-PHISHRATE",
           "IT-PITSURV",
           "IT-TIXSLA",
-          "IT-UPTIME"
+          "IT-UPTIME",
+          "IT-LIAISONSURV"
         ]
       },
       "g5": {
-        "meeting": 4,
-        "withResult": 4,
-        "percent": 100,
-        "awaiting": [
-          "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
-          "TRAN-VACRATE",
-          "LIB-CIRCULATION",
-          "CLERK-AGENDAPOST",
-          "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
-          "CLERK-LIQMARJLIC",
-          "CLERK-VOTERTURNOUT",
-          "PROS-ALLCOMMEVENTS",
-          "PIO-ENGRATE",
-          "PIO-SEECLICKFIX",
-          "PIO-VIEWERSHIP",
-          "IT-TIXSLA"
-        ],
-        "kpis": [
-          "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
-          "TRAN-VACRATE",
-          "LIB-CIRCULATION",
-          "LIB-VISITS",
-          "CLERK-AGENDAPOST",
-          "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
-          "CLERK-LIQMARJLIC",
-          "CLERK-VOTERTURNOUT",
-          "PROS-ALLCOMMEVENTS",
-          "PIO-ENGRATE",
-          "PIO-SEECLICKFIX",
-          "PIO-VIEWERSHIP",
-          "IT-PHISHRATE",
-          "IT-PITSURV",
-          "IT-TIXSLA",
-          "IT-UPTIME"
-        ]
-      },
-      "g6": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
-        "awaiting": [
-          "HR-EMPENG",
-          "HR-INTPROMO",
-          "HR-TIMETOHIRE",
-          "HR-TURNRATE"
-        ],
-        "kpis": [
-          "HR-EMPENG",
-          "HR-INTPROMO",
-          "HR-TIMETOHIRE",
-          "HR-TURNRATE"
-        ]
-      },
-      "ob1": {
-        "meeting": 3,
-        "withResult": 3,
-        "percent": 100,
-        "awaiting": [
-          "CLERK-SPECCOURT",
-          "IT-TIXSLA"
-        ],
-        "kpis": [
-          "CLERK-SPECCOURT",
-          "IT-PHISHRATE",
-          "IT-PITSURV",
-          "IT-TIXSLA",
-          "IT-UPTIME"
-        ]
-      },
-      "ob2": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
@@ -3362,11 +4060,82 @@
           "PIO-VIEWERSHIP"
         ],
         "kpis": [
+          "LIB-CIRCULATION",
+          "LIB-VISITS",
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-VIEWERSHIP"
+        ]
+      },
+      "g6": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "HR-EMPENG",
+          "HR-INTPROMO",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "IT-TIXSLA",
+          "IT-LIAISONSURV",
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
+        ],
+        "kpis": [
+          "HR-EMPENG",
+          "HR-INTPROMO",
+          "HR-TIMETOHIRE",
+          "HR-TURNRATE",
+          "IT-PHISHRATE",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-UPTIME",
+          "IT-LIAISONSURV",
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
+        ]
+      },
+      "ob1": {
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
+        "awaiting": [
+          "IT-TIXSLA",
+          "IT-LIAISONSURV",
+          "PROS-OCCRATE",
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
+        ],
+        "kpis": [
+          "IT-PHISHRATE",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-UPTIME",
+          "IT-LIAISONSURV",
+          "PROS-OCCRATE",
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
+        ]
+      },
+      "ob2": {
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [
+          "PIO-ENGRATE",
+          "PIO-SEECLICKFIX",
+          "PIO-VIEWERSHIP"
+        ],
+        "kpis": [
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
@@ -3384,10 +4153,16 @@
         "withResult": 0,
         "percent": null,
         "awaiting": [
-          "PROS-REGULATEDUNITS"
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
         ],
         "kpis": [
-          "PROS-REGULATEDUNITS"
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
         ]
       },
       "ob5": {
@@ -3395,12 +4170,32 @@
         "withResult": 0,
         "percent": null,
         "awaiting": [
+          "CLERK-AGENDAPOST",
+          "CLERK-BIZLIC",
+          "CLERK-CORARESPRATE",
+          "CLERK-LIQMARJLIC",
+          "CLERK-VOTERTURNOUT",
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ],
         "kpis": [
+          "CLERK-AGENDAPOST",
+          "CLERK-BIZLIC",
+          "CLERK-CORARESPRATE",
+          "CLERK-LIQMARJLIC",
+          "CLERK-VOTERTURNOUT",
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ]
       },
       "ob6": {
@@ -3409,13 +4204,21 @@
         "percent": null,
         "awaiting": [
           "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ],
         "kpis": [
           "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ]
       },
       "ob7": {
@@ -3447,32 +4250,23 @@
       },
       "ob8": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
-          "911-DISPATCHTIME",
-          "911-STAFFING",
-          "PD-CALLVOLUME",
-          "PD-CRIMECLEARANCE",
-          "PD-FATALCRASH",
-          "PD-RESPONSETIME",
-          "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME",
-          "LIB-CIRCULATION",
-          "PROS-ALLCOMMEVENTS"
+          "PROS-ALLCOMMEVENTS",
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ],
         "kpis": [
-          "911-DISPATCHTIME",
-          "911-STAFFING",
-          "PD-CALLVOLUME",
-          "PD-CRIMECLEARANCE",
-          "PD-FATALCRASH",
-          "PD-RESPONSETIME",
-          "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME",
           "LIB-CIRCULATION",
           "LIB-VISITS",
-          "PROS-ALLCOMMEVENTS"
+          "PROS-ALLCOMMEVENTS",
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ]
       },
       "ob9": {
@@ -3480,51 +4274,41 @@
         "withResult": 0,
         "percent": null,
         "awaiting": [
-          "PROS-REGULATEDUNITS"
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY"
         ],
         "kpis": [
-          "PROS-REGULATEDUNITS"
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY"
         ]
       },
       "ob10": {
-        "meeting": 3,
-        "withResult": 3,
-        "percent": 100,
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
+          "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
-          "IT-TIXSLA"
+          "TRAN-TOTALRIDERSHIP"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
+          "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
-          "IT-PHISHRATE",
-          "IT-PITSURV",
-          "IT-TIXSLA",
-          "IT-UPTIME"
+          "TRAN-TOTALRIDERSHIP"
         ]
       },
       "ob11": {
-        "meeting": 3,
-        "withResult": 3,
-        "percent": 100,
-        "awaiting": [
-          "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
-          "TRAN-VACRATE",
-          "IT-TIXSLA"
-        ],
-        "kpis": [
-          "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
-          "TRAN-VACRATE",
-          "IT-PHISHRATE",
-          "IT-PITSURV",
-          "IT-TIXSLA",
-          "IT-UPTIME"
-        ]
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
+        "awaiting": [],
+        "kpis": []
       },
       "ob12": {
         "meeting": 0,
@@ -3537,103 +4321,74 @@
         "meeting": 0,
         "withResult": 0,
         "percent": null,
-        "awaiting": [
-          "911-DISPATCHTIME",
-          "911-STAFFING",
-          "PD-CALLVOLUME",
-          "PD-CRIMECLEARANCE",
-          "PD-FATALCRASH",
-          "PD-RESPONSETIME",
-          "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME"
-        ],
-        "kpis": [
-          "911-DISPATCHTIME",
-          "911-STAFFING",
-          "PD-CALLVOLUME",
-          "PD-CRIMECLEARANCE",
-          "PD-FATALCRASH",
-          "PD-RESPONSETIME",
-          "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME"
-        ]
+        "awaiting": [],
+        "kpis": []
       },
       "ob14": {
         "meeting": 3,
         "withResult": 3,
         "percent": 100,
         "awaiting": [
-          "IT-TIXSLA"
+          "IT-TIXSLA",
+          "IT-LIAISONSURV"
         ],
         "kpis": [
           "IT-PHISHRATE",
           "IT-PITSURV",
           "IT-TIXSLA",
-          "IT-UPTIME"
+          "IT-UPTIME",
+          "IT-LIAISONSURV"
         ]
       },
       "ob15": {
-        "meeting": 3,
-        "withResult": 3,
-        "percent": 100,
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
+          "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
-          "IT-TIXSLA"
+          "TRAN-TOTALRIDERSHIP"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
+          "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
-          "IT-PHISHRATE",
-          "IT-PITSURV",
-          "IT-TIXSLA",
-          "IT-UPTIME"
+          "TRAN-TOTALRIDERSHIP"
         ]
       },
       "ob16": {
-        "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "meeting": 0,
+        "withResult": 0,
+        "percent": null,
         "awaiting": [
-          "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
-          "TRAN-VACRATE",
-          "LIB-CIRCULATION",
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
-          "PROS-ALLCOMMEVENTS",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ],
         "kpis": [
-          "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
-          "TRAN-VACRATE",
-          "LIB-CIRCULATION",
-          "LIB-VISITS",
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
-          "PROS-ALLCOMMEVENTS",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ]
       },
       "ob17": {
-        "meeting": 4,
-        "withResult": 4,
-        "percent": 100,
+        "meeting": 1,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
-          "LIB-CIRCULATION",
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
@@ -3641,8 +4396,7 @@
           "CLERK-VOTERTURNOUT",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-VIEWERSHIP",
-          "IT-TIXSLA"
+          "PIO-VIEWERSHIP"
         ],
         "kpis": [
           "LIB-CIRCULATION",
@@ -3654,11 +4408,7 @@
           "CLERK-VOTERTURNOUT",
           "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
-          "PIO-VIEWERSHIP",
-          "IT-PHISHRATE",
-          "IT-PITSURV",
-          "IT-TIXSLA",
-          "IT-UPTIME"
+          "PIO-VIEWERSHIP"
         ]
       },
       "ob18": {
@@ -3669,13 +4419,21 @@
           "HR-EMPENG",
           "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE"
+          "HR-TURNRATE",
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
         ],
         "kpis": [
           "HR-EMPENG",
           "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE"
+          "HR-TURNRATE",
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
         ]
       },
       "ob19": {
@@ -3696,20 +4454,27 @@
         ]
       },
       "ob20": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 3,
+        "withResult": 3,
+        "percent": 100,
         "awaiting": [
           "HR-EMPENG",
           "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE"
+          "HR-TURNRATE",
+          "IT-TIXSLA",
+          "IT-LIAISONSURV"
         ],
         "kpis": [
           "HR-EMPENG",
           "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE"
+          "HR-TURNRATE",
+          "IT-PHISHRATE",
+          "IT-PITSURV",
+          "IT-TIXSLA",
+          "IT-UPTIME",
+          "IT-LIAISONSURV"
         ]
       },
       "ws1": {
@@ -3746,7 +4511,8 @@
           "HR-INTPROMO",
           "HR-TIMETOHIRE",
           "HR-TURNRATE",
-          "IT-TIXSLA"
+          "IT-TIXSLA",
+          "IT-LIAISONSURV"
         ],
         "kpis": [
           "HR-EMPENG",
@@ -3756,7 +4522,8 @@
           "IT-PHISHRATE",
           "IT-PITSURV",
           "IT-TIXSLA",
-          "IT-UPTIME"
+          "IT-UPTIME",
+          "IT-LIAISONSURV"
         ]
       },
       "ws3": {
@@ -3765,13 +4532,21 @@
         "percent": null,
         "awaiting": [
           "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ],
         "kpis": [
           "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS",
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ]
       },
       "ws4": {
@@ -3808,26 +4583,43 @@
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
-          "TRAN-VACRATE"
+          "TRAN-DEPENDENCY",
+          "TRAN-VACRATE",
+          "TRAN-TOTALRIDERSHIP"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
-          "TRAN-VACRATE"
+          "TRAN-DEPENDENCY",
+          "TRAN-VACRATE",
+          "TRAN-TOTALRIDERSHIP"
         ]
       },
       "ws6": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
-          "LIB-CIRCULATION",
-          "PROS-ALLCOMMEVENTS"
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY",
+          "PROS-ALLCOMMEVENTS",
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ],
         "kpis": [
           "LIB-CIRCULATION",
           "LIB-VISITS",
-          "PROS-ALLCOMMEVENTS"
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY",
+          "PROS-ALLCOMMEVENTS",
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ]
       },
       "ks1": {
@@ -3907,13 +4699,15 @@
         "withResult": 3,
         "percent": 100,
         "awaiting": [
-          "IT-TIXSLA"
+          "IT-TIXSLA",
+          "IT-LIAISONSURV"
         ],
         "kpis": [
           "IT-PHISHRATE",
           "IT-PITSURV",
           "IT-TIXSLA",
-          "IT-UPTIME"
+          "IT-UPTIME",
+          "IT-LIAISONSURV"
         ]
       },
       "ks8": {
@@ -3921,10 +4715,16 @@
         "withResult": 0,
         "percent": null,
         "awaiting": [
-          "PROS-REGULATEDUNITS"
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
         ],
         "kpis": [
-          "PROS-REGULATEDUNITS"
+          "PROS-REGULATEDUNITS",
+          "COMDEV-ANNEXACRES",
+          "COMDEV-PERMIT48",
+          "COMDEV-LANDUSEDAYS"
         ]
       },
       "ks9": {
@@ -3933,11 +4733,13 @@
         "percent": null,
         "awaiting": [
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ],
         "kpis": [
           "PROS-OCCRATE",
-          "PROS-URAINCOME"
+          "PROS-URAINCOME",
+          "PROS-VISITORSPEND"
         ]
       },
       "ks10": {
@@ -3997,12 +4799,16 @@
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
-          "TRAN-VACRATE"
+          "TRAN-DEPENDENCY",
+          "TRAN-VACRATE",
+          "TRAN-TOTALRIDERSHIP"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
-          "TRAN-VACRATE"
+          "TRAN-DEPENDENCY",
+          "TRAN-VACRATE",
+          "TRAN-TOTALRIDERSHIP"
         ]
       },
       "ks15": {
@@ -4021,11 +4827,9 @@
       },
       "ks17": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
-        "awaiting": [
-          "LIB-CIRCULATION"
-        ],
+        "withResult": 2,
+        "percent": 50,
+        "awaiting": [],
         "kpis": [
           "LIB-CIRCULATION",
           "LIB-VISITS"
@@ -4035,18 +4839,34 @@
         "meeting": 0,
         "withResult": 0,
         "percent": null,
-        "awaiting": [],
-        "kpis": []
+        "awaiting": [
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY"
+        ],
+        "kpis": [
+          "PR-PARKBUDGETACRE",
+          "PR-OSBUDGET1000",
+          "PR-QUALITYSURVEY"
+        ]
       },
       "ks20": {
         "meeting": 0,
         "withResult": 0,
         "percent": null,
         "awaiting": [
-          "PROS-ALLCOMMEVENTS"
+          "PROS-ALLCOMMEVENTS",
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ],
         "kpis": [
-          "PROS-ALLCOMMEVENTS"
+          "PROS-ALLCOMMEVENTS",
+          "REC-PASSRETTOTAL",
+          "REC-CAPTOTAL",
+          "REC-SURVEY",
+          "REC-SOCIALENG"
         ]
       }
     }

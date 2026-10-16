@@ -185,7 +185,8 @@
       "objectives": [
         "ob1",
         "ob2",
-        "ob3"
+        "ob19",
+        "ob20"
       ],
       "status": "on-track"
     },
@@ -197,7 +198,7 @@
         "g1"
       ],
       "objectives": [
-        "ob2",
+        "ob5",
         "ob16",
         "ob17"
       ],
@@ -212,9 +213,9 @@
         "g1"
       ],
       "objectives": [
+        "ob2",
         "ob16",
-        "ob17",
-        "ob2"
+        "ob17"
       ],
       "status": "at-risk"
     },
@@ -227,7 +228,8 @@
       ],
       "objectives": [
         "ob1",
-        "ob2"
+        "ob17",
+        "ob20"
       ],
       "status": "on-track"
     },
@@ -255,7 +257,8 @@
       ],
       "objectives": [
         "ob1",
-        "ob7"
+        "ob7",
+        "ob20"
       ],
       "status": "on-track"
     },
@@ -269,10 +272,7 @@
       "objectives": [
         "ob1",
         "ob14",
-        "ob17",
-        "ob10",
-        "ob11",
-        "ob15"
+        "ob20"
       ],
       "status": "off-track"
     },
@@ -285,8 +285,9 @@
       ],
       "objectives": [
         "ob4",
+        "ob5",
         "ob6",
-        "ob9"
+        "ob18"
       ],
       "status": "on-track"
     },
@@ -298,6 +299,7 @@
         "g2"
       ],
       "objectives": [
+        "ob1",
         "ob5",
         "ob6"
       ],
@@ -312,9 +314,7 @@
         "g4"
       ],
       "objectives": [
-        "ob3",
-        "ob9",
-        "ob12"
+        "ob3"
       ],
       "status": "at-risk"
     },
@@ -326,9 +326,7 @@
         "g3"
       ],
       "objectives": [
-        "ob7",
-        "ob8",
-        "ob13"
+        "ob7"
       ],
       "status": "on-track"
     },
@@ -340,8 +338,7 @@
         "g3"
       ],
       "objectives": [
-        "ob7",
-        "ob1"
+        "ob7"
       ],
       "status": "on-track"
     },
@@ -353,10 +350,9 @@
         "g4"
       ],
       "objectives": [
-        "ob10",
+        "ob3",
         "ob11",
         "ob12",
-        "ob3",
         "ob15"
       ],
       "status": "on-track"
@@ -367,9 +363,7 @@
       "workSystem": "ws5",
       "objectives": [
         "ob10",
-        "ob11",
-        "ob15",
-        "ob16"
+        "ob15"
       ],
       "goals": [
         "g4"
@@ -388,10 +382,8 @@
         "g4"
       ],
       "objectives": [
-        "ob11",
         "ob12",
-        "ob14",
-        "ob1"
+        "ob14"
       ],
       "status": "at-risk"
     },
@@ -403,8 +395,7 @@
         "g4"
       ],
       "objectives": [
-        "ob13",
-        "ob10"
+        "ob13"
       ],
       "status": "on-track"
     },
@@ -417,7 +408,6 @@
       ],
       "objectives": [
         "ob8",
-        "ob16",
         "ob17"
       ],
       "status": "on-track"
@@ -430,8 +420,7 @@
         "g3"
       ],
       "objectives": [
-        "ob9",
-        "ob3"
+        "ob9"
       ],
       "status": "on-track"
     },
@@ -443,8 +432,7 @@
         "g3"
       ],
       "objectives": [
-        "ob8",
-        "ob16"
+        "ob8"
       ],
       "status": "at-risk"
     }
