@@ -1069,13 +1069,14 @@
   .sticky-crumbs .crumb{background:none; border:none; font:inherit; font-size:14px; color:var(--forest); font-weight:700; cursor:pointer; padding:4px 2px; text-decoration:underline; text-underline-offset:3px;}
   .sticky-crumbs .crumb.current{color:#1E1E1E; text-decoration:none; cursor:default;}
   .sticky-crumbs .sep{color:var(--slate);}
-  #goal-drill .key-bar{margin:8px 0 14px;}
-  #goal-drill .key-bar > summary{padding:9px 16px;}
+  #key-bar{margin:16px 0 0;}
+  #key-bar > summary{padding:9px 16px;}
   @media (max-width:900px){
     .site-logo img{height:52px;}
     .titleband .title-row h1{font-size:28px;}
     .explorer-bar{position:static;}
   }
+  #goal-drill{margin-top:22px;}
 </style>
 </head>
 <body>
@@ -1132,33 +1133,6 @@
     </div>
   </div>
 
-
-  <!-- CITY SNAPSHOT (renders only if data.json includes a kpis array) -->
-  <div class="kpi-grid" id="kpi-grid"></div>
-
-   <!-- The City of Durango at a glance -->
-  <div class="section" id="glance">
-    <div class="section-head">
-      <div class="eyebrow">The City of Durango</div>
-      <h2>At a glance</h2>
-      <p>What the City tracks. Select a card to explore it below; hover a line to see the names.</p>
-    </div>
-    <div class="stat-grid" id="stat-grid"></div>
-  </div>
-
-
-  <!-- Unified explorer: toggle between Strategic Plan Goal View and Work System View -->
-  <div class="section" id="goal-drill">
-    <div class="section-head">
-      <div class="eyebrow">Explore the City's Work</div>
-      <h2 id="explorer-heading">Strategic Plan Goals → Objectives</h2>
-      <p id="explorer-subhead">Pick a Goal to see its Objectives, then an Objective to see the Key Services that support it.</p>
-    </div>
-
-    <div class="explorer-bar" id="explorer-bar">
-      <div class="root-mode-toggle" id="root-mode-toggle"></div>
-      <nav class="sticky-crumbs" id="sticky-crumbs" aria-label="Current location (pinned)"></nav>
-    </div>
   <!-- KEY: status colors always visible; full definitions fold out (closed by default) -->
   <details class="key-bar" id="key-bar">
     <summary>
@@ -1251,6 +1225,25 @@
         </div>
       </div>
   </details>
+
+
+  <!-- CITY SNAPSHOT (renders only if data.json includes a kpis array) -->
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+
+
+  <!-- Unified explorer: toggle between Strategic Plan Goal View and Work System View -->
+  <div class="section" id="goal-drill">
+    <div class="section-head">
+      <div class="eyebrow">Explore the City's Work</div>
+      <h2 id="explorer-heading">Strategic Plan Goals → Objectives</h2>
+      <p id="explorer-subhead">Pick a Goal to see its Objectives, then an Objective to see the Key Services that support it.</p>
+    </div>
+
+    <div class="explorer-bar" id="explorer-bar">
+      <div class="root-mode-toggle" id="root-mode-toggle"></div>
+      <nav class="sticky-crumbs" id="sticky-crumbs" aria-label="Current location (pinned)"></nav>
+    </div>
     <div id="selected-goal-banner"></div>
 
     <div class="drill-col">
@@ -1858,6 +1851,7 @@ function renderStatusLegend(){
 
 /* ---------- At-a-glance stats ---------- */
 function renderStats(){
+  if(!document.getElementById('stat-grid')) return;
   const stats = [
     { n: DATA.goals.length, l: 'Strategic Plan Goals', breakdown: gaugeBreakdownHTML(DATA.goals) },
     { n: DATA.objectives.length, l: 'Objectives', breakdown: gaugeBreakdownHTML(DATA.objectives) },
@@ -3774,9 +3768,8 @@ function wireExportMenu(){
    the right tool here), and restartable anytime via the header button. */
 const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
-  { target: '#stat-grid', title: 'At a glance', body: 'These cards count everything the City tracks. Hover any line to see which items make it up, or select a card to jump to it below.' },
-  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. The view switch stays pinned at the top as you scroll, and the page address updates so you can share exactly what you are looking at.' },
   { target: '#key-bar', title: 'Read the colors', body: 'Green, gold and red mean the same thing everywhere on the page. Hover a color for a one-line meaning, or open Definitions for more detail.' },
+  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. The view switch stays pinned at the top as you scroll, and the page address updates so you can share exactly what you are looking at.' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
 ];
 
