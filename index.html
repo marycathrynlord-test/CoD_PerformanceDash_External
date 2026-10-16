@@ -1077,6 +1077,21 @@
     .explorer-bar{position:static;}
   }
   #goal-drill{margin-top:22px;}
+  /* Soft fade-in when drilling into a Goal / Work System */
+  @keyframes softIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+  #level-summary > *, #explorer-detail > *, #heatmap-grid > *{animation:softIn .35s ease-out both;}
+  /* Goal / Work System definition panel tinted in its own color */
+  .level-summary.ls-tinted{
+    background:linear-gradient(90deg, color-mix(in srgb, var(--ls-accent) 16%, #fff) 0%, color-mix(in srgb, var(--ls-accent) 7%, #fff) 100%);
+    border-left:8px solid var(--ls-accent); border-bottom:none; border-radius:12px; margin:6px 20px 16px; padding:22px 24px 20px;
+  }
+  .level-summary.ls-tinted .ls-type{color:color-mix(in srgb, var(--ls-accent) 55%, #000);}
+  .level-summary.ls-tinted .ls-name{color:color-mix(in srgb, var(--ls-accent) 60%, #000); font-size:24px; font-weight:800;}
+  .level-summary.ls-tinted .ls-def{color:#1E1E1E;}
+  .level-summary.ls-tinted .ls-src{color:#3F4A48;}
+  .level-summary.ls-tinted .ls-awaiting summary{color:color-mix(in srgb, var(--ls-accent) 55%, #000);}
+  .level-summary.ls-tinted .gauge-block{background:#fff; border-radius:12px; padding:14px 18px; box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  @media (max-width:640px){ .level-summary.ls-tinted{margin:6px 10px 14px; padding:18px 16px;} }
 </style>
 </head>
 <body>
@@ -2101,7 +2116,7 @@ function loadViewFromURL(){
 }
 function scrollToExplorer(){
   const el = document.getElementById('goal-drill');
-  if(el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
+  if(el) softScrollTo(el, 8);
 }
 function gotoExplorer(mode){
   if(dashboardView.rootMode !== mode || dashboardView.level !== 'roots'){
@@ -2488,6 +2503,15 @@ function renderLevelSummary(){
   const byId = {};
   Object.values(KPI_BY_ITEM).flat().forEach(k => { byId[k.id] = k; });
   const awaitingNames = g.awaiting.map(id => byId[id] ? byId[id].name : id);
+  // Tint the panel with the Goal's own color (objectives inherit their Goal's);
+  // Work System levels use the City forest green.
+  let accent = '#006A53';
+  if(dashboardView.rootMode === 'goal'){
+    const goal = DATA.goals.find(gg => gg.id === (type === 'Objective' && item.goal ? item.goal : dashboardView.rootId));
+    if(goal && goal.color) accent = goal.color;
+  }
+  box.style.setProperty('--ls-accent', accent);
+  box.classList.add('ls-tinted');
   box.innerHTML = `
     <div>
       <div class="ls-type">${type}</div>
@@ -2524,7 +2548,42 @@ function renderDashboardHeatmap(){
   if(!target && detail && detail.style.display !== 'none' && detail.innerHTML.trim()){ detail.setAttribute('tabindex', '-1'); target = detail; }
   if(!target) target = document.querySelector('#heatmap-grid .tile-hit');
   if(!target) target = document.querySelector('#heatmap-breadcrumb [aria-current]');
-  if(target) target.focus({ preventScroll:false });
+  if(target){
+    target.focus({ preventScroll:true });
+    if(target !== prev && !target.matches('[data-root-mode]')) softScrollTo(target);
+  }
+}
+
+// Gentle, eased scroll (about 0.7s) instead of the browser's instant jump.
+// Leaves room for the pinned view bar; respects reduced-motion settings.
+let softScrollFrame = null;
+function softScrollTo(el, extraOffset = 16){
+  if(!el) return;
+  const bar = document.getElementById('explorer-bar');
+  const barH = bar && getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight : 0;
+  const rect = el.getBoundingClientRect();
+  // Already comfortably on screen: don't move.
+  if(rect.top >= barH + 8 && rect.top < window.innerHeight * 0.45) return;
+  const startY = window.scrollY;
+  const maxY = document.documentElement.scrollHeight - window.innerHeight;
+  const endY = Math.min(maxY, Math.max(0, startY + rect.top - barH - extraOffset));
+  if(Math.abs(endY - startY) < 4) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ window.scrollTo(0, endY); return; }
+  const dist = endY - startY, dur = Math.min(1100, Math.max(700, Math.abs(dist) * 0.9));
+  const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  let t0 = null;
+  cancelAnimationFrame(softScrollFrame);
+  const step = ts => {
+    if(t0 === null) t0 = ts;
+    const k = Math.min(1, (ts - t0) / dur);
+    window.scrollTo(0, startY + dist * ease(k));
+    if(k < 1) softScrollFrame = requestAnimationFrame(step);
+  };
+  softScrollFrame = requestAnimationFrame(step);
+  // A wheel or touch from the person cancels the animation.
+  const stop = () => { cancelAnimationFrame(softScrollFrame); window.removeEventListener('wheel', stop); window.removeEventListener('touchstart', stop); };
+  window.addEventListener('wheel', stop, { passive:true, once:true });
+  window.addEventListener('touchstart', stop, { passive:true, once:true });
 }
 
 function renderDashboardHeatmapContent(){
