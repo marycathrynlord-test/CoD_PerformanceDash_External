@@ -1028,6 +1028,54 @@
   .crumbs{padding:0 28px 6px;}
   .site-logo img{height:84px;}
   @media (max-width:900px){ .page-shell{margin-top:12px; padding:0 8px;} .content-card .wrap{padding:0 14px 10px;} .crumbs{padding:0 14px 6px;} .site-logo img{height:60px;} }
+  /* ---------- UX pass: compact top, Key with explorer, sticky bar ---------- */
+  .site-header-inner{padding-top:8px; padding-bottom:8px;}
+  .site-logo img{height:64px;}
+  .page-shell{margin-top:16px;}
+  .content-card{padding-top:16px;}
+  .titleband{padding-top:6px;}
+  .title-row{display:flex; align-items:center; flex-wrap:wrap; gap:8px 16px; margin:2px 0 6px;}
+  .titleband .title-row h1{margin:0; font-size:34px;}
+  .period-pill{font-size:13px; font-weight:700; color:var(--forest); background:#E4F1EE; border-radius:999px; padding:5px 12px;}
+  .titleband p{margin:0;}
+
+  /* At a glance: compact, clickable cards with a stacked status bar */
+  #glance{margin-top:22px;}
+  #glance .section-head{margin-bottom:0;}
+  #glance .section-head h2{font-size:21px; margin-bottom:2px;}
+  #glance .section-head p{font-size:14.5px;}
+  .stat-grid{margin-top:12px; gap:12px;}
+  .stat-card{text-align:left; padding:12px 14px; cursor:pointer; transition:border-color .15s, box-shadow .15s;}
+  .stat-card:hover{border-color:var(--forest); box-shadow:0 4px 14px rgba(0,106,83,.12);}
+  .stat-top{display:flex; align-items:baseline; gap:8px;}
+  .stat-card .n{font-size:28px; line-height:1;}
+  .stat-card .l{font-size:14.5px; font-weight:700; color:#1E1E1E; margin:0;}
+  .stat-go{margin-left:auto; background:none; border:none; padding:2px 0; color:var(--forest); font:inherit; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap;}
+  .stat-card:hover .stat-go, .stat-go:hover{text-decoration:underline;}
+  .stat-bar{display:flex; height:8px; border-radius:99px; overflow:hidden; margin:10px 0 8px; gap:2px; background:#fff;}
+  .stat-bar span{display:block; min-width:4px;}
+  .stat-breakdown{margin:0; padding:0; border-top:none; flex-direction:row; flex-wrap:wrap; gap:4px 12px;}
+  .stat-card .mini-status{font-size:13.5px;}
+  @media (max-width:1250px){ .stat-top{flex-wrap:wrap;} .stat-go{margin-left:0; width:100%;} }
+  @media (max-width:1250px){ .stat-go{text-align:left;} }
+  @media (max-width:560px){ .stat-grid{grid-template-columns:1fr;} .stat-top{flex-wrap:nowrap;} .stat-go{margin-left:auto; width:auto;} }
+
+  /* Sticky explorer bar: view toggle + where you are */
+  #goal-drill{scroll-margin-top:8px;}
+  .explorer-bar{position:sticky; top:0; z-index:30; background:#fff; display:flex; align-items:center; flex-wrap:wrap; gap:8px 20px; padding:8px 0; margin:0 0 4px; border-bottom:1px solid transparent; transition:border-color .2s, box-shadow .2s;}
+  .explorer-bar.stuck{border-bottom-color:var(--line); box-shadow:0 6px 10px -8px rgba(0,0,0,.18);}
+  .explorer-bar .root-mode-toggle{margin:0;}
+  .sticky-crumbs{display:flex; align-items:center; flex-wrap:wrap; gap:2px 6px; font-size:14px;}
+  .sticky-crumbs .crumb{background:none; border:none; font:inherit; font-size:14px; color:var(--forest); font-weight:700; cursor:pointer; padding:4px 2px; text-decoration:underline; text-underline-offset:3px;}
+  .sticky-crumbs .crumb.current{color:#1E1E1E; text-decoration:none; cursor:default;}
+  .sticky-crumbs .sep{color:var(--slate);}
+  #goal-drill .key-bar{margin:8px 0 14px;}
+  #goal-drill .key-bar > summary{padding:9px 16px;}
+  @media (max-width:900px){
+    .site-logo img{height:52px;}
+    .titleband .title-row h1{font-size:28px;}
+    .explorer-bar{position:static;}
+  }
 </style>
 </head>
 <body>
@@ -1079,12 +1127,38 @@
 
   <div class="titleband">
     <div class="titleband-text">
-      <h1>Performance Dashboard</h1>
-      <p>Key Performance Indicators (KPIs) show how the City of Durango is doing on the things that matter most, and whether we are moving in the right direction on our strategic goals.</p>
-      <p class="period-line" id="period-label">FY2026 · Performance Snapshot</p>
+      <div class="title-row"><h1>Performance Dashboard</h1><span class="period-pill" id="period-label">FY2026 · Performance Snapshot</span></div>
+      <p>How the City is doing on the things that matter most, measured against our strategic goals.</p>
     </div>
   </div>
 
+
+  <!-- CITY SNAPSHOT (renders only if data.json includes a kpis array) -->
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+   <!-- The City of Durango at a glance -->
+  <div class="section" id="glance">
+    <div class="section-head">
+      <div class="eyebrow">The City of Durango</div>
+      <h2>At a glance</h2>
+      <p>What the City tracks. Select a card to explore it below; hover a line to see the names.</p>
+    </div>
+    <div class="stat-grid" id="stat-grid"></div>
+  </div>
+
+
+  <!-- Unified explorer: toggle between Strategic Plan Goal View and Work System View -->
+  <div class="section" id="goal-drill">
+    <div class="section-head">
+      <div class="eyebrow">Explore the City's Work</div>
+      <h2 id="explorer-heading">Strategic Plan Goals → Objectives</h2>
+      <p id="explorer-subhead">Pick a Goal to see its Objectives, then an Objective to see the Key Services that support it.</p>
+    </div>
+
+    <div class="explorer-bar" id="explorer-bar">
+      <div class="root-mode-toggle" id="root-mode-toggle"></div>
+      <nav class="sticky-crumbs" id="sticky-crumbs" aria-label="Current location (pinned)"></nav>
+    </div>
   <!-- KEY: status colors always visible; full definitions fold out (closed by default) -->
   <details class="key-bar" id="key-bar">
     <summary>
@@ -1177,30 +1251,6 @@
         </div>
       </div>
   </details>
-
-  <!-- CITY SNAPSHOT (renders only if data.json includes a kpis array) -->
-  <div class="kpi-grid" id="kpi-grid"></div>
-
-   <!-- The City of Durango at a glance -->
-  <div class="section" id="glance" style="margin-top:28px;">
-    <div class="section-head">
-      <div class="eyebrow">The City of Durango</div>
-      <h2>At a glance</h2>
-      <p>An at‑a‑glance view of how the City is organized and performing, helping residents understand how local services work together to support our community.</p>
-    </div>
-    <div class="stat-grid" id="stat-grid"></div>
-  </div>
-
-
-  <!-- Unified explorer: toggle between Strategic Plan Goal View and Work System View -->
-  <div class="section" id="goal-drill">
-    <div class="section-head">
-      <div class="eyebrow">Explore the City's Work</div>
-      <h2 id="explorer-heading">Strategic Plan Goals → Objectives</h2>
-      <p id="explorer-subhead">Pick a Goal to see its Objectives, then an Objective to see the Key Services that support it.</p>
-    </div>
-
-    <div class="root-mode-toggle" id="root-mode-toggle"></div>
     <div id="selected-goal-banner"></div>
 
     <div class="drill-col">
@@ -1685,7 +1735,9 @@ function statusBreakdownHTML(items, statusFn){
         </span>
       `;
     }).join('');
-  return `<div class="stat-breakdown">${rows}</div>`;
+  const total = items.length || 1;
+  const bar = Object.entries(groups).filter(([,n])=>n.length).map(([st,n])=>`<span style="flex:${n.length};background:${statusDotColor(st)}"></span>`).join('');
+  return `<div class="stat-bar" aria-hidden="true">${bar}</div><div class="stat-breakdown">${rows}</div>`;
 }
 
 function showTooltip(target, tipId){
@@ -1775,9 +1827,9 @@ document.addEventListener('click', ()=>{ hideTooltip(); });
 // no Key Service KPIs at all. Hover/focus lists the names (with %).
 function gaugeBreakdownHTML(items){
   const groups = [
-    { key:'with', label:'With a gauge reading', color:'#006A53', names:[] },
+    { key:'with', label:'Reporting (has a gauge reading)', color:'#006A53', names:[] },
     { key:'await', label:'Awaiting results', color:'#7FB4A9', names:[] },
-    { key:'none', label:'No Key Service KPIs yet', color:'#FFFFFF', names:[] },
+    { key:'none', label:'No Key Service KPIs yet', color:'#E3EAE8', names:[] },
   ];
   items.forEach(item=>{
     const g = gaugeFor(item.id);
@@ -1791,10 +1843,11 @@ function gaugeBreakdownHTML(items){
     return `
       <span class="mini-status" data-tip-id="${tipId}" tabindex="0" aria-label="${escHTML(gr.label)}: ${escHTML(gr.names.join(', '))}">
         <span class="status-dot" style="background:${gr.color}; box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)"></span>
-        ${gr.names.length} ${gr.key === 'with' ? 'with a reading' : gr.key === 'await' ? 'awaiting results' : 'no KPIs yet'}
+        ${gr.names.length} ${gr.key === 'with' ? 'Reporting' : gr.key === 'await' ? 'Awaiting data' : 'No KPIs yet'}
       </span>`;
   }).join('');
-  return `<div class="stat-breakdown">${rows}</div>`;
+  const bar = groups.filter(gr=>gr.names.length).map(gr=>`<span style="flex:${gr.names.length};background:${gr.key==='none'?'#E3EAE8':gr.color}"></span>`).join('');
+  return `<div class="stat-bar" aria-hidden="true">${bar}</div><div class="stat-breakdown">${rows}</div>`;
 }
 
 function renderStatusLegend(){
@@ -1813,13 +1866,25 @@ function renderStats(){
     { n: DATA.programs.length, l: 'Programs', breakdown: statusBreakdownHTML(DATA.programs, programStatus) },
     
   ];
-  document.getElementById('stat-grid').innerHTML = stats.map(s=>`
-    <div class="stat-card">
-      <div class="n">${s.n}</div>
-      <div class="l">${s.l}</div>
+  const modes = ['goal','goal','workSystem','workSystem','workSystem'];
+  document.getElementById('stat-grid').innerHTML = stats.map((s,i)=>`
+    <div class="stat-card" data-goto-mode="${modes[i]}">
+      <div class="stat-top">
+        <div class="n">${s.n}</div>
+        <div class="l">${s.l}</div>
+        <button type="button" class="stat-go" data-goto-mode="${modes[i]}" aria-label="Explore ${s.l} in the ${modes[i]==='goal'?'Strategic Plan Goal':'Work System'} View">Explore <span aria-hidden="true">→</span></button>
+      </div>
       ${s.breakdown || ''}
     </div>
   `).join('');
+  document.querySelectorAll('#stat-grid [data-goto-mode]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      if(e.target.closest('.mini-status')) return;
+      if(el.classList.contains('stat-card') && e.target.closest('.stat-go')) return;
+      e.stopPropagation();
+      gotoExplorer(el.dataset.gotoMode);
+    });
+  });
 
   wireStatusTooltips(document.getElementById('stat-grid'));
 }
@@ -2008,6 +2073,51 @@ function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAt
    Goal -> Key Service -> Program, and Work System -> Key Service ->
    Program share the same last two steps). */
 let dashboardView = { rootMode: 'goal', level: 'roots' };
+let viewSaving = true;
+
+// Shareable links: the current selection lives in the URL (#view=…),
+// and the last view is remembered for the next visit.
+function saveViewToURL(){
+  if(!viewSaving) return;
+  const v = dashboardView, parts = [v.rootMode === 'goal' ? 'goal' : 'ws'];
+  if(v.rootId) parts.push(v.rootId);
+  if(v.level === 'objective' && v.objectiveId) parts.push('o:' + v.objectiveId);
+  if(v.level === 'keyservice' && v.ksId) parts.push('k:' + v.ksId);
+  const hash = v.level === 'roots' && v.rootMode === 'goal' ? '' : '#view=' + parts.map(encodeURIComponent).join('/');
+  try{ history.replaceState(null, '', location.pathname + location.search + hash); }catch(e){}
+  try{ localStorage.setItem('durango-dash-mode', v.rootMode); }catch(e){}
+}
+function loadViewFromURL(){
+  const m = /#view=([^&]+)/.exec(location.hash);
+  if(!m){
+    let mode = null; try{ mode = localStorage.getItem('durango-dash-mode'); }catch(e){}
+    if(mode === 'workSystem') dashboardView = { rootMode:'workSystem', level:'roots' };
+    return;
+  }
+  const parts = m[1].split('/').map(decodeURIComponent);
+  const rootMode = parts[0] === 'ws' ? 'workSystem' : 'goal';
+  const roots = rootMode === 'goal' ? DATA.goals : DATA.workSystems;
+  const v = { rootMode, level:'roots' };
+  if(parts[1] && roots.some(r=>r.id===parts[1])){ v.level = 'root'; v.rootId = parts[1]; }
+  const tail = parts[2] || '';
+  if(v.rootId && tail.startsWith('o:') && DATA.objectives.some(o=>o.id===tail.slice(2))){ v.level = 'objective'; v.objectiveId = tail.slice(2); }
+  if(v.rootId && tail.startsWith('k:') && DATA.keyServices.some(k=>k.id===tail.slice(2))){ v.level = 'keyservice'; v.ksId = tail.slice(2); }
+  dashboardView = v;
+  if(v.level !== 'roots') setTimeout(()=>scrollToExplorer(), 300);
+}
+function scrollToExplorer(){
+  const el = document.getElementById('goal-drill');
+  if(el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
+}
+function gotoExplorer(mode){
+  if(dashboardView.rootMode !== mode || dashboardView.level !== 'roots'){
+    dashboardView = { rootMode: mode, level:'roots' };
+    updateExplorerHeading(); renderDashboardHeatmap();
+  }
+  scrollToExplorer();
+  const btn = document.querySelector(`[data-root-mode="${mode}"]`);
+  if(btn) setTimeout(()=>btn.focus({ preventScroll:true }), 400);
+}
 
 function rootsList(rootMode){
   return rootMode === 'goal' ? sortGoalsCanonical(DATA.goals) : DATA.workSystems;
@@ -2099,6 +2209,16 @@ function renderDashboardBreadcrumb(){
   bc.setAttribute('role', 'navigation');
   bc.setAttribute('aria-label', 'Breadcrumb');
 
+  const sc = document.getElementById('sticky-crumbs');
+  if(sc){
+    sc.innerHTML = dashboardView.level === 'roots' ? '' : bc.innerHTML.replace(/ aria-current="location"/g,'');
+    sc.querySelectorAll('.crumb').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const orig = bc.querySelector(`.crumb[data-crumb="${btn.dataset.crumb}"]`);
+        if(orig && !btn.classList.contains('current')){ orig.click(); scrollToExplorer(); }
+      });
+    });
+  }
   bc.querySelectorAll('.crumb').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const level = btn.dataset.crumb;
@@ -2414,6 +2534,7 @@ function renderDashboardHeatmap(){
 }
 
 function renderDashboardHeatmapContent(){
+  saveViewToURL();
   renderRootModeToggle();
   renderDashboardBreadcrumb();
   renderLevelSummary();
@@ -3524,6 +3645,7 @@ function removeHeatmapSparklines(inserted){
 // gets "everything" even though only one level is ever on screen at a
 // time — it walks the same states a person would click through.
 async function captureHeatmapLevel(view, sectionTitle, gridId='heatmap-grid'){
+  viewSaving = false;
   dashboardView = view;
   renderDashboardHeatmap();
   await new Promise(r => setTimeout(r, 150));
@@ -3596,6 +3718,7 @@ async function exportPDF(){
   } catch(err){
     alert('Something went wrong generating the PDF. Try again, or use Export CSV instead.\n\nTechnical detail: ' + err.message);
   } finally {
+    viewSaving = true;
     dashboardView = savedView;
     updateExplorerHeading();
     renderDashboardHeatmap();
@@ -3651,9 +3774,9 @@ function wireExportMenu(){
    the right tool here), and restartable anytime via the header button. */
 const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
+  { target: '#stat-grid', title: 'At a glance', body: 'These cards count everything the City tracks. Hover any line to see which items make it up, or select a card to jump to it below.' },
+  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. The view switch stays pinned at the top as you scroll, and the page address updates so you can share exactly what you are looking at.' },
   { target: '#key-bar', title: 'Read the colors', body: 'Green, gold and red mean the same thing everywhere on the page. Hover a color for a one-line meaning, or open Definitions for more detail.' },
-  { target: '#stat-grid', title: 'At a glance', body: 'These cards count everything the City tracks. Hover any line to see exactly which items make it up.' },
-  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. Each gauge shows the share of Key Service KPIs meeting their target.' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
 ];
 
@@ -3743,6 +3866,7 @@ function init(){
   renderKPIs();
   renderHeadline();
   renderStats();
+  loadViewFromURL();
   updateExplorerHeading();
   renderDashboardHeatmap();
   wireExportButtons();
@@ -3751,6 +3875,13 @@ function init(){
   wireTour();
 }
 
+// Adds a shadow to the explorer bar once it is pinned at the top.
+document.addEventListener('DOMContentLoaded', ()=>{
+  const bar = document.getElementById('explorer-bar');
+  if(!bar || !('IntersectionObserver' in window)) return;
+  const s = document.createElement('div'); s.style.height = '1px'; bar.before(s);
+  new IntersectionObserver(([e])=> bar.classList.toggle('stuck', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(s);
+});
 loadData();
 </script>
 
