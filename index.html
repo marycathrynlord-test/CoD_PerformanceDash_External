@@ -984,6 +984,42 @@
   }
 
   .site-header :focus-visible{outline-color:var(--focus) !important; box-shadow:none;}
+  /* Single-column page (no sidebar), tools in the header */
+  .page-shell{display:block; max-width:1400px;}
+  .content-card{border-radius:22px;}
+  .header-tools{padding-top:0;}
+  .header-tools .tour-restart-btn{font-size:14px; padding:9px 16px;}
+  .key-bar .key-row{display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; padding:10px 16px; font-size:12.5px;}
+  @media (max-width:900px){ .content-card{border-radius:16px;} }
+  /* Key + Definitions fold-out (template look) */
+  .key-bar{border:1px solid var(--line); border-radius:12px; background:#fff; overflow:hidden;}
+  .key-bar > summary{padding:12px 18px; gap:8px 20px; font-size:14px;}
+  .key-bar-label{font-size:12px; color:#1E1E1E; letter-spacing:.08em;}
+  .key-item{font-weight:600; color:#1E1E1E;}
+  .key-item .ref-icon.dot{width:11px; height:11px;}
+  .key-more{margin-left:auto; text-decoration:none; color:#fff; background:var(--forest); border-radius:999px; padding:6px 14px; font-size:13px; font-weight:700;}
+  .key-bar > summary:hover .key-more{color:#fff; background:#00523F;}
+  .key-more .chev{color:#fff;}
+  .key-bar .reference-grid{display:grid; grid-template-columns:1fr 1.4fr; gap:0; margin:0; padding:0; border-top:1px solid var(--line); background:#F4F9F8;}
+  .key-bar .reference-col{border:none; border-radius:0; background:transparent; padding:22px 26px 24px;}
+  .key-bar .reference-col + .reference-col{border-left:1px solid var(--line);}
+  .key-bar .reference-col-title{font-size:17px; font-weight:800; color:#1E1E1E; text-transform:none; letter-spacing:0; margin-bottom:2px;}
+  .key-bar .reference-col-sub{font-size:13.5px; color:var(--slate); margin-bottom:14px;}
+  .key-bar .reference-col.progress > .ref-row{display:inline-flex;}
+  .key-bar .ref-row{border-bottom:none; padding:9px 0; gap:12px;}
+  .key-bar .ref-term{font-size:14.5px; font-weight:800;}
+  .key-bar .ref-desc{font-size:13.5px; color:#3A3A3A; line-height:1.5;}
+  .key-bar .ref-icon{width:12px; height:12px; margin-top:5px; border-radius:3px;}
+  .key-bar .ref-icon.dot{border-radius:50%;}
+  .key-bar .reference-col.progress{display:grid; grid-template-columns:1fr 1fr; column-gap:24px; align-content:start;}
+  .key-bar .reference-col.progress .reference-col-title, .key-bar .reference-col.progress .reference-col-sub{grid-column:1 / -1;}
+  .key-bar .reference-col.progress > .ref-row:last-of-type{grid-column:auto;}
+  @media (max-width:800px){
+    .key-bar .reference-grid{grid-template-columns:1fr;}
+    .key-bar .reference-col + .reference-col{border-left:none; border-top:1px solid var(--line);}
+    .key-bar .reference-col.progress{grid-template-columns:1fr;}
+    .key-more{margin-left:0;}
+  }
 </style>
 </head>
 <body>
@@ -992,7 +1028,7 @@
 <!-- City website frame: matches the durangoco.gov page template -->
 <div class="site-topbar">
   <div class="site-topbar-inner">
-    <span><strong>City of Durango Performance Dashboard</strong> &ndash; how the City is doing on its Strategic Plan goals</span>
+    <span><strong>City of Durango Performance Dashboard</strong> &ndash; How the City of Durango is Performing</span>
     <a href="https://durangoco.gov" class="site-topbar-link">durangoco.gov</a>
   </div>
 </div>
@@ -1005,22 +1041,22 @@
         <span><small>City of</small>Durango</span>
       </span>
     </a>
-    <nav class="site-nav" aria-label="City website">
-      <a href="https://durangoco.gov">Services</a>
-      <a href="https://durangoco.gov">Local Government</a>
-      <a href="https://durangoco.gov">I want to &hellip;</a>
-      <a href="https://durangoco.gov">Engage Durango</a>
-    </nav>
+    <div class="page-tools header-tools">
+      <div class="header-export" id="header-export">
+      <button class="tour-restart-btn" id="export-menu-btn" aria-controls="export-dropdown" aria-expanded="false"><span aria-hidden="true">⬇</span> Export <span aria-hidden="true">▾</span></button>
+      <div class="export-dropdown" id="export-dropdown" hidden>
+        <label class="export-dropdown-label" for="export-scope-select">Scope</label>
+        <select id="export-scope-select" class="export-select" style="width:100%;"></select>
+        <button class="export-dropdown-item" id="export-csv-btn"><span aria-hidden="true">⬇</span> Export as CSV</button>
+        <button class="export-dropdown-item" id="export-pdf-btn"><span aria-hidden="true">⬇</span> Export as PDF</button>
+      </div>
+    </div>
+    <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour">Take the tour</button>
+    </div>
   </div>
 </header>
 
 <div class="page-shell">
-  <aside class="side-nav" aria-label="Dashboard sections">
-    <a href="#glance" data-side="glance">At a Glance</a>
-    <a href="#goal-drill" data-side="goal">Strategic Plan Goals</a>
-    <a href="#goal-drill" data-side="workSystem">Work Systems</a>
-    <a href="#key-bar" data-side="key">What the Colors Mean</a>
-  </aside>
   <div class="content-card">
     <nav class="crumbs" aria-label="Breadcrumb"><a href="https://durangoco.gov">Home</a> › <a href="https://durangoco.gov">Local Government</a> › <span aria-current="page">Performance Dashboard</span></nav>
 
@@ -1039,20 +1075,6 @@
       <p>Key Performance Indicators (KPIs) show how the City of Durango is doing on the things that matter most, and whether we are moving in the right direction on our strategic goals.</p>
       <p class="period-line" id="period-label">FY2026 · Performance Snapshot</p>
     </div>
-    <div class="page-tools">
-      <div class="header-export" id="header-export">
-      <button class="tour-restart-btn" id="export-menu-btn" aria-controls="export-dropdown" aria-expanded="false"><span aria-hidden="true">⬇</span> Export <span aria-hidden="true">▾</span></button>
-      <div class="export-dropdown" id="export-dropdown" hidden>
-        <label class="export-dropdown-label" for="export-scope-select">Scope</label>
-        <select id="export-scope-select" class="export-select" style="width:100%;"></select>
-        <button class="export-dropdown-item" id="export-csv-btn"><span aria-hidden="true">⬇</span> Export as CSV</button>
-        <button class="export-dropdown-item" id="export-pdf-btn"><span aria-hidden="true">⬇</span> Export as PDF</button>
-      </div>
-    </div>
-    <button class="tour-restart-btn" id="tour-restart-btn" title="Restart the guided tour">Take the tour</button>
-    <span class="datepill" id="today-pill">Loading date…</span>
-    <span class="sample-tag">Sample data</span>
-    </div>
   </div>
 
   <!-- KEY: status colors always visible; full definitions fold out (closed by default) -->
@@ -1064,7 +1086,7 @@
       <span class="key-item" title="More than 15% below target, or declining 2+ periods"><span class="ref-icon dot" style="background:#C1443B;" aria-hidden="true"></span>Off Track</span>
       <span class="key-item" title="No current measure recorded yet"><span class="ref-icon dot" style="background:#7FB4A9;" aria-hidden="true"></span>No Data</span>
       <span class="key-item" title="Not updated in over 45 days">⏱ Stale</span>
-      <span class="key-more"><span class="when-closed">What do these mean?</span><span class="when-open">Hide definitions</span> <span class="chev" aria-hidden="true">▾</span></span>
+      <span class="key-more"><span class="when-closed">Definitions</span><span class="when-open">Hide definitions</span> <span class="chev" aria-hidden="true">▾</span></span>
     </summary>
       <div class="reference-grid">
         <div class="reference-col">
@@ -3621,7 +3643,7 @@ function wireExportMenu(){
    the right tool here), and restartable anytime via the header button. */
 const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
-  { target: '#key-bar', title: 'Read the colors', body: 'Green, gold and red mean the same thing everywhere on the page. Hover a color for a one-line meaning, or open "What do these mean?" for the full definitions.' },
+  { target: '#key-bar', title: 'Read the colors', body: 'Green, gold and red mean the same thing everywhere on the page. Hover a color for a one-line meaning, or open Definitions for more detail.' },
   { target: '#stat-grid', title: 'At a glance', body: 'These cards count everything the City tracks. Hover any line to see exactly which items make it up.' },
   { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. Each gauge shows the share of Key Service KPIs meeting their target.' },
   { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
@@ -3703,7 +3725,8 @@ function wireTour(){
 }
 
 function init(){
-  document.getElementById('today-pill').textContent =
+  const todayPill = document.getElementById('today-pill');
+  if(todayPill) todayPill.textContent =
     new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
   if(DATA.meta && DATA.meta.period){
     document.getElementById('period-label').textContent = DATA.meta.period;
