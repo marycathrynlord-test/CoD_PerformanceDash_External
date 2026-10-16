@@ -1082,14 +1082,14 @@
   #level-summary > *, #explorer-detail > *, #heatmap-grid > *{animation:softIn .35s ease-out both;}
   /* Goal / Work System definition panel tinted in its own color */
   .level-summary.ls-tinted{
-    background:linear-gradient(90deg, color-mix(in srgb, var(--ls-accent) 16%, #fff) 0%, color-mix(in srgb, var(--ls-accent) 7%, #fff) 100%);
+    background:linear-gradient(90deg, var(--ls-tint-1) 0%, var(--ls-tint-2) 100%);
     border-left:8px solid var(--ls-accent); border-bottom:none; border-radius:12px; margin:6px 20px 16px; padding:22px 24px 20px;
   }
-  .level-summary.ls-tinted .ls-type{color:color-mix(in srgb, var(--ls-accent) 55%, #000);}
-  .level-summary.ls-tinted .ls-name{color:color-mix(in srgb, var(--ls-accent) 60%, #000); font-size:24px; font-weight:800;}
+  .level-summary.ls-tinted .ls-type{color:var(--ls-dark-55);}
+  .level-summary.ls-tinted .ls-name{color:var(--ls-dark-60); font-size:24px; font-weight:800;}
   .level-summary.ls-tinted .ls-def{color:#1E1E1E;}
   .level-summary.ls-tinted .ls-src{color:#3F4A48;}
-  .level-summary.ls-tinted .ls-awaiting summary{color:color-mix(in srgb, var(--ls-accent) 55%, #000);}
+  .level-summary.ls-tinted .ls-awaiting summary{color:var(--ls-dark-55);}
   .level-summary.ls-tinted .gauge-block{background:#fff; border-radius:12px; padding:14px 18px; box-shadow:0 2px 8px rgba(0,0,0,.06);}
   @media (max-width:640px){ .level-summary.ls-tinted{margin:6px 10px 14px; padding:18px 16px;} }
   .titleband .intro{max-width:900px;}
@@ -2527,6 +2527,17 @@ function renderLevelSummary(){
     if(goal && goal.color) accent = goal.color;
   }
   box.style.setProperty('--ls-accent', accent);
+  // Plain hex mixes (not CSS color-mix) so the PDF export can render them.
+  const mix = (hex, withHex, pct) => {
+    const a = hex.replace('#',''), b = withHex.replace('#','');
+    const ch = i => Math.round(parseInt(a.substr(i,2),16) * pct + parseInt(b.substr(i,2),16) * (1 - pct));
+    return '#' + [0,2,4].map(i => ch(i).toString(16).padStart(2,'0')).join('');
+  };
+  const acc = /^#[0-9a-f]{6}$/i.test(accent) ? accent : '#006A53';
+  box.style.setProperty('--ls-tint-1', mix(acc, '#FFFFFF', .16));
+  box.style.setProperty('--ls-tint-2', mix(acc, '#FFFFFF', .07));
+  box.style.setProperty('--ls-dark-55', mix(acc, '#000000', .55));
+  box.style.setProperty('--ls-dark-60', mix(acc, '#000000', .60));
   box.classList.add('ls-tinted');
   box.innerHTML = `
     <div>
