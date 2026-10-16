@@ -9,6 +9,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#1E1E1E;
@@ -35,7 +38,7 @@
   body{
     background:var(--paper);
     color:var(--ink);
-    font-family:'Aptos','Segoe UI Variable','Segoe UI',system-ui,-apple-system,sans-serif;
+    font-family:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
   @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
@@ -932,10 +935,94 @@
     .ws-top-icon{width:40px; height:40px;} .ws-top-icon svg{width:22px; height:22px;}
   }
   #modal-status-slot{display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  /* ---------- City website template (durangoco.gov) ---------- */
+  body{background:#FFFFFF; color:#1E1E1E; font-size:16px;}
+  .site-topbar{background:var(--forest); color:#fff; font-size:12.5px;}
+  .site-topbar-inner{max-width:1400px; margin:0 auto; padding:9px 28px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .site-topbar-link{color:#fff; font-weight:700; text-decoration:none; background:rgba(255,255,255,.1); padding:2px 12px; border-radius:2px;}
+  .site-topbar-link:hover{text-decoration:underline;}
+  .site-header{display:block; padding:0; border-bottom:none; color:#1E1E1E; background:linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 35%,#E4F1EE 100%); box-shadow:0 2px 8px rgba(0,0,0,.08); position:relative; z-index:5;}
+  .site-header-inner{max-width:1400px; margin:0 auto; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;}
+  .site-logo img{display:block; height:100px; width:auto;}
+  .site-logo{text-decoration:none; color:#1E1E1E;}
+  .site-wordmark{align-items:center; gap:10px; font-family:Georgia,'Times New Roman',serif; font-weight:700; font-size:30px; line-height:.9; text-transform:uppercase; letter-spacing:.01em;}
+  .site-wordmark small{display:block; font-size:17px; text-transform:none;}
+  .site-nav{display:flex; flex-wrap:wrap; gap:8px 64px;}
+  .site-nav a{color:#1E1E1E; text-decoration:none; font-size:21px; font-weight:600;}
+  .site-nav a:hover{color:var(--forest); text-decoration:underline; text-underline-offset:5px;}
+
+  .page-shell{max-width:1400px; margin:48px auto 64px; padding:0 28px; display:grid; grid-template-columns:270px minmax(0,1fr); align-items:start;}
+  .side-nav{background:var(--forest); border-radius:22px 0 0 22px; padding:30px 0 40px; align-self:stretch; min-height:420px; display:flex; flex-direction:column;}
+  .side-nav a{color:#fff; text-decoration:none; font-size:17px; font-weight:600; padding:12px 30px; line-height:1.35;}
+  .side-nav a:hover, .side-nav a[aria-current]{background:rgba(255,255,255,.12); text-decoration:underline; text-underline-offset:4px;}
+  .content-card{background:#fff; border-radius:0 22px 22px 0; box-shadow:0 4px 20px rgba(0,0,0,.08); padding:28px 0 36px; min-width:0;}
+  .content-card .wrap{max-width:none; padding:0 30px 10px;}
+  .crumbs{font-size:13px; padding:0 30px 6px; color:#1E1E1E;}
+  .crumbs a{color:#1E1E1E; text-decoration:none;}
+  .crumbs a:hover{text-decoration:underline;}
+  #load-state, #error-state{margin-left:30px; margin-right:30px;}
+
+  /* Headings and text like the template: black, no eyebrow labels */
+  .titleband{padding:14px 0 0;}
+  .titleband h1{font-size:40px; font-weight:800; color:#1E1E1E; letter-spacing:0; margin:4px 0 14px;}
+  .titleband p{font-size:16px; color:#1E1E1E; line-height:1.6;}
+  .titleband .period-line{font-size:13px; color:var(--slate); margin-top:6px;}
+  .section-head .eyebrow{display:none;}
+  .section-head h2{color:#1E1E1E; font-size:23px; font-weight:800;}
+  .section-head p{color:#1E1E1E; font-size:15.5px; line-height:1.6;}
+  .page-tools{padding-top:12px;}
+
+  @media (max-width:900px){
+    .site-nav{gap:8px 28px;} .site-nav a{font-size:17px;}
+    .site-logo img{height:70px;}
+    .page-shell{grid-template-columns:1fr; margin-top:20px; padding:0 12px;}
+    .side-nav{border-radius:16px 16px 0 0; min-height:0; padding:8px 0; flex-direction:row; flex-wrap:wrap;}
+    .side-nav a{padding:10px 16px; font-size:15px;}
+    .content-card{border-radius:0 0 16px 16px; padding-top:18px;}
+    .content-card .wrap{padding:0 16px 10px;} .crumbs{padding:0 16px 6px;}
+    .titleband h1{font-size:30px;}
+  }
+
+  .site-header :focus-visible{outline-color:var(--focus) !important; box-shadow:none;}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
+
+<!-- City website frame: matches the durangoco.gov page template -->
+<div class="site-topbar">
+  <div class="site-topbar-inner">
+    <span><strong>City of Durango Performance Dashboard</strong> &ndash; how the City is doing on its Strategic Plan goals</span>
+    <a href="https://durangoco.gov" class="site-topbar-link">durangoco.gov</a>
+  </div>
+</div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-logo" href="https://durangoco.gov" aria-label="City of Durango home">
+      <img src="city-logo.png" alt="City of Durango" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <span class="site-wordmark" style="display:none">
+        <svg viewBox="0 0 44 44" width="44" height="44" aria-hidden="true"><polygon points="4,34 14,14 24,34" fill="#7FB4A9"/><polygon points="14,34 24,10 34,34" fill="#1B8A79"/><polygon points="24,34 32,18 40,34" fill="#006A53"/></svg>
+        <span><small>City of</small>Durango</span>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="City website">
+      <a href="https://durangoco.gov">Services</a>
+      <a href="https://durangoco.gov">Local Government</a>
+      <a href="https://durangoco.gov">I want to &hellip;</a>
+      <a href="https://durangoco.gov">Engage Durango</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-shell">
+  <aside class="side-nav" aria-label="Dashboard sections">
+    <a href="#glance" data-side="glance">At a Glance</a>
+    <a href="#goal-drill" data-side="goal">Strategic Plan Goals</a>
+    <a href="#goal-drill" data-side="workSystem">Work Systems</a>
+    <a href="#key-bar" data-side="key">What the Colors Mean</a>
+  </aside>
+  <div class="content-card">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="https://durangoco.gov">Home</a> › <a href="https://durangoco.gov">Local Government</a> › <span aria-current="page">Performance Dashboard</span></nav>
 
 
 
@@ -948,9 +1035,9 @@
 
   <div class="titleband">
     <div class="titleband-text">
-      <div class="eyebrow" id="period-label">FY2026 · Performance Snapshot</div>
-      <h1>How the City of Durango is Performing</h1>
-      <p>Key Performance Indicators (KPIs) show whether the City is moving in the right direction on its strategic goals.</p>
+      <h1>Performance Dashboard</h1>
+      <p>Key Performance Indicators (KPIs) show how the City of Durango is doing on the things that matter most, and whether we are moving in the right direction on our strategic goals.</p>
+      <p class="period-line" id="period-label">FY2026 · Performance Snapshot</p>
     </div>
     <div class="page-tools">
       <div class="header-export" id="header-export">
@@ -1065,7 +1152,7 @@
   <div class="kpi-grid" id="kpi-grid"></div>
 
    <!-- The City of Durango at a glance -->
-  <div class="section" style="margin-top:28px;">
+  <div class="section" id="glance" style="margin-top:28px;">
     <div class="section-head">
       <div class="eyebrow">The City of Durango</div>
       <h2>At a glance</h2>
@@ -1148,6 +1235,8 @@
 
 
 </div>
+  </div><!-- /content-card -->
+</div><!-- /page-shell -->
 
 <script>
 /* =========================================================
@@ -1927,6 +2016,20 @@ function renderRootModeToggle(){
     });
   });
 }
+
+// Sidebar: jump to a section; the two view links also switch the explorer.
+document.addEventListener('click', e=>{
+  const a = e.target.closest && e.target.closest('.side-nav [data-side]');
+  if(!a) return;
+  const mode = a.dataset.side;
+  if((mode === 'goal' || mode === 'workSystem') && typeof dashboardView !== 'undefined' && dashboardView.rootMode !== mode){
+    dashboardView = { rootMode: mode, level: 'roots' };
+    updateExplorerHeading(); renderRootModeToggle(); renderDashboardHeatmap();
+  }
+  if(mode === 'key'){ const k = document.getElementById('key-bar'); if(k) k.open = true; }
+  document.querySelectorAll('.side-nav a').forEach(x => x.removeAttribute('aria-current'));
+  a.setAttribute('aria-current', 'true');
+});
 
 function updateExplorerHeading(){
   const heading = document.getElementById('explorer-heading');
