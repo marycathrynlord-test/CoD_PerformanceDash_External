@@ -1092,6 +1092,9 @@
   .level-summary.ls-tinted .ls-awaiting summary{color:color-mix(in srgb, var(--ls-accent) 55%, #000);}
   .level-summary.ls-tinted .gauge-block{background:#fff; border-radius:12px; padding:14px 18px; box-shadow:0 2px 8px rgba(0,0,0,.06);}
   @media (max-width:640px){ .level-summary.ls-tinted{margin:6px 10px 14px; padding:18px 16px;} }
+  .titleband .intro{max-width:900px;}
+  .titleband .intro p{margin:0 0 10px; font-size:16px; line-height:1.6;}
+  .titleband .intro p:last-child{margin-bottom:0;}
 </style>
 </head>
 <body>
@@ -1144,7 +1147,11 @@
   <div class="titleband">
     <div class="titleband-text">
       <div class="title-row"><h1>Performance Dashboard</h1><span class="period-pill" id="period-label">FY2026 · Performance Snapshot</span></div>
-      <p>How the City is doing on the things that matter most, measured against our strategic goals.</p>
+      <div class="intro">
+        <p>Key Performance Indicators (KPIs) show how the City is doing on the things that matter most. They transform complex data into clear, measurable results so residents and leaders understand what’s working and where improvements are needed. By tracking KPIs, the City uses data to make informed decisions, prioritize resources, and improve services.</p>
+        <p>KPIs show how strategic goals translate into real-world outcomes for the Durango community, allowing us to celebrate successes, identify challenges early, and stay focused on long-term priorities like sustainability, infrastructure, and community well-being.</p>
+        <p>Ultimately, KPIs help answer the question: <strong>Are we moving in the right direction?</strong></p>
+      </div>
     </div>
   </div>
 
@@ -1156,7 +1163,7 @@
       <span class="key-item" title="Below target by 5–15%, or trending toward target"><span class="ref-icon dot" style="background:#D9A441;" aria-hidden="true"></span>At Risk</span>
       <span class="key-item" title="More than 15% below target, or declining 2+ periods"><span class="ref-icon dot" style="background:#C1443B;" aria-hidden="true"></span>Off Track</span>
       <span class="key-item" title="No current measure recorded yet"><span class="ref-icon dot" style="background:#7FB4A9;" aria-hidden="true"></span>No Data</span>
-      <span class="key-item" title="Not updated in over 45 days">⏱ Stale</span>
+      <span class="key-item" title="Not updated in a quarter (3 months) or more">⏱ Stale</span>
       <span class="key-more"><span class="when-closed">Definitions</span><span class="when-open">Hide definitions</span> <span class="chev" aria-hidden="true">▾</span></span>
     </summary>
       <div class="reference-grid">
@@ -1234,7 +1241,7 @@
             <span class="ref-icon dot" style="background:#1B8A79;"></span>
             <div>
               <div class="ref-term">⏱ Stale</div>
-              <div class="ref-desc">Not updated in over 45 days — treat the badge as unverified until refreshed.</div>
+              <div class="ref-desc">Not updated in a quarter (3 months) or more — treat the badge as unverified until refreshed.</div>
             </div>
           </div>
         </div>
@@ -2035,11 +2042,11 @@ function primaryMetricHTML(item){
 // the threshold. Items without a statusUpdated field show nothing extra
 // (same graceful-fallback pattern as everywhere else in this dashboard),
 // rather than assuming staleness for data we simply don't have a date for.
-const STALE_THRESHOLD_DAYS = 45;
+const STALE_THRESHOLD_DAYS = 91; // one quarter
 function staleFlagHTML(item){
   if(!item.statusUpdated) return '';
   const days = Math.floor((Date.now() - new Date(item.statusUpdated).getTime()) / 86400000);
-  if(days <= STALE_THRESHOLD_DAYS) return '';
+  if(days < STALE_THRESHOLD_DAYS) return '';
   return `<span class="stale-flag" title="Status last updated ${item.statusUpdated}">⏱ ${days}d stale</span>`;
 }
 
@@ -2518,7 +2525,6 @@ function renderLevelSummary(){
       <h3 class="ls-name">${escHTML(item.name)}</h3>
       ${def ? `<p class="ls-def">${escHTML(def)}</p>` : ''}
       ${def && adopted ? `<p class="ls-src">Definition adopted by City Council in the 2024 Strategic Plan.</p>` : ''}
-      ${awaitingNames.length ? `<details class="ls-awaiting"><summary>${plural(awaitingNames.length, 'Key Service KPI')} awaiting results</summary><ul>${awaitingNames.map(n=>`<li>${escHTML(n)}</li>`).join('')}</ul></details>` : ''}
     </div>
     ${gaugeBlockHTML(g)}`;
 }
@@ -3542,9 +3548,12 @@ function getExportScope(){
 
 function renderExportScopeSelect(){
   const select = document.getElementById('export-scope-select');
-  const options = ['<option value="all">All Goals</option>']
-    .concat(sortGoalsCanonical(DATA.goals).map(g=>`<option value="${g.id}">${g.name}</option>`));
-  select.innerHTML = options.join('');
+  select.innerHTML =
+    `<optgroup label="Strategic Plan Goal View"><option value="all">All Goals</option>` +
+    sortGoalsCanonical(DATA.goals).map(g=>`<option value="${g.id}">${escHTML(g.name)}</option>`).join('') +
+    `</optgroup><optgroup label="Work System View"><option value="all-ws">All Work Systems</option>` +
+    DATA.workSystems.map(w=>`<option value="ws:${w.id}">${escHTML(w.name)}</option>`).join('') +
+    `</optgroup>`;
 }
 
 /* ---------- Export: single datapoint ----------
@@ -3614,8 +3623,30 @@ function wireTileExportButtons(scope){
   });
 }
 
+// Export scope helpers: Goal View scopes are 'all' or a goal id;
+// Work System View scopes are 'all-ws' or 'ws:<id>'.
+function isWsScope(scope){ return scope === 'all-ws' || String(scope).startsWith('ws:'); }
+function wsScopeList(scope){ return scope === 'all-ws' ? DATA.workSystems : DATA.workSystems.filter(w => 'ws:' + w.id === scope); }
+function wsScopeName(scope){ return scope === 'all-ws' ? 'all-work-systems' : slugify((wsScopeList(scope)[0] || {}).name || 'work-system'); }
+
+function exportWorkSystemCSV(scope){
+  const rows = [['Type','Name','Key Service','Work System','Gauge % meeting target','KPIs meeting target','KPIs with results','KPIs awaiting results','Program status','Definition']];
+  wsScopeList(scope).forEach(ws=>{
+    rows.push(['Work System', ws.name, '', '', ...gaugeCols(ws.id), '', definitionFor(ws.id)]);
+    keyServicesUnderWorkSystem(ws.id).forEach(ks=>{
+      rows.push(['Key Service', ks.name, '', ws.name, ...gaugeCols(ks.id), '', definitionFor(ks.id)]);
+      programsUnderKeyService(ks.id).forEach(p=>{
+        rows.push(['Program', p.name, ks.name, ws.name, '', '', '', '', STATUS_META[programStatus(p)].label, definitionFor(p.id)]);
+      });
+    });
+  });
+  const csv = rows.map(r => r.map(csvEscape).join(',')).join('\r\n');
+  downloadBlob(csv, `durango-dashboard-${wsScopeName(scope)}-${todayStamp()}.csv`, 'text/csv;charset=utf-8;');
+}
+
 function exportCSV(){
   const scope = getExportScope();
+  if(isWsScope(scope)) return exportWorkSystemCSV(scope);
   const rows = [['Type','Name','Goal','Gauge % meeting target','KPIs meeting target','KPIs with results','KPIs awaiting results','Key Services aligned','Definition']];
 
   const scopedGoals = scope === 'all' ? sortGoalsCanonical(DATA.goals) : DATA.goals.filter(g=>g.id===scope);
@@ -3719,7 +3750,8 @@ async function exportPDF(){
   }
 
   const scope = getExportScope();
-  if(scope !== 'all' && !DATA.goals.find(g=>g.id===scope)){
+  const wsMode = isWsScope(scope);
+  if(wsMode ? !wsScopeList(scope).length : (scope !== 'all' && !DATA.goals.find(g=>g.id===scope))){
     alert('Could not find that Goal to export. Try refreshing and selecting it again.');
     return;
   }
@@ -3745,6 +3777,30 @@ async function exportPDF(){
       pdf.text(title, margin, margin);
       pdf.setFontSize(9);
       pdf.text(`Generated ${new Date().toLocaleString('en-US')}`, margin, margin + 16);
+    }
+
+    // Work System View: overview, each Work System's Key Services, and —
+    // for a single Work System — each Key Service's Programs.
+    if(wsMode){
+      if(scope === 'all-ws'){
+        const ov = await captureHeatmapLevel({ rootMode:'workSystem', level:'roots' }, 'All Work Systems — Overview', 'worksystem-card-row');
+        addTitledPage(ov.title);
+        addCanvasPaginated(pdf, ov.canvas, margin + 24);
+      }
+      for(const ws of wsScopeList(scope)){
+        const cap = await captureHeatmapLevel({ rootMode:'workSystem', level:'root', rootId:ws.id }, `${ws.name} — Key Services`);
+        addTitledPage(cap.title);
+        addCanvasPaginated(pdf, cap.canvas, margin + 24);
+        if(scope !== 'all-ws'){
+          for(const ks of keyServicesUnderWorkSystem(ws.id)){
+            const kc = await captureHeatmapLevel({ rootMode:'workSystem', level:'keyservice', rootId:ws.id, ksId:ks.id }, `${ws.name} › ${ks.name} — Programs`);
+            addTitledPage(kc.title);
+            addCanvasPaginated(pdf, kc.canvas, margin + 24);
+          }
+        }
+      }
+      pdf.save(`durango-${wsScopeName(scope)}-chart-${todayStamp()}.pdf`);
+      return;
     }
 
     // Walk the Goal View through both of its levels (Goals, then each
@@ -3802,6 +3858,12 @@ function wireExportMenu(){
     btn.setAttribute('aria-expanded', 'false');
   }
   function openMenu(){
+    const sel = document.getElementById('export-scope-select');
+    if(sel){
+      const v = dashboardView;
+      if(v.rootMode === 'workSystem') sel.value = v.rootId ? 'ws:' + v.rootId : 'all-ws';
+      else sel.value = v.rootId || 'all';
+    }
     dropdown.hidden = false;
     btn.setAttribute('aria-expanded', 'true');
   }
@@ -3829,7 +3891,7 @@ const TOUR_STEPS = [
   { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
   { target: '#key-bar', title: 'Read the colors', body: 'Green, gold and red mean the same thing everywhere on the page. Hover a color for a one-line meaning, or open Definitions for more detail.' },
   { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. The view switch stays pinned at the top as you scroll, and the page address updates so you can share exactly what you are looking at.' },
-  { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — the whole dashboard, or just one Goal — right from this menu.' },
+  { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — all Goals or all Work Systems, or just one Goal or Work System — right from this menu.' },
 ];
 
 let tourStep = 0;
