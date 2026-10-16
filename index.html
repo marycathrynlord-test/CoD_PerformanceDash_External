@@ -1095,6 +1095,15 @@
   .titleband .intro{max-width:900px;}
   .titleband .intro p{margin:0 0 10px; font-size:16px; line-height:1.6;}
   .titleband .intro p:last-child{margin-bottom:0;}
+  /* No Data = hollow black circle everywhere */
+  .nodata-ring, .status-dot[style*="#FFFFFF"], .status-no-data .status-dot{background:#fff !important; box-shadow:inset 0 0 0 2px #1E1E1E !important;}
+  .ref-icon.dot.nodata-ring{border:none;}
+  .clock-icon{display:inline-block; vertical-align:-2px;}
+  .ref-icon.clock{display:inline-flex; align-items:center; justify-content:center; color:#1E1E1E; background:none !important; width:15px; height:15px;}
+  .key-item .clock-icon{margin-right:3px;}
+  /* Narrative uses the full width */
+  .titleband .intro{max-width:none;}
+  .titleband .intro p{max-width:none;}
 </style>
 </head>
 <body>
@@ -1162,8 +1171,8 @@
       <span class="key-item" title="At or above target, or within 5%"><span class="ref-icon dot" style="background:#006A53;" aria-hidden="true"></span>On Track</span>
       <span class="key-item" title="Below target by 5–15%, or trending toward target"><span class="ref-icon dot" style="background:#D9A441;" aria-hidden="true"></span>At Risk</span>
       <span class="key-item" title="More than 15% below target, or declining 2+ periods"><span class="ref-icon dot" style="background:#C1443B;" aria-hidden="true"></span>Off Track</span>
-      <span class="key-item" title="No current measure recorded yet"><span class="ref-icon dot" style="background:#7FB4A9;" aria-hidden="true"></span>No Data</span>
-      <span class="key-item" title="Not updated in a quarter (3 months) or more">⏱ Stale</span>
+      <span class="key-item" title="No current measure recorded yet"><span class="ref-icon dot nodata-ring" aria-hidden="true"></span>No Data</span>
+      <span class="key-item" title="Not updated in a quarter (3 months) or more"><svg class="clock-icon" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.2V8l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Stale</span>
       <span class="key-more"><span class="when-closed">Definitions</span><span class="when-open">Hide definitions</span> <span class="chev" aria-hidden="true">▾</span></span>
     </summary>
       <div class="reference-grid">
@@ -1224,7 +1233,7 @@
             </div>
           </div>
           <div class="ref-row">
-            <span class="ref-icon dot" style="background:#7FB4A9;"></span>
+            <span class="ref-icon dot nodata-ring"></span>
             <div>
               <div class="ref-term">No Data</div>
               <div class="ref-desc">No current measure has been recorded for this item.</div>
@@ -1238,9 +1247,9 @@
             </div>
           </div>
           <div class="ref-row">
-            <span class="ref-icon dot" style="background:#1B8A79;"></span>
+            <span class="ref-icon clock"><svg class="clock-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.2V8l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             <div>
-              <div class="ref-term">⏱ Stale</div>
+              <div class="ref-term">Stale</div>
               <div class="ref-desc">Not updated in a quarter (3 months) or more — treat the badge as unverified until refreshed.</div>
             </div>
           </div>
@@ -1651,7 +1660,7 @@ function sparklineSVG(history, w=240, h=56){
   });
   const linePath = points.map((p,i)=> (i===0?'M':'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
   const dots = points.map(p=>
-    `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="${statusDotColor(p.status)}"><title>${p.date}: ${STATUS_META[p.status].label}</title></circle>`
+    `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="${statusDotColor(p.status)}"${p.status==='no-data' ? ' stroke="#1E1E1E" stroke-width="1.5"' : ''}><title>${p.date}: ${STATUS_META[p.status].label}</title></circle>`
   ).join('');
   return `
     <svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Status trend over time">
@@ -1727,7 +1736,7 @@ function statusDotColor(status){
   return status==='on-track' ? '#006A53'
        : status==='at-risk'  ? '#D9A441'
        : status==='off-track'? '#C1443B'
-       : '#7FB4A9';
+       : '#FFFFFF'; // No Data: hollow circle (black ring added in CSS / SVG)
 }
 
 let tooltipRegistry = {};
@@ -1751,7 +1760,7 @@ function statusBreakdownHTML(items, statusFn){
       `;
     }).join('');
   const total = items.length || 1;
-  const bar = Object.entries(groups).filter(([,n])=>n.length).map(([st,n])=>`<span style="flex:${n.length};background:${statusDotColor(st)}"></span>`).join('');
+  const bar = Object.entries(groups).filter(([,n])=>n.length).map(([st,n])=>`<span style="flex:${n.length};background:${st==='no-data' ? '#C9D3D1' : statusDotColor(st)}"></span>`).join('');
   return `<div class="stat-bar" aria-hidden="true">${bar}</div><div class="stat-breakdown">${rows}</div>`;
 }
 
@@ -2047,7 +2056,7 @@ function staleFlagHTML(item){
   if(!item.statusUpdated) return '';
   const days = Math.floor((Date.now() - new Date(item.statusUpdated).getTime()) / 86400000);
   if(days < STALE_THRESHOLD_DAYS) return '';
-  return `<span class="stale-flag" title="Status last updated ${item.statusUpdated}">⏱ ${days}d stale</span>`;
+  return `<span class="stale-flag" title="Status last updated ${item.statusUpdated}"><svg class="clock-icon" viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.2V8l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> ${days}d stale</span>`;
 }
 
 
@@ -2066,7 +2075,7 @@ function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAt
   // highlight of its own — a solid colored chip — rather than plain
   // text that would otherwise blend into a pastel background.
   const statusLabelHTML = statusAsHighlight
-    ? `<span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${statusTextColor(status)};">${STATUS_META[status].label}</span>`
+    ? `<span class="heat-status-highlight" style="background:${statusDotColor(status)}; color:${statusTextColor(status)};${status==='no-data' ? ' box-shadow:inset 0 0 0 1.5px #1E1E1E;' : ''}">${STATUS_META[status].label}</span>`
     : `<span>${STATUS_META[status].label}</span>`;
   return `
     <div class="${classAttr}"${styleAttr} ${dataAttrs}>
@@ -3085,7 +3094,7 @@ function kpiChartSVG(k, width){
           <rect x="${(x(i) - colW / 2).toFixed(1)}" y="${padT - 14}" width="${colW.toFixed(1)}" height="${H - padB - padT + 14}" fill="transparent"/>
           <line class="seg-hover-guide" x1="${cx}" y1="${padT - 10}" x2="${cx}" y2="${H - padB}" stroke="#7FB4A9" stroke-width="1"/>
           <circle class="seg-hover-ring" cx="${cx}" cy="${cy}" r="9" fill="none" stroke="#006A53" stroke-width="1.5"/>
-          <circle cx="${cx}" cy="${cy}" r="5" fill="${p.status ? statusDotColor(p.status) : '#006A53'}" stroke="#fff" stroke-width="2"/></g>
+          <circle cx="${cx}" cy="${cy}" r="5" fill="${p.status ? statusDotColor(p.status) : '#006A53'}" stroke="${p.status==='no-data' ? '#1E1E1E' : '#fff'}" stroke-width="2"/></g>
       ${labelled.has(i) ? `<text x="${cx}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1E1E1E" stroke="#fff" stroke-width="3" paint-order="stroke" pointer-events="none">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>` : ''}`;
     }).join('')}`;
 
