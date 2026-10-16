@@ -1104,6 +1104,14 @@
   /* Narrative uses the full width */
   .titleband .intro{max-width:none;}
   .titleband .intro p{max-width:none;}
+  /* System Definitions split by view, no color icons */
+  .def-views{display:grid; grid-template-columns:1fr 1fr; gap:6px 24px;}
+  .def-view-title{margin:6px 0 8px; font-size:13px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--forest); padding-bottom:6px; border-bottom:1px solid var(--line);}
+  .ref-row.plain{padding-left:0;}
+  .def-both{margin-top:12px; padding-top:10px; border-top:1px solid var(--line); line-height:1.5;}
+  .def-both .ref-term{display:inline; font-weight:700;}
+  .def-both .ref-desc{display:inline;}
+  @media (max-width:640px){ .def-views{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -1178,35 +1186,22 @@
       <div class="reference-grid">
         <div class="reference-col">
           <h3 class="reference-col-title">System Definitions</h3>
-          <p class="reference-col-sub">How the City's work is organized, from policy down to daily operations.</p>
-          <div class="ref-row">
-            <span class="ref-icon" style="background:var(--fw-blue);"></span>
-            <div>
-              <div class="ref-term">Strategic Plan</div>
-              <div class="ref-desc">High-level community outcomes and priorities.</div>
-            </div>
+          <p class="reference-col-sub">The two ways the dashboard organizes the City's work.</p>
+          <div class="def-views">
+          <div class="def-view">
+            <h4 class="def-view-title">Strategic Plan Goal View</h4>
+            <div class="ref-row plain"><div><div class="ref-term">Strategic Plan Goal</div><div class="ref-desc">One of the six community outcomes adopted by City Council in the 2024 Strategic Plan.</div></div></div>
+            <div class="ref-row plain"><div><div class="ref-term">Objective</div><div class="ref-desc">A specific, measurable aim under a Goal that describes how the Goal will be achieved.</div></div></div>
+            <div class="ref-row plain"><div><div class="ref-term">Key Service</div><div class="ref-desc">A core City service aligned to an Objective. Its KPIs show progress on that Objective.</div></div></div>
           </div>
-          <div class="ref-row">
-            <span class="ref-icon" style="background:var(--fw-purple);"></span>
-            <div>
-              <div class="ref-term">Key Work System</div>
-              <div class="ref-desc">Major operational systems that create City value.</div>
-            </div>
+          <div class="def-view">
+            <h4 class="def-view-title">Work System View</h4>
+            <div class="ref-row plain"><div><div class="ref-term">Key Work System</div><div class="ref-desc">A major operational system that groups related City services.</div></div></div>
+            <div class="ref-row plain"><div><div class="ref-term">Key Service</div><div class="ref-desc">A core service delivered to residents and stakeholders within a Work System.</div></div></div>
+            <div class="ref-row plain"><div><div class="ref-term">Program</div><div class="ref-desc">An operational activity or service delivery function within a Key Service.</div></div></div>
           </div>
-          <div class="ref-row">
-            <span class="ref-icon" style="background:var(--fw-gold);"></span>
-            <div>
-              <div class="ref-term">Key Services</div>
-              <div class="ref-desc">Core services delivered to residents and stakeholders.</div>
-            </div>
           </div>
-          <div class="ref-row">
-            <span class="ref-icon" style="background:#1E1E1E;"></span>
-            <div>
-              <div class="ref-term">Programs</div>
-              <div class="ref-desc">Operational activities and service delivery functions.</div>
-            </div>
-          </div>
+          <div class="def-both"><span class="ref-term">KPI (Key Performance Indicator)</span> <span class="ref-desc">A measure, with a target, that shows how a Key Service or Program is performing. The same KPIs appear in both views.</span></div>
         </div>
         <div class="reference-col progress">
           <h3 class="reference-col-title">Progress Key</h3>
