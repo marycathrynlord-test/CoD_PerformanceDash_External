@@ -1306,7 +1306,7 @@
   <!-- GUIDED TOUR CARD -->
   <div class="tour-card" id="tour-card" role="dialog" aria-modal="false" aria-labelledby="tour-title" aria-describedby="tour-body">
     <div class="tour-card-head">
-      <span class="tour-progress" id="tour-progress">1 / 6</span>
+      <span class="tour-progress" id="tour-progress">1 / 7</span>
       <button class="tour-skip-link" id="tour-skip">Skip tour</button>
     </div>
     <h4 class="tour-title" id="tour-title"></h4>
@@ -3752,10 +3752,25 @@ async function captureHeatmapLevel(view, sectionTitle, gridId='heatmap-grid'){
   viewSaving = false;
   dashboardView = view;
   renderDashboardHeatmap();
-  await new Promise(r => setTimeout(r, 150));
+  await new Promise(r => setTimeout(r, 450));
   const grid = gridId === 'heatmap-grid' ? document.getElementById('goal-drill').querySelector('.drill-col') : document.getElementById(gridId);
   const injected = injectHeatmapSparklines(grid);
-  const canvas = await html2canvas(grid, { scale:2, backgroundColor:'#FAFCFC' });
+  const canvas = await html2canvas(grid, {
+    scale:2, backgroundColor:'#FFFFFF',
+    // In the copy that gets photographed: no fade-in animations (they made
+    // content look washed out) and closed "View data table" panels stay hidden.
+    onclone: (doc, el) => {
+      // Below the overview, leave out the repeated row of Goal / Work System
+      // tiles so the page's own content prints larger.
+      if(gridId === 'heatmap-grid' && view.level !== 'roots'){
+        ['goal-mountain-row-wrap','worksystem-card-row-wrap'].forEach(id => { const n = doc.getElementById(id); if(n) n.style.display = 'none'; });
+      }
+      if(el && el.style) el.style.maxWidth = '1240px';
+      const st = doc.createElement('style');
+      st.textContent = '*,*::before,*::after{animation:none !important; transition:none !important;} details:not([open]) > *:not(summary){display:none !important;} .hover-tooltip{display:none !important;}';
+      doc.head.appendChild(st);
+    }
+  });
   removeHeatmapSparklines(injected);
   return { canvas, title: sectionTitle };
 }
@@ -3908,10 +3923,20 @@ function wireExportMenu(){
    real standalone site, not a Claude artifact, so browser storage is
    the right tool here), and restartable anytime via the header button. */
 const TOUR_STEPS = [
-  { target: null, title: 'Welcome to the Performance Dashboard', body: 'A quick tour of how this page works. Skip anytime, or restart it later from the "❓ Take the tour" button up top.' },
-  { target: '#key-bar', title: 'Read the colors', body: 'Green, gold and red mean the same thing everywhere on the page. Hover a color for a one-line meaning, or open Definitions for more detail.' },
-  { target: '#goal-drill', title: 'Explore the data two ways', body: 'Goal View: Goals → Objectives → Key Services. Work System View: Work Systems → Key Services → Programs. The view switch stays pinned at the top as you scroll, and the page address updates so you can share exactly what you are looking at.' },
-  { target: '#header-export', title: 'Take it with you', body: 'Export whatever you\'re looking at as a spreadsheet or PDF — all Goals or all Work Systems, or just one Goal or Work System — right from this menu.' },
+  { target: null, title: 'Welcome to the Performance Dashboard',
+    body: 'This page shows how the City is doing on the things that matter most, using Key Performance Indicators (KPIs). This short tour shows you how to read it and find what you need. Skip anytime, or replay it later with the "Take the tour" button at the top.' },
+  { target: '#key-bar', title: 'Read the colors',
+    body: 'Green is On Track, gold is At Risk and red is Off Track. An empty black circle means No Data yet, and the clock marks a result that hasn\'t been updated in 3 months or more. Hover a color for a quick meaning, or select Definitions for the full key.' },
+  { target: '#root-mode-toggle', title: 'Two ways to explore',
+    body: 'Strategic Plan Goal View follows the City\'s goals: Goals → Objectives → Key Services. Work System View follows how the City is organized: Work Systems → Key Services → Programs. Switch anytime.' },
+  { target: () => dashboardView.rootMode === 'workSystem' ? '#worksystem-card-row-wrap' : '#goal-mountain-row-wrap', title: 'Gauges show progress',
+    body: 'Each gauge shows the share of Key Service KPIs meeting their target. A dash means results are still being collected. Select any tile to open it.' },
+  { target: '#explorer-bar', title: 'Drill in and find your way back',
+    body: 'Opening a Goal or Work System shows its definition, its gauge and what sits under it. The path next to the view switch shows where you are; select any step to go back. It stays pinned at the top as you scroll.' },
+  { target: null, title: 'See the numbers behind each KPI',
+    body: 'Open a Key Service or Program to see its KPIs. Each one has a chart; hover or tap a point for the exact value, target and breakdown, or select "View data table" for all of the numbers. Measures that are set up but still waiting on data say "Data not yet entered".' },
+  { target: '#header-export', title: 'Share and take it with you',
+    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. To share exactly what you are looking at, copy the page address: it updates as you click.' },
 ];
 
 let tourStep = 0;
@@ -3932,7 +3957,8 @@ function showTourStep(){
   document.getElementById('tour-next').textContent = tourStep === TOUR_STEPS.length - 1 ? 'Done' : 'Next';
 
   if(step.target){
-    const el = document.querySelector(step.target);
+    const sel = typeof step.target === 'function' ? step.target() : step.target;
+    const el = document.querySelector(sel);
     if(el){
       el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center' });
       el.classList.add('tour-highlight');
@@ -3965,7 +3991,7 @@ function endTour(markSeen){
   }
   tourReturnFocus = null;
   if(markSeen){
-    try{ localStorage.setItem('durangoTourSeen', '1'); } catch(e){ /* storage unavailable — fine, tour just replays next visit */ }
+    try{ localStorage.setItem('durangoTourSeen-v2', '1'); } catch(e){ /* storage unavailable — fine, tour just replays next visit */ }
   }
 }
 
@@ -3985,7 +4011,7 @@ function wireTour(){
   });
 
   let alreadySeen = false;
-  try{ alreadySeen = localStorage.getItem('durangoTourSeen') === '1'; } catch(e){ /* storage unavailable — default to showing the tour */ }
+  try{ alreadySeen = localStorage.getItem('durangoTourSeen-v2') === '1'; } catch(e){ /* storage unavailable — default to showing the tour */ }
   if(!alreadySeen){ setTimeout(startTour, 700); }
 }
 
