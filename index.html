@@ -368,22 +368,35 @@
   #explorer-children-label{margin-bottom:10px;}
   /* Objective level: aligned Key Services listed at the top, then all
      of their KPIs grouped by Key Service. */
-  .obj-ks-overview{margin-bottom:18px;}
+  .obj-ks-overview{margin:0 0 22px; padding:18px 20px 20px; background:#ECF4F2; border:1px solid #D9E9E5; border-left:5px solid #006A53; border-radius:10px;}
+  .obj-ks-overview-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+  .obj-ks-overview-title{margin:0; font-size:18px; font-weight:800; color:#006A53; line-height:1.3;}
+  .obj-ks-count{font-size:12.5px; font-weight:700; color:#4B4B4B; background:#fff; border:1px solid #D9E9E5; border-radius:999px; padding:2px 10px;}
+  .obj-ks-overview-intro{margin:6px 0 0; font-size:13.5px; color:#1E1E1E; line-height:1.5;}
+  .obj-ks-list{list-style:none; margin:14px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px;}
+  .obj-ks-link{display:flex; flex-direction:column; justify-content:space-between; gap:12px; height:100%; padding:14px 14px 12px;
+    border:1.5px solid #7FB4A9; border-radius:10px; background:#fff; color:#1E1E1E; text-decoration:none;
+    box-shadow:0 2px 6px rgba(0,106,83,.10); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;}
+  .obj-ks-link:hover{border-color:#006A53; box-shadow:0 8px 18px rgba(0,106,83,.18); transform:translateY(-2px);}
+  .obj-ks-link:focus-visible{outline:3px solid #1E1E1E; outline-offset:2px;}
+  .obj-ks-top{display:flex; align-items:flex-start; gap:12px;}
+  .obj-ks-link .gauge-inline{color:var(--forest); flex:none; flex-direction:column; gap:2px;}
+  .obj-ks-link .gauge-pct{color:var(--forest-dark); font-weight:800; font-size:13px;}
+  .obj-ks-text{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .obj-ks-name{font-weight:800; color:#006A53; font-size:14.5px; line-height:1.3;}
+  .obj-ks-sub{font-size:12px; color:var(--slate);}
+  .obj-ks-cta{display:flex; align-items:center; gap:6px; align-self:stretch; padding:7px 10px; border-radius:7px;
+    background:#006A53; color:#fff; font-size:12.5px; font-weight:800;}
+  .obj-ks-cta-note{font-weight:600;}
+  .obj-ks-arrow{margin-left:auto; transition:transform .15s ease;}
+  .obj-ks-link:hover .obj-ks-arrow{transform:translateY(2px);}
+  .obj-ks-link.obj-ks-empty{border-style:dashed; box-shadow:none; background:#FAFCFC;}
+  .obj-ks-link.obj-ks-empty .obj-ks-cta{background:transparent; color:#4B4B4B; border:1px dashed #7FB4A9; font-weight:700;}
+  @media (prefers-reduced-motion: reduce){ .obj-ks-link, .obj-ks-arrow{transition:none;} .obj-ks-link:hover{transform:none;} }
   .kpi-waiting-list ul{margin:8px 0 0; padding-left:18px; font-size:13px; line-height:1.55; color:var(--ink);}
   .kpi-waiting-list li + li{margin-top:4px;}
   .kpi-waiting-list li span{color:var(--slate);}
   .kpi-waiting-list .kpi-waiting-meta{font-size:12px;}
-  .obj-ks-overview .grid-label{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
-  .obj-ks-count{font-size:12px; font-weight:600; color:var(--slate); text-transform:none; letter-spacing:0;}
-  .obj-ks-list{list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px;}
-  .obj-ks-link{display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--white); color:var(--ink); text-decoration:none; height:100%;}
-  .obj-ks-link:hover{border-color:var(--sage); box-shadow:0 4px 12px rgba(0,106,83,.12);}
-  .obj-ks-link:focus-visible{outline:2px solid #1E1E1E; outline-offset:2px;}
-  .obj-ks-link .gauge-inline{color:var(--forest); flex:none;}
-  .obj-ks-link .gauge-pct{color:var(--forest-dark); font-weight:700; font-size:13px;}
-  .obj-ks-text{display:flex; flex-direction:column; gap:2px; min-width:0;}
-  .obj-ks-name{font-weight:700; color:var(--forest-dark); font-size:13.5px; line-height:1.3;}
-  .obj-ks-sub{font-size:12px; color:var(--slate);}
   .obj-ks-section{scroll-margin-top:90px; padding-top:16px; margin-top:6px; border-top:2px solid var(--line);}
   .obj-ks-head{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:12px;}
   .obj-ks-type{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--slate);}
@@ -2548,10 +2561,11 @@ function renderExplorerDetail(){
 // below, grouped by Key Service, so the numbers are one click from the
 // Objective. The list at the top jumps to each Key Service's group.
 function objectiveDetailHTML(obId){
-  // Key Services with results come first, so the first screen shows numbers.
+  // Key Services with results come first, then those with KPIs still
+  // waiting on data, then those with no KPIs yet.
   const hasResults = ks => kpisFor(ks.id).some(k => !k.pending);
   const services = keyServicesForObjective(obId).map((ks, i) => ({ ks, i }))
-    .sort((a, b) => (hasResults(b.ks) - hasResults(a.ks)) || (a.i - b.i)).map(x => x.ks);
+    .sort((a, b) => (hasResults(b.ks) - hasResults(a.ks)) || ((kpisFor(b.ks.id).length > 0) - (kpisFor(a.ks.id).length > 0)) || (a.i - b.i)).map(x => x.ks);
   if(!services.length) return `<p class="ed-desc">No Key Services are aligned to this Objective yet.</p>`;
   const cardInner = document.getElementById('explorer-split').clientWidth - 40 - 42;
   const chartWidth = Math.max(240, Math.round(cardInner));
@@ -2560,9 +2574,14 @@ function objectiveDetailHTML(obId){
     const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
     const g = gaugeFor(ks.id);
     const n = kpisFor(ks.id).length;
-    return `<li><a class="obj-ks-link" href="#obj-ks-${ks.id}" data-obj-jump="${ks.id}">
-        <span class="gauge-inline" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span></span>
-        <span class="obj-ks-text"><span class="obj-ks-name">${escHTML(ks.name)}</span><span class="obj-ks-sub">${ws ? escHTML(ws.name) + ' · ' : ''}${n ? plural(n, 'KPI') : 'No KPIs yet'}</span></span>
+    const live = kpisFor(ks.id).filter(k => !k.pending).length;
+    const cta = n ? `View ${plural(n, 'KPI')}` : 'No KPIs yet';
+    return `<li><a class="obj-ks-link${n ? '' : ' obj-ks-empty'}" href="#obj-ks-${ks.id}" data-obj-jump="${ks.id}">
+        <span class="obj-ks-top">
+          <span class="gauge-inline" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span></span>
+          <span class="obj-ks-text"><span class="obj-ks-name">${escHTML(ks.name)}</span>${ws ? `<span class="obj-ks-sub">${escHTML(ws.name)}</span>` : ''}</span>
+        </span>
+        <span class="obj-ks-cta">${cta}${n && live < n ? `<span class="obj-ks-cta-note"> · ${live ? live + ' with results' : 'awaiting results'}</span>` : ''}<svg class="obj-ks-arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.5v8M2.5 6 6 9.5 9.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </a></li>`;
   }).join('');
   const sections = services.map(ks => {
@@ -2582,10 +2601,14 @@ function objectiveDetailHTML(obId){
       </section>`;
   }).join('');
   return `
-    <div class="obj-ks-overview">
-      <h3 class="grid-label">Key Services supporting this Objective <span class="obj-ks-count">${plural(services.length, 'Key Service')} · ${plural(totalKpis, 'KPI')}</span></h3>
+    <nav class="obj-ks-overview" aria-labelledby="obj-ks-overview-h">
+      <div class="obj-ks-overview-head">
+        <h3 class="obj-ks-overview-title" id="obj-ks-overview-h">Go to a Key Service's KPIs</h3>
+        <span class="obj-ks-count">${plural(services.length, 'Key Service')} · ${plural(totalKpis, 'KPI')}</span>
+      </div>
+      <p class="obj-ks-overview-intro">These Key Services support this Objective. Select one to jump straight to its numbers, or scroll down to see them all.</p>
       <ul class="obj-ks-list">${list}</ul>
-    </div>
+    </nav>
     ${sections}`;
 }
 // KPIs with results get their full card; measures still waiting on data
