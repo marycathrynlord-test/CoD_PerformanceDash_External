@@ -234,17 +234,59 @@
       "alsoUnder": [
         "ks2"
       ],
-      "unit": "number",
+      "unit": "percent",
       "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "frequency": "Every Quarter",
+      "description": "Share of regular City Council meeting agendas posted at least 48 hours before the meeting, each quarter.",
+      "footnote": "Target: more than 90% posted within 48 hours. Results swing from quarter to quarter because the number of meetings varies.",
       "gaugeKeyServices": [
         "ks2"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "on-track",
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [
+        {
+          "period": "2024-Q4",
+          "value": 95,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q1",
+          "value": 95,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q2",
+          "value": 95,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q3",
+          "value": 97,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q4",
+          "value": 97,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2026-Q1",
+          "value": 95,
+          "target": 90,
+          "status": "on-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "CLERK-BIZLIC",
@@ -288,17 +330,59 @@
       "alsoUnder": [
         "ks2"
       ],
-      "unit": "number",
+      "unit": "percent",
       "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": false,
+      "frequency": "Every Quarter",
+      "description": "Share of public records requests closed within 24 hours, each quarter.",
+      "footnote": "Target: 90% closed within 24 hours. The legal deadline is 3 days. Some requests are delayed while waiting on the requester, especially for payment.",
       "gaugeKeyServices": [
         "ks2"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "on-track",
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [
+        {
+          "period": "2024-Q4",
+          "value": 88,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q1",
+          "value": 87,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q2",
+          "value": 87,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q3",
+          "value": 88,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2025-Q4",
+          "value": 88,
+          "target": 90,
+          "status": "on-track"
+        },
+        {
+          "period": "2026-Q1",
+          "value": 88,
+          "target": 90,
+          "status": "on-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "CLERK-LIQMARJLIC",
@@ -562,17 +646,51 @@
       "alsoUnder": [
         "p24"
       ],
-      "unit": "number",
-      "decimals": 0,
+      "unit": "percent",
+      "decimals": 2,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
+      "frequency": "Every year",
+      "description": "Internal promotion rate for full-time City positions each fiscal year.",
+      "footnote": "Target: 10%. Benchmark: 6%, SHRM's average internal promotion rate.",
       "gaugeKeyServices": [
         "ks5"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "on-track",
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [
+        {
+          "period": "2022",
+          "value": 49.3,
+          "target": 10,
+          "benchmark": 6,
+          "status": "on-track"
+        },
+        {
+          "period": "2023",
+          "value": 20.6,
+          "target": 10,
+          "benchmark": 6,
+          "status": "on-track"
+        },
+        {
+          "period": "2024",
+          "value": 17.6,
+          "target": 10,
+          "benchmark": 6,
+          "status": "on-track"
+        },
+        {
+          "period": "2025",
+          "value": 30.09,
+          "target": 10,
+          "benchmark": 6,
+          "status": "on-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "HR-JOBPOSTVIEW",
@@ -732,17 +850,58 @@
       "alsoUnder": [
         "p24"
       ],
-      "unit": "number",
-      "decimals": 0,
-      "higherIsBetter": true,
+      "unit": "percent",
+      "decimals": 2,
+      "higherIsBetter": false,
       "compareTo": "target",
       "drivesStatus": true,
+      "frequency": "Every year",
+      "description": "Cumulative turnover rate for City employees each fiscal year. Lower is better.",
+      "footnote": "Target: 20%. Benchmark: the Colorado average (18% in 2021, 20% in 2022, 18% in 2023); from 2024, SHRM's 20% average for government, as the Colorado figure is not available. Shown as one total; a voluntary/involuntary split is not available yet.",
       "gaugeKeyServices": [
         "ks5"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "on-track",
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [
+        {
+          "period": "2021",
+          "value": 20.34,
+          "target": 20,
+          "benchmark": 18,
+          "status": "on-track"
+        },
+        {
+          "period": "2022",
+          "value": 20.3,
+          "target": 20,
+          "benchmark": 20,
+          "status": "on-track"
+        },
+        {
+          "period": "2023",
+          "value": 21.18,
+          "target": 20,
+          "benchmark": 18,
+          "status": "at-risk"
+        },
+        {
+          "period": "2024",
+          "value": 19.85,
+          "target": 20,
+          "benchmark": 20,
+          "status": "on-track"
+        },
+        {
+          "period": "2025",
+          "value": 16.6,
+          "target": 20,
+          "benchmark": 20,
+          "status": "on-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "HR-VACRATE",
@@ -2060,18 +2219,59 @@
         "p95"
       ],
       "unit": "number",
-      "decimals": 2,
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
+      "description": "Community events supported with City services such as production, facilities and equipment, each fiscal year.",
+      "footnote": "Target: 250 events, set from Customer Service portal and self-service capacity. Growth is limited by the calendar and the number of facilities available.",
       "gaugeKeyServices": [
         "ks20"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "off-track",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [
+        {
+          "period": "2020",
+          "value": 47,
+          "target": 250,
+          "status": "off-track"
+        },
+        {
+          "period": "2021",
+          "value": 202,
+          "target": 250,
+          "status": "off-track"
+        },
+        {
+          "period": "2022",
+          "value": 264,
+          "target": 250,
+          "status": "on-track"
+        },
+        {
+          "period": "2023",
+          "value": 236,
+          "target": 250,
+          "status": "off-track"
+        },
+        {
+          "period": "2024",
+          "value": 236,
+          "target": 250,
+          "status": "off-track"
+        },
+        {
+          "period": "2025",
+          "value": 239,
+          "target": 250,
+          "status": "off-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "PROS-COMMSURVEY",
@@ -2198,15 +2398,44 @@
       "level": "Program",
       "attachTo": "p95",
       "unit": "number",
-      "decimals": 2,
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
-      "status": null,
-      "pending": true,
-      "series": []
+      "description": "Community event permits issued each fiscal year.",
+      "footnote": "Target: 240 permits, set from Customer Service portal and self-service capacity. Growth is limited by the calendar and the number of facilities available. Counts community event permits only; activity, park and banner permits are not included yet.",
+      "status": "off-track",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [
+        {
+          "period": "2021",
+          "value": 171,
+          "target": 240,
+          "status": "off-track"
+        },
+        {
+          "period": "2022",
+          "value": 221,
+          "target": 240,
+          "status": "off-track"
+        },
+        {
+          "period": "2023",
+          "value": 242,
+          "target": 240,
+          "status": "on-track"
+        },
+        {
+          "period": "2024",
+          "value": 239,
+          "target": 240,
+          "status": "off-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "PROS-PROP123",
@@ -4223,13 +4452,11 @@
         ]
       },
       "g2": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 2,
+        "withResult": 2,
+        "percent": 100,
         "awaiting": [
-          "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
           "PROS-REGULATEDUNITS",
@@ -4257,8 +4484,8 @@
       },
       "g3": {
         "meeting": 2,
-        "withResult": 4,
-        "percent": 50,
+        "withResult": 5,
+        "percent": 40,
         "awaiting": [
           "911-STAFFING",
           "PD-CALLVOLUME",
@@ -4270,7 +4497,6 @@
           "PR-PARKBUDGETACRE",
           "PR-OSBUDGET1000",
           "PR-QUALITYSURVEY",
-          "PROS-ALLCOMMEVENTS",
           "REC-PASSRETTOTAL",
           "REC-CAPTOTAL",
           "REC-SURVEY",
@@ -4323,13 +4549,11 @@
         ]
       },
       "g5": {
-        "meeting": 2,
-        "withResult": 3,
-        "percent": 67,
+        "meeting": 4,
+        "withResult": 5,
+        "percent": 80,
         "awaiting": [
-          "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
           "PIO-SEECLICKFIX",
@@ -4349,14 +4573,12 @@
         ]
       },
       "g6": {
-        "meeting": 3,
-        "withResult": 3,
+        "meeting": 5,
+        "withResult": 5,
         "percent": 100,
         "awaiting": [
           "HR-EMPENG",
-          "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE",
           "IT-TIXSLA",
           "IT-LIAISONSURV"
         ],
@@ -4433,13 +4655,11 @@
         ]
       },
       "ob5": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 2,
+        "withResult": 2,
+        "percent": 100,
         "awaiting": [
-          "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
           "PROS-REGULATEDUNITS",
@@ -4515,10 +4735,9 @@
       },
       "ob8": {
         "meeting": 1,
-        "withResult": 2,
-        "percent": 50,
+        "withResult": 3,
+        "percent": 33,
         "awaiting": [
-          "PROS-ALLCOMMEVENTS",
           "REC-PASSRETTOTAL",
           "REC-CAPTOTAL",
           "REC-SURVEY",
@@ -4621,13 +4840,11 @@
         ]
       },
       "ob16": {
-        "meeting": 1,
-        "withResult": 1,
+        "meeting": 3,
+        "withResult": 3,
         "percent": 100,
         "awaiting": [
-          "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
           "PIO-SEECLICKFIX",
@@ -4645,13 +4862,11 @@
         ]
       },
       "ob17": {
-        "meeting": 2,
-        "withResult": 3,
-        "percent": 67,
+        "meeting": 4,
+        "withResult": 5,
+        "percent": 80,
         "awaiting": [
-          "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
           "PIO-SEECLICKFIX",
@@ -4671,14 +4886,12 @@
         ]
       },
       "ob18": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 2,
+        "withResult": 2,
+        "percent": 100,
         "awaiting": [
           "HR-EMPENG",
-          "HR-INTPROMO",
-          "HR-TIMETOHIRE",
-          "HR-TURNRATE"
+          "HR-TIMETOHIRE"
         ],
         "kpis": [
           "HR-EMPENG",
@@ -4688,14 +4901,12 @@
         ]
       },
       "ob19": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 2,
+        "withResult": 2,
+        "percent": 100,
         "awaiting": [
           "HR-EMPENG",
-          "HR-INTPROMO",
-          "HR-TIMETOHIRE",
-          "HR-TURNRATE"
+          "HR-TIMETOHIRE"
         ],
         "kpis": [
           "HR-EMPENG",
@@ -4705,14 +4916,12 @@
         ]
       },
       "ob20": {
-        "meeting": 3,
-        "withResult": 3,
+        "meeting": 5,
+        "withResult": 5,
         "percent": 100,
         "awaiting": [
           "HR-EMPENG",
-          "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE",
           "IT-TIXSLA",
           "IT-LIAISONSURV"
         ],
@@ -4729,13 +4938,11 @@
         ]
       },
       "ws1": {
-        "meeting": 1,
-        "withResult": 1,
+        "meeting": 3,
+        "withResult": 3,
         "percent": 100,
         "awaiting": [
-          "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
           "PIO-SEECLICKFIX",
@@ -4753,14 +4960,12 @@
         ]
       },
       "ws2": {
-        "meeting": 3,
-        "withResult": 3,
+        "meeting": 5,
+        "withResult": 5,
         "percent": 100,
         "awaiting": [
           "HR-EMPENG",
-          "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE",
           "IT-TIXSLA",
           "IT-LIAISONSURV"
         ],
@@ -4843,13 +5048,12 @@
       },
       "ws6": {
         "meeting": 1,
-        "withResult": 2,
-        "percent": 50,
+        "withResult": 3,
+        "percent": 33,
         "awaiting": [
           "PR-PARKBUDGETACRE",
           "PR-OSBUDGET1000",
           "PR-QUALITYSURVEY",
-          "PROS-ALLCOMMEVENTS",
           "REC-PASSRETTOTAL",
           "REC-CAPTOTAL",
           "REC-SURVEY",
@@ -4876,13 +5080,11 @@
         "kpis": []
       },
       "ks2": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 2,
+        "withResult": 2,
+        "percent": 100,
         "awaiting": [
-          "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
-          "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT"
         ],
@@ -4916,14 +5118,12 @@
         "kpis": []
       },
       "ks5": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 2,
+        "withResult": 2,
+        "percent": 100,
         "awaiting": [
           "HR-EMPENG",
-          "HR-INTPROMO",
-          "HR-TIMETOHIRE",
-          "HR-TURNRATE"
+          "HR-TIMETOHIRE"
         ],
         "kpis": [
           "HR-EMPENG",
@@ -5093,10 +5293,9 @@
       },
       "ks20": {
         "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "withResult": 1,
+        "percent": 0,
         "awaiting": [
-          "PROS-ALLCOMMEVENTS",
           "REC-PASSRETTOTAL",
           "REC-CAPTOTAL",
           "REC-SURVEY",
