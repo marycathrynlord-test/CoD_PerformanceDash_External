@@ -262,6 +262,21 @@
   .kpi-block + .kpi-block{margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);}
   .kpi-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
   .kpi-name{font-size:14.5px; font-weight:700; color:var(--forest-dark);}
+  .kpi-head-right{display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap; margin-left:auto;}
+  .kpi-tools{display:inline-flex; gap:6px; flex-wrap:wrap;}
+  .kpi-tool{display:inline-flex; align-items:center; gap:5px; font:inherit; font-size:12px; font-weight:700; color:var(--forest-dark);
+    background:var(--white); border:1px solid #7FB4A9; border-radius:6px; padding:4px 9px; cursor:pointer; line-height:1.2;}
+  .kpi-tool:hover{background:var(--mist); border-color:var(--forest);}
+  .kpi-tool:focus-visible{outline:2px solid #1E1E1E; outline-offset:2px;}
+  .kpi-tool[disabled]{cursor:progress; opacity:.75;}
+  .kpi-tool svg{flex:none;}
+  .kpi-toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:3000; max-width:min(560px, calc(100vw - 32px));
+    background:#1E1E1E; color:#fff; border-radius:10px; padding:12px 44px 12px 16px; font-size:13.5px; line-height:1.5; box-shadow:0 10px 30px rgba(0,0,0,.25);}
+  .kpi-toast[hidden]{display:none;}
+  .kpi-toast button{position:absolute; top:8px; right:8px; background:none; border:0; color:#fff; font-size:18px; line-height:1; cursor:pointer; padding:4px 6px; border-radius:4px;}
+  .kpi-toast button:focus-visible{outline:2px solid #fff;}
+  .kpi-toast .kpi-toast-action{position:static; display:inline-block; margin-top:8px; font-size:13px; font-weight:700; background:#fff; color:#1E1E1E; padding:6px 12px;}
+  @media print{ .kpi-tools, .kpi-toast{display:none !important;} }
   .kpi-desc{font-size:12.5px; color:var(--slate); line-height:1.5; margin:4px 0 0;}
   .kpi-figure{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-top:10px;}
   .kpi-big{font-size:30px; font-weight:700; color:var(--ink); letter-spacing:-.01em; line-height:1;}
@@ -320,6 +335,7 @@
   .tt-seg-chg{font-size:11px; font-weight:700; text-align:right; color:var(--slate); white-space:nowrap;}
   .tt-seg-chg.up{color:#006A53;} .tt-seg-chg.down{color:#8A2E26;}
   .kpi-seg-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(138px, 1fr)); gap:10px; margin-top:12px;}
+  .kpi-seg-swatch{display:inline-block; vertical-align:-1px; margin-right:6px;}
   .kpi-seg-tile{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--white); display:flex; flex-direction:column; gap:6px; border-top:3px solid var(--seg-color, #006A53);}
   .kpi-seg-label{font-size:12.5px; font-weight:700; color:var(--forest-dark);}
   .kpi-seg-value{font-size:22px; font-weight:700; color:var(--ink); line-height:1; letter-spacing:-.01em;}
@@ -350,6 +366,33 @@
     margin:0; padding:18px 20px; border:1px solid var(--line); border-radius:8px; background:var(--white);
   }
   #explorer-children-label{margin-bottom:10px;}
+  /* Objective level: aligned Key Services listed at the top, then all
+     of their KPIs grouped by Key Service. */
+  .obj-ks-overview{margin-bottom:18px;}
+  .kpi-waiting-list ul{margin:8px 0 0; padding-left:18px; font-size:13px; line-height:1.55; color:var(--ink);}
+  .kpi-waiting-list li + li{margin-top:4px;}
+  .kpi-waiting-list li span{color:var(--slate);}
+  .kpi-waiting-list .kpi-waiting-meta{font-size:12px;}
+  .obj-ks-overview .grid-label{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .obj-ks-count{font-size:12px; font-weight:600; color:var(--slate); text-transform:none; letter-spacing:0;}
+  .obj-ks-list{list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px;}
+  .obj-ks-link{display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--white); color:var(--ink); text-decoration:none; height:100%;}
+  .obj-ks-link:hover{border-color:var(--sage); box-shadow:0 4px 12px rgba(0,106,83,.12);}
+  .obj-ks-link:focus-visible{outline:2px solid #1E1E1E; outline-offset:2px;}
+  .obj-ks-link .gauge-inline{color:var(--forest); flex:none;}
+  .obj-ks-link .gauge-pct{color:var(--forest-dark); font-weight:700; font-size:13px;}
+  .obj-ks-text{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .obj-ks-name{font-weight:700; color:var(--forest-dark); font-size:13.5px; line-height:1.3;}
+  .obj-ks-sub{font-size:12px; color:var(--slate);}
+  .obj-ks-section{scroll-margin-top:90px; padding-top:16px; margin-top:6px; border-top:2px solid var(--line);}
+  .obj-ks-head{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:12px;}
+  .obj-ks-type{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--slate);}
+  .obj-ks-title{margin:3px 0 0; font-size:18px; color:var(--forest-dark);}
+  .obj-ks-title:focus{outline:none;}
+  .obj-ks-title:focus-visible{outline:2px solid #1E1E1E; outline-offset:2px;}
+  .obj-ks-head .gauge-inline{color:var(--forest); display:inline-flex; align-items:center; gap:8px;}
+  .obj-ks-head .gauge-pct{color:var(--forest-dark); font-weight:700;}
+  .obj-ks-cap{font-size:12px; color:var(--slate); font-weight:600;}
 
   /* Wide screens: the details take the full width on the left, and the
      tiles for what sits underneath (Programs or Key Services) stack in
@@ -1160,6 +1203,7 @@
 <div class="wrap" id="dashboard">
 <main id="main" tabindex="-1">
 <div id="sr-status" class="sr-only" role="status" aria-live="polite"></div>
+<div id="kpi-toast" class="kpi-toast" role="status" aria-live="polite" hidden><span id="kpi-toast-msg"></span><button type="button" id="kpi-toast-close" aria-label="Dismiss message">×</button></div>
 
   <div class="titleband">
     <div class="titleband-text">
@@ -1391,6 +1435,7 @@ async function loadData(){
    also be tagged to Strategic Plan Objectives (objectives). The file
    is optional: without it the dashboard behaves exactly as before. */
 let KPI_BY_ITEM = {};
+let KPI_BY_ID = {};
 // Built by build_kpi_data.py from the workbook: which Key Services
 // support which Objectives, the council-adopted Goal and Objective
 // definitions, and the gauge counts for every Goal, Objective, Work
@@ -1399,6 +1444,7 @@ let FRAMEWORK = { gauges:{}, objectiveAlignment:{}, descriptions:{} };
 
 async function loadKpiData(){
   KPI_BY_ITEM = {};
+  KPI_BY_ID = {};
   try{
     const res = await fetch('kpi-data.json', { cache: 'no-store' });
     if(!res.ok) return;
@@ -1409,6 +1455,7 @@ async function loadKpiData(){
       const hasSegments = k && k.segmentsOnly && Array.isArray(k.segmentSeries) && k.segmentSeries.some(sg => sg.series && sg.series.length);
       if(!k || !k.attachTo || !(hasSeries || hasSegments || k.pending)) return;
       (KPI_BY_ITEM[k.attachTo] = KPI_BY_ITEM[k.attachTo] || []).push(k);
+      KPI_BY_ID[k.id] = k;
       // "Also Show Under" in the spreadsheet: the same KPI is listed under
       // further Work Systems, Key Services or Programs as well (and, with
       // Drives Status = Yes, sets the color of those Programs).
@@ -2439,7 +2486,7 @@ function renderWorkSystemCardRow(){
 function childLabelText(){
   const v = dashboardView;
   if(v.level === 'root') return v.rootMode === 'goal' ? 'Objectives under this Goal' : 'Key Services';
-  if(v.level === 'objective') return 'Key Services supporting this Objective';
+  if(v.level === 'objective') return '';
   if(v.level === 'keyservice') return 'Programs';
   return '';
 }
@@ -2459,7 +2506,9 @@ function renderExplorerDetail(){
   const hasChildren = !!childWord;
 
   let html = '';
-  if(item){
+  if(dashboardView.rootMode === 'goal' && dashboardView.level === 'objective'){
+    html = objectiveDetailHTML(dashboardView.objectiveId);
+  } else if(item){
     const d = item.details || {};
     const kpis = kpisFor(item.id);
     // Size the KPI chart for the space it will really get: the panel's
@@ -2487,10 +2536,81 @@ function renderExplorerDetail(){
 
   box.innerHTML = html;
   box.style.display = html ? '' : 'none';
+  wireObjectiveJumpLinks(box);
   const split = document.getElementById('explorer-split');
   split.classList.toggle('has-detail', !!html);
   split.classList.toggle('no-children', !!html && !hasChildren);
   childLabel.textContent = childLabelText();
+}
+
+// Objective level (Goal View): the Key Services aligned to the Objective
+// are listed at the top, and every one of their KPIs is shown right
+// below, grouped by Key Service, so the numbers are one click from the
+// Objective. The list at the top jumps to each Key Service's group.
+function objectiveDetailHTML(obId){
+  // Key Services with results come first, so the first screen shows numbers.
+  const hasResults = ks => kpisFor(ks.id).some(k => !k.pending);
+  const services = keyServicesForObjective(obId).map((ks, i) => ({ ks, i }))
+    .sort((a, b) => (hasResults(b.ks) - hasResults(a.ks)) || (a.i - b.i)).map(x => x.ks);
+  if(!services.length) return `<p class="ed-desc">No Key Services are aligned to this Objective yet.</p>`;
+  const cardInner = document.getElementById('explorer-split').clientWidth - 40 - 42;
+  const chartWidth = Math.max(240, Math.round(cardInner));
+  const totalKpis = services.reduce((n, ks) => n + kpisFor(ks.id).length, 0);
+  const list = services.map(ks => {
+    const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
+    const g = gaugeFor(ks.id);
+    const n = kpisFor(ks.id).length;
+    return `<li><a class="obj-ks-link" href="#obj-ks-${ks.id}" data-obj-jump="${ks.id}">
+        <span class="gauge-inline" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span></span>
+        <span class="obj-ks-text"><span class="obj-ks-name">${escHTML(ks.name)}</span><span class="obj-ks-sub">${ws ? escHTML(ws.name) + ' · ' : ''}${n ? plural(n, 'KPI') : 'No KPIs yet'}</span></span>
+      </a></li>`;
+  }).join('');
+  const sections = services.map(ks => {
+    const kpis = kpisFor(ks.id);
+    const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
+    const g = gaugeFor(ks.id);
+    return `<section class="obj-ks-section" id="obj-ks-${ks.id}" aria-labelledby="obj-ks-h-${ks.id}">
+        <div class="obj-ks-head">
+          <div>
+            <div class="obj-ks-type">Key Service${ws ? ' · ' + escHTML(ws.name) : ''}</div>
+            <h3 class="obj-ks-title" id="obj-ks-h-${ks.id}" tabindex="-1">${escHTML(ks.name)}</h3>
+          </div>
+          <span class="gauge-inline" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 40)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span><span class="obj-ks-cap" aria-hidden="true">${escHTML(gaugeCaption(g))}</span></span>
+        </div>
+        ${kpis.length ? objectiveKpisHTML(kpis, chartWidth)
+          : `<p class="kpi-pending-note">No KPIs have been set up for this Key Service yet.</p>`}
+      </section>`;
+  }).join('');
+  return `
+    <div class="obj-ks-overview">
+      <h3 class="grid-label">Key Services supporting this Objective <span class="obj-ks-count">${plural(services.length, 'Key Service')} · ${plural(totalKpis, 'KPI')}</span></h3>
+      <ul class="obj-ks-list">${list}</ul>
+    </div>
+    ${sections}`;
+}
+// KPIs with results get their full card; measures still waiting on data
+// are listed together in one short box instead of a card each.
+function objectiveKpisHTML(kpis, chartWidth){
+  const live = kpis.filter(k => !k.pending), waiting = kpis.filter(k => k.pending);
+  return `<div class="explorer-kpis">
+      ${live.map(k => kpiBlockHTML(k, chartWidth, false)).join('')}
+      ${waiting.length ? `<div class="kpi-block kpi-waiting-list">
+        <div class="kpi-head"><span class="kpi-name">${live.length ? 'Also measured, data not yet entered' : 'Measures set up, data not yet entered'}</span><span class="kpi-bysegment">${plural(waiting.length, 'KPI')}</span></div>
+        <ul>${waiting.map(k => `<li><strong>${escHTML(k.name)}</strong>${k.description ? ` <span>${escHTML(k.description)}</span>` : ''}${k.owner || k.frequency ? ` <span class="kpi-waiting-meta">(${[k.owner, k.frequency ? 'updated ' + k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1) : ''].filter(Boolean).map(escHTML).join(', ')})</span>` : ''}</li>`).join('')}</ul>
+      </div>` : ''}
+    </div>`;
+}
+function wireObjectiveJumpLinks(scope){
+  scope.querySelectorAll('[data-obj-jump]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const sec = document.getElementById('obj-ks-' + a.dataset.objJump);
+      if(!sec) return;
+      const h = sec.querySelector('.obj-ks-title');
+      if(h) h.focus({ preventScroll:true });
+      softScrollTo(sec, 12);
+    });
+  });
 }
 
 // The selected item's name, council-adopted definition (Goals and
@@ -2658,7 +2778,7 @@ function renderDashboardHeatmapContent(){
           exportKind:'objective', exportId:o.id,
           extraClass:'objective-card',
           tileStyle: '',
-          actionHint:'Open to see its Key Services',
+          actionHint:'Open to see its Key Services and their KPIs',
         });
       }).join('') || `<div class="heatmap-empty">No Objectives recorded under this Goal yet.</div>`;
       wireDashboardTiles(grid);
@@ -2679,21 +2799,10 @@ function renderDashboardHeatmapContent(){
   }
 
   if(dashboardView.level === 'objective'){
-    // Goal View: the Key Services aligned to this Objective. Each opens
-    // its KPIs in the pop-up. Programs are not part of this view.
-    const services = keyServicesForObjective(dashboardView.objectiveId);
-    grid.classList.add('ks-grid');
-    grid.innerHTML = services.map(ks=>{
-      const ws = DATA.workSystems.find(w=>w.id===ks.workSystem);
-      return gaugeTileHTML({
-        typeLabel:'Key Service', name:ks.name, gauge:gaugeFor(ks.id),
-        subtitle: ws ? ws.name : '',
-        dataAttrs:`data-open-detail="ks" data-id="${ks.id}"`,
-        exportKind:'ks', exportId:ks.id,
-        actionHint:'Open to see its KPIs',
-      });
-    }).join('') || `<div class="heatmap-empty">No Key Services are aligned to this Objective yet.</div>`;
-    wireDashboardTiles(grid);
+    // Goal View: the aligned Key Services and all of their KPIs are shown
+    // straight away in the detail area above (renderExplorerDetail), so
+    // there is nothing more to click through to here.
+    grid.innerHTML = '';
     return;
   }
 
@@ -2944,22 +3053,41 @@ function kpiDiff(value, comparison, k){
 // line (each point colored by that period's status), the target as a
 // dashed line and the benchmark as a dotted one, whichever exist.
 // Skipped when there is only one period.
-// Chart series use brand colors only. Lines that need telling apart
-// beyond three colors also change dash pattern. Teal is a line color
-// only; its labels are drawn in forest so small text stays 4.5:1+.
-// Long dashes (9 3) stay distinct from the Target (5 4) and Benchmark
+// Chart series: the first line (the Total, or the first segment) is City
+// forest green; further segments use clearly different hues, chosen to
+// avoid the gold/red status colors. Every color reaches at least 5:1 on
+// white, so it also works for the line's text label. Each series also
+// has its own point shape, so the lines can be told apart without
+// relying on color. Past six series the pattern repeats with long
+// dashes (9 3), which stay distinct from the Target (5 4) and Benchmark
 // (dotted) reference lines.
 const KPI_SERIES = [
-  { stroke:'#006A53', dash:'' },
-  { stroke:'#1E1E1E', dash:'' },
-  { stroke:'#1B8A79', dash:'9 3' },
-  { stroke:'#1E1E1E', dash:'9 3' },
-  { stroke:'#006A53', dash:'9 3' },
-  { stroke:'#1B8A79', dash:'' },
+  { stroke:'#006A53', shape:'circle'   }, // forest
+  { stroke:'#2B5FB3', shape:'square'   }, // blue
+  { stroke:'#7A3E9D', shape:'diamond'  }, // purple
+  { stroke:'#B3541E', shape:'triangle' }, // burnt orange
+  { stroke:'#B0306F', shape:'tri-down' }, // magenta
+  { stroke:'#1E1E1E', shape:'circle-open' }, // ink
 ];
 function kpiSeriesStyle(i){
   const st = KPI_SERIES[i % KPI_SERIES.length];
-  return { stroke: st.stroke, dash: st.dash, text: st.stroke === '#1B8A79' ? '#006A53' : st.stroke };
+  const dash = i >= KPI_SERIES.length ? '9 3' : '';
+  return { stroke: st.stroke, dash, shape: st.shape, text: st.stroke };
+}
+// A point marker in the series' own shape.
+function kpiMarkerSVG(shape, cx, cy, r, color, extra = ''){
+  const n = v => Number(v).toFixed(1);
+  const ring = `stroke="#fff" stroke-width="1.5"`;
+  if(shape === 'square') return `<rect x="${n(cx - r * .9)}" y="${n(cy - r * .9)}" width="${n(r * 1.8)}" height="${n(r * 1.8)}" fill="${color}" ${ring}${extra}/>`;
+  if(shape === 'diamond') return `<path d="M${n(cx)},${n(cy - r * 1.25)} L${n(cx + r * 1.25)},${n(cy)} L${n(cx)},${n(cy + r * 1.25)} L${n(cx - r * 1.25)},${n(cy)} Z" fill="${color}" ${ring}${extra}/>`;
+  if(shape === 'triangle') return `<path d="M${n(cx)},${n(cy - r * 1.3)} L${n(cx + r * 1.2)},${n(cy + r * .85)} L${n(cx - r * 1.2)},${n(cy + r * .85)} Z" fill="${color}" ${ring}${extra}/>`;
+  if(shape === 'tri-down') return `<path d="M${n(cx)},${n(cy + r * 1.3)} L${n(cx + r * 1.2)},${n(cy - r * .85)} L${n(cx - r * 1.2)},${n(cy - r * .85)} Z" fill="${color}" ${ring}${extra}/>`;
+  if(shape === 'circle-open') return `<circle cx="${n(cx)}" cy="${n(cy)}" r="${n(r * .85)}" fill="#fff" stroke="${color}" stroke-width="2"${extra}/>`;
+  return `<circle cx="${n(cx)}" cy="${n(cy)}" r="${n(r)}" fill="${color}" ${ring}${extra}/>`;
+}
+// Legend swatch: a short line in the series' color and dash, with its point shape.
+function kpiLegendSwatchSVG(st, width = 2){
+  return `<svg width="26" height="12" aria-hidden="true"><line x1="0" y1="6" x2="26" y2="6" stroke="${st.stroke}" stroke-width="${width}"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>${kpiMarkerSVG(st.shape, 13, 6, 3.6, st.stroke)}</svg>`;
 }
 // A KPI with a headline Total and segments: each Total dot opens a hover
 // box with every segment. A few segments (e.g. Digital and Physical) are
@@ -3121,8 +3249,8 @@ function kpiChartSVG(k, width){
     if(!sp.length) return '';
     const d = sp.map((p,j) => (j ? 'L' : 'M') + x(idx(p.period)).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
     const last = sp[sp.length - 1];
-    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.75"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>
-      ${sp.map(p => `<circle cx="${x(idx(p.period)).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"/>`).join('')}
+    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="2"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>
+      ${sp.map(p => kpiMarkerSVG(st.shape, x(idx(p.period)), y(p.value), 4, color)).join('')}
       <text x="${(x(idx(last.period)) + 8).toFixed(1)}" y="${labelY[n].toFixed(1)}" font-size="11" font-weight="700" fill="${st.text}" stroke="#fff" stroke-width="3" paint-order="stroke">${escHTML(sg.label)} ${escHTML(fmtKpiValue(last.value, k))}</text>`;
   }).join('');
 
@@ -3137,8 +3265,8 @@ function kpiChartSVG(k, width){
       ${comparisonLayers}${breakdownLayer}${valueLayer}${xLabels}
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
-      <span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#006A53" stroke-width="2"/></svg>${breakdown.length || hasSegs ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result'}</span>
-      ${breakdown.map((sg,n) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${kpiSeriesStyle(n + 1).stroke}" stroke-width="1.75"${kpiSeriesStyle(n + 1).dash ? ` stroke-dasharray="${kpiSeriesStyle(n + 1).dash}"` : ''}/></svg>${escHTML(sg.label)}</span>`).join('')}
+      <span>${kpiLegendSwatchSVG(kpiSeriesStyle(0))}${breakdown.length || hasSegs ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result'}</span>
+      ${breakdown.map((sg,n) => `<span>${kpiLegendSwatchSVG(kpiSeriesStyle(n + 1))}${escHTML(sg.label)}</span>`).join('')}
       ${lines.map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${c.label}</span>`).join('')}
       <span class="seg-hover-hint">${hasSegs ? 'Hover or tap a point for details and the breakdown' : 'Hover or tap a point for details'}</span>
     </div>`;
@@ -3240,7 +3368,7 @@ function kpiSegmentChartSVG(k, width){
     const pts = [...sg.series].sort((a,b) => periods.indexOf(a.period) - periods.indexOf(b.period));
     const d = pts.map((p,j) => (j ? 'L' : 'M') + x(p.period).toFixed(1) + ',' + y(p.value).toFixed(1)).join(' ');
     return `<path d="${d}" fill="none" stroke="${color}" stroke-width="2"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>
-      ${pts.map(p => `<circle cx="${x(p.period).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="4" fill="${color}" stroke="#fff" stroke-width="1.5"/>`).join('')}`;
+      ${pts.map(p => kpiMarkerSVG(st.shape, x(p.period), y(p.value), 4.5, color)).join('')}`;
   }).join('');
   const colW = (W - padL - inset - padR) / (periods.length - 1);
   const hovers = periods.map(period => {
@@ -3260,7 +3388,7 @@ function kpiSegmentChartSVG(k, width){
       ${lines}${hovers}${xLabels}
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
-      ${k.segmentSeries.map((sg,i) => `<span><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="${kpiSeriesStyle(i).stroke}" stroke-width="2"${kpiSeriesStyle(i).dash ? ` stroke-dasharray="${kpiSeriesStyle(i).dash}"` : ''}/></svg>${escHTML(sg.label)}</span>`).join('')}
+      ${k.segmentSeries.map((sg,i) => `<span>${kpiLegendSwatchSVG(kpiSeriesStyle(i))}${escHTML(sg.label)}</span>`).join('')}
       <span class="seg-hover-hint">Hover or tap a year to compare each with its target</span>
     </div>`;
 }
@@ -3273,7 +3401,7 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
   const basisLabel = basis === 'benchmark' ? 'Benchmark' : 'Target';
   const cards = kpiOrderCards(k.segmentSeries.map((sg, i) => {
     const latest = sg.series[sg.series.length - 1];
-    return { label: sg.label, point: latest, value: latest.value, color: kpiSeriesStyle(i).stroke, isTotal: kpiIsTotalLabel(sg.label), series: sg.series };
+    return { label: sg.label, point: latest, value: latest.value, color: kpiSeriesStyle(i).stroke, style: kpiSeriesStyle(i), isTotal: kpiIsTotalLabel(sg.label), series: sg.series };
   }));
   const tiles = cards.map(c => kpiCardHTML(k, c)).join('');
   const periods = kpiSegmentPeriods(k);
@@ -3290,7 +3418,7 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
     <div class="kpi-block">
       <div class="kpi-head">
         <span class="kpi-name">${escHTML(k.name)}</span>
-        <span class="kpi-bysegment">Shown by segment · no overall status</span>
+        <span class="kpi-head-right"><span class="kpi-bysegment">Shown by segment · no overall status</span>${kpiToolsHTML(k)}</span>
       </div>
       ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
       <div class="kpi-seg-grid">${tiles}</div>
@@ -3322,7 +3450,7 @@ function kpiCardHTML(k, c){
     return `${cmp.label} <strong>${escHTML(fmtKpiComparison(v, k))}</strong> · <span class="${d.good ? 'kpi-good' : 'kpi-bad'}">${escHTML(d.phrase)}</span>`;
   }).join('<br>') : '';
   return `<div class="kpi-seg-tile${c.isTotal ? ' kpi-total-tile' : ''}" style="--seg-color:${c.color}">
-      <span class="kpi-seg-label">${escHTML(c.label)}</span>
+      <span class="kpi-seg-label">${c.style ? `<svg class="kpi-seg-swatch" width="12" height="12" aria-hidden="true">${kpiMarkerSVG(c.style.shape, 6, 6, 4, c.style.stroke)}</svg>` : ''}${escHTML(c.label)}</span>
       <span class="kpi-seg-value">${escHTML(fmtKpiValue(c.point.value, k))}${c.point.note ? '*' : ''}<small>${escHTML(c.point.period)}</small></span>
       <span class="kpi-seg-status">${c.point.status ? statusBadgeHTML(c.point.status) : ''}</span>
       ${comps ? `<span class="kpi-seg-meta">${comps}</span>` : ''}
@@ -3426,11 +3554,11 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
 
   const segs = kpiAllSegments(k);
   const cards = segs.length ? kpiOrderCards([
-    { label: k.unit === 'percent' ? 'Overall' : 'Total', point: latest, value: latest.value, color: '#006A53', isTotal: true, series: k.series },
+    { label: k.unit === 'percent' ? 'Overall' : 'Total', point: latest, value: latest.value, color: '#006A53', style: kpiSeriesStyle(0), isTotal: true, series: k.series },
     ...segs.map((sg, n) => {
       const pt = segAt(sg, latest.period) || sg.series[sg.series.length - 1];
       const lineIdx = breakdown.indexOf(sg);
-      return { label: sg.label, point: pt, value: pt.value, color: lineIdx >= 0 ? kpiSeriesStyle(lineIdx + 1).stroke : '#7FB4A9', isTotal: false, series: sg.series };
+      return { label: sg.label, point: pt, value: pt.value, color: lineIdx >= 0 ? kpiSeriesStyle(lineIdx + 1).stroke : '#7FB4A9', style: lineIdx >= 0 ? kpiSeriesStyle(lineIdx + 1) : null, isTotal: false, series: sg.series };
     })
   ]) : [];
   // Cards only when there are a few segments; 11 count locations would be
@@ -3475,7 +3603,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
     <div class="kpi-block">
       <div class="kpi-head">
         <span class="kpi-name">${escHTML(k.name)}</span>
-        ${k.status && !showCards ? statusBadgeHTML(k.status) : ''}
+        <span class="kpi-head-right">${k.status && !showCards ? statusBadgeHTML(k.status) : ''}${kpiToolsHTML(k)}</span>
       </div>
       ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
       ${showCards ? `<div class="kpi-seg-grid">${cards.map(c => kpiCardHTML(k, c)).join('')}</div>` : `
@@ -3912,6 +4040,453 @@ function wireExportMenu(){
   document.getElementById('export-pdf-btn').addEventListener('click', closeMenu);
 }
 
+/* ---------- One KPI: Excel, PDF and email ----------
+   Every KPI card has its own Download Excel, Download PDF and Email
+   buttons. The Excel file has the KPI's numbers (every period, Total and
+   segments, with Target, Benchmark and status) plus an "About" sheet.
+   The PDF has real, selectable text: the KPI's details, its chart and its
+   data table. "Email" puts both files into a new email:
+   - where the browser can hand files to the computer's share sheet
+     (Safari, and Edge/Chrome for file types they allow), that sheet opens
+     and the person picks Mail or Outlook;
+   - otherwise an email draft file (.eml) with both files attached is
+     downloaded; opening it starts a new message in Outlook, ready to
+     address and send. */
+const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+const ICON_DOWNLOAD = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.2M4.6 6.5 8 9.9l3.4-3.4M2.5 11.5v2h11v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_MAIL = '<svg width="14" height="13" viewBox="0 0 16 14" aria-hidden="true"><rect x="1.2" y="1.5" width="13.6" height="11" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m1.8 2.5 6.2 5 6.2-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+
+function kpiToolsHTML(k){
+  if(!k || k.pending) return '';
+  const n = escHTML(k.name);
+  return `<span class="kpi-tools" role="group" aria-label="Download or share ${n}">
+      <button type="button" class="kpi-tool" data-kpi-action="xlsx" data-kpi-id="${escHTML(k.id)}" aria-label="Download ${n} as an Excel file">${ICON_DOWNLOAD}Excel</button>
+      <button type="button" class="kpi-tool" data-kpi-action="pdf" data-kpi-id="${escHTML(k.id)}" aria-label="Download ${n} as a PDF">${ICON_DOWNLOAD}PDF</button>
+      <button type="button" class="kpi-tool" data-kpi-action="email" data-kpi-id="${escHTML(k.id)}" aria-label="Email ${n} with the Excel file and PDF attached">${ICON_MAIL}Email</button>
+    </span>`;
+}
+
+let toastTimer = null;
+function showToast(html, { action = null, ms = 9000 } = {}){
+  const box = document.getElementById('kpi-toast');
+  const msg = document.getElementById('kpi-toast-msg');
+  if(!box || !msg) return;
+  msg.innerHTML = html;
+  if(action){
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'kpi-toast-action'; b.textContent = action.label;
+    b.addEventListener('click', () => { hideToast(); action.run(); });
+    msg.appendChild(document.createElement('br'));
+    msg.appendChild(b);
+    ms = Math.max(ms, 20000);
+  }
+  box.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, ms);
+  if(action) setTimeout(() => { const b = msg.querySelector('.kpi-toast-action'); if(b) b.focus(); }, 50);
+}
+function hideToast(){
+  const box = document.getElementById('kpi-toast');
+  if(box) box.hidden = true;
+  clearTimeout(toastTimer);
+}
+
+const scriptLoads = {};
+function loadScriptOnce(src, ready){
+  if(ready()) return Promise.resolve();
+  if(!scriptLoads[src]) scriptLoads[src] = new Promise((resolve, reject) => {
+    const el = document.createElement('script');
+    el.src = src; el.async = true;
+    el.onload = () => ready() ? resolve() : reject(new Error('library did not start'));
+    el.onerror = () => { delete scriptLoads[src]; reject(new Error('could not load ' + src)); };
+    document.head.appendChild(el);
+  });
+  return scriptLoads[src];
+}
+const loadSheetJS = () => loadScriptOnce(XLSX_SRC, () => typeof XLSX !== 'undefined' && XLSX.utils);
+
+// Where the KPI appears on the dashboard ("Library & Learning Services (Key Service)").
+function kpiShownUnder(k){
+  const ids = [k.attachTo, ...(Array.isArray(k.alsoUnder) ? k.alsoUnder : [])].filter((id, i, a) => id && a.indexOf(id) === i);
+  return ids.map(id => {
+    const ks = DATA.keyServices.find(x => x.id === id);
+    if(ks) return { type:'Key Service', name: ks.name };
+    const p = DATA.programs.find(x => x.id === id);
+    if(p) return { type:'Program', name: p.name };
+    const ws = DATA.workSystems.find(x => x.id === id);
+    if(ws) return { type:'Work System', name: ws.name };
+    return null;
+  }).filter(Boolean).sort((a, b) => (a.type === 'Key Service' ? 0 : 1) - (b.type === 'Key Service' ? 0 : 1));
+}
+function kpiUnitSuffix(k){ return k.unit === 'percent' ? '%' : k.unit === 'currency' ? '$' : (!k.unit || k.unit === 'number') ? '' : k.unit; }
+function kpiFreqText(k){ return k.frequency ? k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1) : ''; }
+
+// Every number behind one KPI, one row per period and measure, oldest first.
+function kpiExportRows(k){
+  const basis = kpiBasis(k);
+  const series = [];
+  if(k.segmentsOnly) (k.segmentSeries || []).forEach(sg => series.push({ label: sg.label, pts: sg.series || [] }));
+  else {
+    series.push({ label: kpiAllSegments(k).length ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result', pts: k.series || [] });
+    kpiAllSegments(k).forEach(sg => series.push({ label: sg.label, pts: sg.series }));
+  }
+  const periods = [];
+  series.forEach(s => s.pts.forEach(p => { if(!periods.includes(p.period)) periods.push(p.period); }));
+  if(periods.every(p => /^\d{4}$/.test(p))) periods.sort((a, b) => Number(a) - Number(b));
+  const rows = [];
+  periods.forEach(period => series.forEach(s => {
+    const p = s.pts.find(q => q.period === period);
+    if(!p) return;
+    const cmp = p[basis];
+    rows.push({ period, measure: s.label, value: p.value,
+      target: kpiHas(p.target) ? p.target : null, benchmark: kpiHas(p.benchmark) ? p.benchmark : null,
+      diff: kpiHas(cmp) ? Math.round((p.value - cmp) * 1e6) / 1e6 : null,
+      status: p.status ? STATUS_META[p.status].label : '', note: p.note || '' });
+  }));
+  return rows;
+}
+function kpiFileBase(k){ return `durango-kpi-${slugify(k.name).slice(0, 60)}-${todayStamp()}`; }
+function kpiLatestSummary(k){
+  const basis = kpiBasis(k);
+  if(k.segmentsOnly){
+    return (k.segmentSeries || []).map(sg => {
+      const l = sg.series[sg.series.length - 1];
+      return l ? `${sg.label}: ${fmtKpiValue(l.value, k)} (${l.period})${l.status ? ', ' + STATUS_META[l.status].label : ''}` : '';
+    }).filter(Boolean).join('; ');
+  }
+  const l = k.series[k.series.length - 1];
+  if(!l) return '';
+  const comps = KPI_COMPARISONS.filter(c => kpiHas(l[c.key])).map(c => `${c.label} ${fmtKpiComparison(l[c.key], k)} (${kpiDiff(l.value, l[c.key], k).phrase})`);
+  return `${l.period}: ${fmtKpiValue(l.value, k)}${l.status ? ', ' + STATUS_META[l.status].label : ''}${comps.length ? '. ' + comps.join('; ') : ''}`;
+}
+
+// ---- Excel ----
+async function buildKpiXlsxBlob(k){
+  await loadSheetJS();
+  const basis = kpiBasis(k);
+  const u = kpiUnitSuffix(k);
+  const unitHead = u ? ` (${u})` : '';
+  const rows = kpiExportRows(k);
+  const head = ['Period', 'Measure', 'Result' + unitHead, 'Target' + unitHead, 'Benchmark' + unitHead, `Difference vs ${basis}` + unitHead, 'Status', 'Note'];
+  const aoa = [head, ...rows.map(r => [r.period, r.measure, r.value, r.target, r.benchmark, r.diff, r.status, r.note])];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const d = Math.max(Number.isInteger(k.decimals) ? k.decimals : 0, ...rows.flatMap(r => [r.target, r.benchmark]).filter(kpiHas).map(v => kpiDecimalsFor(v, k)));
+  const numFmt = (k.unit === 'currency' ? '"$"#,##0' : '#,##0') + (d ? '.' + '0'.repeat(d) : '');
+  for(let r = 1; r < aoa.length; r++) for(let c = 2; c <= 5; c++){
+    const cell = ws[XLSX.utils.encode_cell({ r, c })];
+    if(cell && cell.t === 'n') cell.z = numFmt;
+  }
+  ws['!cols'] = [{ wch:10 }, { wch: Math.min(40, Math.max(12, ...rows.map(r => String(r.measure).length + 2))) }, { wch:14 }, { wch:14 }, { wch:16 }, { wch:22 }, { wch:12 }, { wch:40 }];
+  ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s:{ r:0, c:0 }, e:{ r: Math.max(0, aoa.length - 1), c: head.length - 1 } }) };
+
+  const shown = kpiShownUnder(k).map(x => `${x.name} (${x.type})`).join('; ');
+  const about = [
+    ['KPI', k.name],
+    ['Description', k.description || ''],
+    ['Shown under', shown],
+    ['Latest', kpiLatestSummary(k)],
+    ['Status based on', k.segmentsOnly ? `Each segment's own ${basis}` : `The ${basis}`],
+    ['Better when', k.higherIsBetter === false ? 'Lower' : 'Higher'],
+    ['Unit', k.unit === 'percent' ? 'Percent' : k.unit === 'currency' ? 'Dollars' : (!k.unit || k.unit === 'number') ? 'Number' : k.unit],
+    ['Owner', k.owner || ''],
+    ['Source', k.source || ''],
+    ['Updated', k.frequency || ''],
+    ['Footnote', k.footnote || ''],
+    ['KPI ID', k.id],
+    ['Exported', new Date().toLocaleString('en-US')],
+    ['Dashboard', location.href.split('#')[0]],
+  ].filter(r => r[1] !== '');
+  const ws2 = XLSX.utils.aoa_to_sheet([['City of Durango Performance Dashboard', ''], ...about]);
+  ws2['!cols'] = [{ wch:18 }, { wch:90 }];
+
+  const wb = XLSX.utils.book_new();
+  wb.Props = { Title: k.name, Subject: 'City of Durango KPI', Author: 'City of Durango' };
+  XLSX.utils.book_append_sheet(wb, ws, 'Data');
+  XLSX.utils.book_append_sheet(wb, ws2, 'About');
+  const out = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+  return { blob: new Blob([out], { type: XLSX_MIME }), name: kpiFileBase(k) + '.xlsx', type: XLSX_MIME };
+}
+// Plain CSV when the Excel library can't be reached (Excel opens it too).
+function buildKpiCsvFile(k){
+  const basis = kpiBasis(k);
+  const rows = kpiExportRows(k);
+  const csv = [['Period', 'Measure', 'Result', 'Target', 'Benchmark', `Difference vs ${basis}`, 'Status', 'Note'],
+    ...rows.map(r => [r.period, r.measure, r.value, r.target ?? '', r.benchmark ?? '', r.diff ?? '', r.status, r.note])]
+    .map(r => r.map(csvEscape).join(',')).join('\r\n');
+  return { blob: new Blob(['﻿' + csv], { type:'text/csv;charset=utf-8' }), name: kpiFileBase(k) + '.csv', type:'text/csv' };
+}
+async function buildKpiSpreadsheet(k){
+  try{ return await buildKpiXlsxBlob(k); }
+  catch(err){ console.warn('Excel library unavailable, using CSV', err); return buildKpiCsvFile(k); }
+}
+
+// ---- PDF ----
+// The chart, drawn again at a fixed size as a picture (with its legend
+// inside), for the PDF.
+function kpiLegendItems(k){
+  const items = [];
+  const comps = KPI_COMPARISONS.filter(c => k.segmentsOnly
+    ? (k.segmentSeries || []).some(sg => sg.series.some(p => kpiHas(p[c.key])))
+    : (k.series || []).some(p => kpiHas(p[c.key])));
+  if(k.segmentsOnly) (k.segmentSeries || []).forEach((sg, i) => items.push({ label: sg.label, st: kpiSeriesStyle(i) }));
+  else {
+    items.push({ label: kpiAllSegments(k).length ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result', st: kpiSeriesStyle(0) });
+    kpiBreakdownLines(k).forEach((sg, n) => items.push({ label: sg.label, st: kpiSeriesStyle(n + 1) }));
+    // Only comparisons drawn on the chart (segment-only charts don't draw them).
+    comps.forEach(c => items.push({ label: c.label, st: { stroke: c.stroke, dash: c.dash, shape: null } }));
+  }
+  return items;
+}
+function kpiChartImage(k, W = 760){
+  const html = k.segmentsOnly ? kpiSegmentChartSVG(k, W) : kpiChartSVG(k, W);
+  if(!html) return Promise.resolve(null);
+  const holder = document.createElement('div');
+  holder.innerHTML = html;
+  const svg = holder.querySelector('svg.kpi-chart');
+  if(!svg) return Promise.resolve(null);
+  svg.querySelectorAll('.seg-hover-ring, .seg-hover-guide').forEach(n => n.remove());
+  const vb = svg.getAttribute('viewBox').split(/\s+/).map(Number);
+  const w = vb[2], h0 = vb[3];
+  // Legend row(s) under the plot.
+  let lx = 10, ly = h0 + 6, legend = '';
+  kpiLegendItems(k).forEach(it => {
+    const tw = 34 + it.label.length * 6.6 + 18;
+    if(lx + tw > w - 10){ lx = 10; ly += 20; }
+    legend += `<g transform="translate(${lx},${ly})"><line x1="0" y1="7" x2="26" y2="7" stroke="${it.st.stroke}" stroke-width="2"${it.st.dash ? ` stroke-dasharray="${it.st.dash}"` : ''}/>${it.st.shape ? kpiMarkerSVG(it.st.shape, 13, 7, 3.6, it.st.stroke) : ''}<text x="32" y="11" font-size="12" fill="#1E1E1E">${escHTML(it.label)}</text></g>`;
+    lx += tw;
+  });
+  const h = ly + 24;
+  svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('width', w); svg.setAttribute('height', h);
+  svg.setAttribute('font-family', 'Helvetica, Arial, sans-serif');
+  svg.insertAdjacentHTML('afterbegin', `<rect x="0" y="0" width="${w}" height="${h}" fill="#ffffff"/>`);
+  svg.insertAdjacentHTML('beforeend', legend);
+  const src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = 2, c = document.createElement('canvas');
+      c.width = w * scale; c.height = h * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      try{ resolve({ data: c.toDataURL('image/png'), w, h }); } catch(e){ resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+// The PDF's built-in fonts only cover Western European characters.
+function pdfSafe(t){
+  return String(t ?? '').replace(/−/g, '-').replace(/[▲▼↑↓→←]/g, '').replace(/ /g, ' ')
+    .replace(/[^\x00-\xFF–—‘’“”•…€™]/g, '');
+}
+async function buildKpiPdfBlob(k){
+  if(!window.jspdf) throw new Error('The PDF library could not be loaded (it comes from cdnjs.cloudflare.com).');
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit:'pt', format:'letter' });
+  pdf.setProperties({ title: k.name, subject: 'City of Durango Performance Dashboard KPI', author: 'City of Durango', creator: 'City of Durango Performance Dashboard' });
+  if(pdf.setLanguage) pdf.setLanguage('en-US');
+  const PW = pdf.internal.pageSize.getWidth(), PH = pdf.internal.pageSize.getHeight(), M = 48, CW = PW - M * 2;
+  let y = M;
+  const ink = [30,30,30], forest = [0,106,83], slate = [75,75,75], line = [217,233,229];
+  const ensure = need => { if(y + need > PH - M - 18){ pdf.addPage(); y = M; return true; } return false; };
+  const para = (text, size = 10, color = ink, style = 'normal', gap = 4) => {
+    if(!text) return;
+    pdf.setFont('helvetica', style); pdf.setFontSize(size); pdf.setTextColor(...color);
+    pdf.splitTextToSize(pdfSafe(text), CW).forEach(l => { ensure(size * 1.3); pdf.text(l, M, y + size); y += size * 1.3; });
+    y += gap;
+  };
+
+  para('CITY OF DURANGO  ·  PERFORMANCE DASHBOARD', 8.5, slate, 'bold', 6);
+  para(k.name, 18, forest, 'bold', 4);
+  const shown = kpiShownUnder(k).map(x => `${x.name} (${x.type})`).join('; ');
+  if(shown) para('Shown under: ' + shown, 9.5, slate, 'normal', 6);
+  para(k.description, 10.5, ink, 'normal', 8);
+  para('Latest: ' + kpiLatestSummary(k), 10.5, ink, 'bold', 10);
+
+  const img = await kpiChartImage(k);
+  if(img){
+    const ih = CW * img.h / img.w;
+    ensure(ih + 6);
+    pdf.addImage(img.data, 'PNG', M, y, CW, ih, undefined, 'FAST');
+    y += ih + 12;
+  }
+
+  // Data table, newest period first.
+  const basis = kpiBasis(k);
+  const rows = kpiExportRows(k);
+  const periodsDesc = [...new Set(rows.map(r => r.period))].reverse();
+  const fmt = v => kpiHas(v) ? fmtKpiComparison(v, k) : '—';
+  const fmtDiff = v => !kpiHas(v) ? '—' : (v > 0 ? '+' : v < 0 ? '-' : '') + fmtKpiComparison(Math.abs(v), k).replace('%', k.unit === 'percent' ? ' pts' : '%');
+  const multi = new Set(rows.map(r => r.measure)).size > 1;
+  const cols = [
+    { h:'Period', w:56, a:'left' },
+    ...(multi ? [{ h:'Measure', w:150, a:'left' }] : []),
+    { h:'Result', w:70, a:'right' }, { h:'Target', w:66, a:'right' }, { h:'Benchmark', w:70, a:'right' },
+    { h:'vs ' + basis, w:64, a:'right' }, { h:'Status', w:0, a:'left' },
+  ];
+  const fixed = cols.reduce((n, c) => n + c.w, 0);
+  cols[cols.length - 1].w = Math.max(60, CW - fixed);
+  const header = () => {
+    pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8.5); pdf.setTextColor(...slate);
+    let x = M;
+    cols.forEach(c => { pdf.text(pdfSafe(c.h), c.a === 'right' ? x + c.w - 8 : x, y + 9, { align: c.a === 'right' ? 'right' : 'left' }); x += c.w; });
+    y += 14; pdf.setDrawColor(...line); pdf.setLineWidth(0.8); pdf.line(M, y, M + CW, y); y += 4;
+  };
+  ensure(40);
+  para('Data', 11, forest, 'bold', 2);
+  header();
+  periodsDesc.forEach(period => rows.filter(r => r.period === period).forEach((r, i) => {
+    if(ensure(16)) header();
+    const cells = [i === 0 ? r.period : '', ...(multi ? [r.measure] : []), fmt(r.value) + (r.note ? '*' : ''), fmt(r.target), fmt(r.benchmark), fmtDiff(r.diff), r.status || '—'];
+    pdf.setFont('helvetica', (r.measure === 'Total' || r.measure === 'Overall') ? 'bold' : 'normal'); pdf.setFontSize(9.5); pdf.setTextColor(...ink);
+    let x = M;
+    cols.forEach((c, j) => {
+      let t = pdfSafe(cells[j]);
+      while(t.length > 3 && pdf.getTextWidth(t) > c.w - 10) t = t.slice(0, -2);
+      if(t !== pdfSafe(cells[j])) t = t.slice(0, -1) + '…';
+      pdf.text(t, c.a === 'right' ? x + c.w - 8 : x, y + 10, { align: c.a === 'right' ? 'right' : 'left' });
+      x += c.w;
+    });
+    y += 15; pdf.setDrawColor(236, 244, 242); pdf.line(M, y - 2, M + CW, y - 2);
+  }));
+  y += 8;
+
+  const notes = [];
+  rows.filter(r => r.note).forEach(r => notes.push(`* ${r.period}${multi ? ', ' + r.measure : ''}: ${r.note}`));
+  if(k.footnote) notes.push(k.footnote);
+  notes.push([k.segmentsOnly ? `Each segment is compared with its own ${basis}` : `Status based on the ${basis}`, k.source ? `Source: ${k.source}` : '', k.frequency ? `Updated ${kpiFreqText(k)}` : '', k.owner ? `Owner: ${k.owner}` : ''].filter(Boolean).join('  ·  '));
+  [...new Set(notes)].forEach(n => para(n, 9, slate, 'normal', 2));
+
+  const pages = pdf.getNumberOfPages();
+  for(let i = 1; i <= pages; i++){
+    pdf.setPage(i);
+    pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8); pdf.setTextColor(...slate);
+    pdf.text(pdfSafe(`Generated ${new Date().toLocaleString('en-US')}  ·  ${location.href.split('#')[0]}`), M, PH - 24);
+    pdf.text(`Page ${i} of ${pages}`, PW - M, PH - 24, { align:'right' });
+  }
+  return { blob: pdf.output('blob'), name: kpiFileBase(k) + '.pdf', type: 'application/pdf' };
+}
+
+// ---- Email ----
+function b64FromBytes(bytes){
+  let bin = '';
+  for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+const b64Utf8 = s => b64FromBytes(new TextEncoder().encode(s));
+const wrap76 = s => s.replace(/.{1,76}/g, '$&\r\n');
+async function buildEmlDraft(subject, body, files){
+  const boundary = '----=_DurangoKPI_' + Math.random().toString(36).slice(2);
+  const parts = [
+    'X-Unsent: 1',
+    'To: ',
+    `Subject: =?UTF-8?B?${b64Utf8(subject)}?=`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    'Content-Transfer-Encoding: base64',
+    '',
+    wrap76(b64Utf8(body)),
+  ];
+  for(const f of files){
+    const bytes = new Uint8Array(await f.blob.arrayBuffer());
+    const encName = `=?UTF-8?B?${b64Utf8(f.name)}?=`;
+    parts.push(`--${boundary}`, `Content-Type: ${f.type}; name="${encName}"`, 'Content-Transfer-Encoding: base64',
+      `Content-Disposition: attachment; filename="${encName}"`, '', wrap76(b64FromBytes(bytes)));
+  }
+  parts.push(`--${boundary}--`, '');
+  return parts.join('\r\n');
+}
+function kpiEmailText(k){
+  const shown = kpiShownUnder(k).map(x => x.name).join(', ');
+  return {
+    subject: `${k.name}: City of Durango Performance Dashboard`,
+    body: `Here is the latest data for "${k.name}"${shown ? ` (${shown})` : ''} from the City of Durango Performance Dashboard.\n\n`
+      + `Latest: ${kpiLatestSummary(k)}\n\n`
+      + `The Excel file has every period's numbers; the PDF has the chart and data table.\n\n`
+      + `Dashboard: ${location.href}\n`,
+  };
+}
+async function shareKpiByEmail(k){
+  const [sheet, pdfFile] = await Promise.all([buildKpiSpreadsheet(k), buildKpiPdfBlob(k)]);
+  const files = [sheet, pdfFile];
+  const { subject, body } = kpiEmailText(k);
+  const shareFiles = files.map(f => new File([f.blob], f.name, { type: f.type }));
+  const canShareFiles = !!(navigator.canShare && navigator.share) && (() => { try{ return navigator.canShare({ files: shareFiles }); } catch(e){ return false; } })();
+  if(canShareFiles){
+    const doShare = async () => {
+      try{ await navigator.share({ files: shareFiles, title: subject, text: body }); }
+      catch(err){
+        if(err.name === 'AbortError') return;
+        if(err.name === 'NotAllowedError'){
+          // Preparing the files took too long for the browser to count it
+          // as part of the click: one more click opens the share sheet.
+          showToast(`Your email for <strong>${escHTML(k.name)}</strong> is ready.`, { action:{ label:'Open email', run: doShare } });
+          return;
+        }
+        await downloadEmlDraft(k, subject, body, files);
+      }
+    };
+    await doShare();
+    return;
+  }
+  await downloadEmlDraft(k, subject, body, files);
+}
+async function downloadEmlDraft(k, subject, body, files){
+  const eml = await buildEmlDraft(subject, body, files);
+  downloadBlob(eml, kpiFileBase(k) + '.eml', 'message/rfc822');
+  showToast(`An email with the Excel file and PDF attached was downloaded. <strong>Open it</strong> to address and send it from Outlook. (In Apple Mail, open it, then choose Message › Send Again.)`, { ms: 14000 });
+}
+
+async function runKpiAction(btn){
+  const k = KPI_BY_ID[btn.dataset.kpiId];
+  if(!k || btn.disabled) return;
+  const action = btn.dataset.kpiAction;
+  const label = btn.innerHTML;
+  btn.disabled = true;
+  btn.setAttribute('aria-busy', 'true');
+  btn.innerHTML = action === 'email' ? 'Preparing…' : 'Creating…';
+  try{
+    if(action === 'xlsx'){
+      const f = await buildKpiSpreadsheet(k);
+      downloadBlob(f.blob, f.name, f.type);
+      if(f.name.endsWith('.csv')) showToast('The Excel library couldn\'t load, so a CSV file was downloaded instead. It opens in Excel.');
+    } else if(action === 'pdf'){
+      const f = await buildKpiPdfBlob(k);
+      downloadBlob(f.blob, f.name, f.type);
+    } else if(action === 'email'){
+      await shareKpiByEmail(k);
+    }
+  } catch(err){
+    console.error(err);
+    showToast('Sorry, that didn\'t work: ' + escHTML(err.message || String(err)));
+  } finally {
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+    btn.innerHTML = label;
+  }
+}
+document.addEventListener('click', e => {
+  const btn = e.target.closest && e.target.closest('[data-kpi-action]');
+  if(btn){ e.preventDefault(); e.stopPropagation(); runKpiAction(btn); }
+});
+document.addEventListener('DOMContentLoaded', () => {
+  const close = document.getElementById('kpi-toast-close');
+  if(close) close.addEventListener('click', hideToast);
+});
+document.addEventListener('keydown', e => { if(e.key === 'Escape') hideToast(); });
+// Start fetching the Excel library as soon as someone reaches for a KPI
+// button, so the file is ready by the time they click.
+['pointerover', 'focusin'].forEach(ev => document.addEventListener(ev, e => {
+  if(e.target.closest && e.target.closest('.kpi-tool')) loadSheetJS().catch(() => {});
+}, { passive:true }));
+
 /* ---------- Guided first-visit tour ----------
    A short, dismissible walkthrough of the page's structure. Shown
    automatically once per browser (tracked via localStorage — this is a
@@ -3929,9 +4504,9 @@ const TOUR_STEPS = [
   { target: '#explorer-bar', title: 'Drill in and find your way back',
     body: 'Opening a Goal or Work System shows its definition, its gauge and what sits under it. The path next to the view switch shows where you are; select any step to go back. It stays pinned at the top as you scroll.' },
   { target: null, title: 'See the numbers behind each KPI',
-    body: 'Open a Key Service or Program to see its KPIs. Each one has a chart; hover or tap a point for the exact value, target and breakdown, or select "View data table" for all of the numbers. Measures that are set up but still waiting on data say "Data not yet entered".' },
+    body: 'Open an Objective to see the Key Services that support it and all of their KPIs at once, or open a Key Service or Program. Each KPI has a chart; hover or tap a point for the exact value, target and breakdown, or select "View data table" for all of the numbers. Measures that are set up but still waiting on data say "Data not yet entered".' },
   { target: '#header-export', title: 'Share and take it with you',
-    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. To share exactly what you are looking at, copy the page address: it updates as you click.' },
+    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. Each KPI also has its own Excel, PDF and Email buttons; Email puts both files into a new message. To share exactly what you are looking at, copy the page address: it updates as you click.' },
 ];
 
 let tourStep = 0;
