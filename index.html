@@ -311,6 +311,7 @@
   @media print{ .kpi-range-btn{display:none;} }
   .kpi-legend{display:flex; gap:16px; font-size:11.5px; color:var(--slate); margin-top:2px;}
   .kpi-legend span{display:inline-flex; align-items:center; gap:6px;}
+  .kpi-legend .kpi-legend-note{font-style:italic;}
   .kpi-table{width:100%; border-collapse:collapse; margin-top:12px; font-size:12.5px;}
   .kpi-table th{font-size:11px; font-weight:700; color:var(--slate); text-align:right; padding:0 0 6px 12px; border-bottom:1px solid var(--line); white-space:nowrap;}
   .kpi-table td{text-align:right; padding:6px 0 6px 12px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; white-space:nowrap;}
@@ -3644,17 +3645,33 @@ function kpiSegmentPeriods(k){
 
 // A segment's Target (dashed) and Benchmark (dotted) lines, drawn in the
 // segment's own color so each one reads with its result line.
-function kpiSegmentComparisonLines(sg, color, k, xOf, y){
-  return KPI_COMPARISONS.map(c => {
+// Which reference lines a segment chart draws: the target (dashed) and
+// the benchmark (dotted), each in its segment's own color. A benchmark that
+// equals the target everywhere is the same line, so it is drawn once; with
+// three or more segments only the line that sets the status is drawn, so
+// the chart stays readable.
+function kpiSegmentComparisonsToDraw(k){
+  const segs = k.segmentSeries || [];
+  const has = key => segs.some(sg => sg.series.some(p => kpiHas(p[key])));
+  const same = segs.every(sg => sg.series.every(p => !kpiHas(p.benchmark) || (kpiHas(p.target) && p.benchmark === p.target)));
+  const basis = kpiBasis(k);
+  return KPI_COMPARISONS.filter(c => has(c.key))
+    .filter(c => !(c.key === 'benchmark' && same && has('target')))
+    .filter(c => segs.length <= 2 || c.key === basis)
+    .map(c => Object.assign({}, c, { label: c.key === 'target' && same && has('benchmark') ? 'Target & benchmark' : c.label }));
+}
+function kpiSegmentComparisonLines(sg, color, k, xOf, y, comps){
+  return (comps || KPI_COMPARISONS).map(c => {
     const pts = sg.series.filter(p => kpiHas(p[c.key]) && xOf(p.period) !== null);
     if(!pts.length) return '';
-    const d = pts.map((p,j) => (j ? 'L' : 'M') + xOf(p.period).toFixed(1) + ',' + y(p[c.key]).toFixed(1)).join(' ');
-    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round" opacity="0.85"/>
-      ${pts.map(p => `<circle cx="${xOf(p.period).toFixed(1)}" cy="${y(p[c.key]).toFixed(1)}" r="2.5" fill="${color}"><title>${escHTML(sg.label)}, ${escHTML(p.period)} ${c.label.toLowerCase()}: ${escHTML(fmtKpiComparison(p[c.key], k))}</title></circle>`).join('')}`;
+    const d = pts.length === 1
+      ? `M${(xOf(pts[0].period) - 10).toFixed(1)},${y(pts[0][c.key]).toFixed(1)} L${(xOf(pts[0].period) + 10).toFixed(1)},${y(pts[0][c.key]).toFixed(1)}`
+      : pts.map((p,j) => (j ? 'L' : 'M') + xOf(p.period).toFixed(1) + ',' + y(p[c.key]).toFixed(1)).join(' ');
+    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.6" stroke-dasharray="${c.dash}" stroke-linecap="round" opacity="0.9"/>`;
   }).join('');
 }
-function kpiComparisonLegendHTML(series, prefix = ''){
-  return KPI_COMPARISONS.filter(c => series.some(sg => sg.series.some(p => kpiHas(p[c.key]))))
+function kpiComparisonLegendHTML(series, prefix = '', comps){
+  return (comps || KPI_COMPARISONS.filter(c => series.some(sg => sg.series.some(p => kpiHas(p[c.key])))))
     .map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="#1E1E1E" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${prefix}${prefix ? c.label.toLowerCase() : c.label}</span>`).join('');
 }
 
@@ -3665,12 +3682,15 @@ function kpiSegmentChartSVG(k, width){
   if(periods.length < 2) return '';
   const W = width || Math.max(240, Math.min(464, window.innerWidth - 104));
   const H = W >= 700 ? 270 : 220, padR = 30, padT = 20, padB = 46;
-  const all = k.segmentSeries.flatMap(sg => sg.series.map(p => p.value));
+  const comps = kpiSegmentComparisonsToDraw(k);
+  const all = k.segmentSeries.flatMap(sg => sg.series.flatMap(p => [p.value, ...comps.map(c => p[c.key]).filter(kpiHas)]));
   const scale = kpiYScale(all, k);
   const padL = Math.max(34, 14 + Math.max(...scale.ticks.map(v => kpiTickLabel(v, k).length)) * 6.2);
   const inset = 22;
   const x = period => padL + inset + periods.indexOf(period) * (W - padL - inset - padR) / (periods.length - 1);
   const y = v => padT + (scale.hi - v) / (scale.hi - scale.lo) * (H - padT - padB);
+  const xOf = period => periods.includes(period) ? x(period) : null;
+  const refLines = k.segmentSeries.map((sg, i) => kpiSegmentComparisonLines(sg, kpiSeriesStyle(i).stroke, k, xOf, y, comps)).join('');
   const lines = k.segmentSeries.map((sg, i) => {
     const st = kpiSeriesStyle(i), color = st.stroke;
     const pts = [...sg.series].sort((a,b) => periods.indexOf(a.period) - periods.indexOf(b.period));
@@ -3693,10 +3713,11 @@ function kpiSegmentChartSVG(k, width){
   return `
     <svg class="kpi-chart" viewBox="0 0 ${W} ${H}" role="group" aria-label="${escHTML(k.name)} by segment over time. Latest: ${escHTML(summary)}." font-family="inherit">
       ${kpiGridSVG(scale, k, y, padL, W - padR + 6)}
-      ${lines}${hovers}${xLabels}
+      ${refLines}${lines}${hovers}${xLabels}
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
       ${k.segmentSeries.map((sg,i) => `<span>${kpiLegendSwatchSVG(kpiSeriesStyle(i))}${escHTML(sg.label)}</span>`).join('')}
+      ${kpiComparisonLegendHTML(k.segmentSeries, '', comps)}${comps.length ? '<span class="kpi-legend-note">(each in its segment\'s color)</span>' : ''}
       <span class="seg-hover-hint">Hover or tap a year to compare each with its target</span>
     </div>`;
 }
@@ -4705,9 +4726,10 @@ function kpiLegendItems(k){
   else {
     items.push({ label: kpiAllSegments(k).length ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result', st: kpiSeriesStyle(0) });
     kpiBreakdownLines(k).forEach((sg, n) => items.push({ label: sg.label, st: kpiSeriesStyle(n + 1) }));
-    // Only comparisons drawn on the chart (segment-only charts don't draw them).
+    // Only comparisons drawn on the chart.
     comps.forEach(c => items.push({ label: c.label, st: { stroke: c.stroke, dash: c.dash, shape: null } }));
   }
+  if(k.segmentsOnly) kpiSegmentComparisonsToDraw(k).forEach(c => items.push({ label: c.label + ' (segment color)', st: { stroke: '#1E1E1E', dash: c.dash, shape: null } }));
   return items;
 }
 function kpiChartImage(k, W = 760){
