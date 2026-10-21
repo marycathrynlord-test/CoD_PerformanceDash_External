@@ -406,6 +406,11 @@
   .obj-ks-title{margin:4px 0 0; font-size:22px; font-weight:800; color:#fff; line-height:1.25;}
   .obj-ks-title:focus{outline:none;}
   .obj-ks-title:focus-visible{outline:2px solid #fff; outline-offset:3px;}
+  .obj-ks-head-right{display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .obj-ks-programs{font:inherit; font-size:13px; font-weight:800; color:#006A53; background:#fff; border:2px solid #fff; border-radius:8px; padding:9px 14px; cursor:pointer;
+    box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .obj-ks-programs:hover{background:#ECF4F2;}
+  .obj-ks-programs:focus-visible{outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 6px #1E1E1E;}
   .obj-ks-gauge{display:inline-flex; align-items:center; gap:8px; background:#fff; color:var(--forest); border-radius:10px; padding:8px 14px;}
   .obj-ks-gauge .gauge-pct{color:#006A53; font-weight:800;}
   .obj-ks-cap{font-size:12px; color:#4B4B4B; font-weight:600;}
@@ -2501,7 +2506,7 @@ function renderWorkSystemCardRow(){
 // shown when the item has none of these.
 function childLabelText(){
   const v = dashboardView;
-  if(v.level === 'root') return v.rootMode === 'goal' ? 'Objectives under this Goal' : 'Key Services';
+  if(v.level === 'root') return v.rootMode === 'goal' ? 'Objectives under this Goal' : '';
   if(v.level === 'objective') return '';
   if(v.level === 'keyservice') return 'Programs';
   return '';
@@ -2519,18 +2524,19 @@ function renderExplorerDetail(){
       childWord = 'Programs';
     }
   }
-  const hasChildren = !!childWord;
-
   let html = '';
   if(dashboardView.rootMode === 'goal' && dashboardView.level === 'objective'){
     html = objectiveDetailHTML(dashboardView.objectiveId);
+  } else if(dashboardView.rootMode === 'workSystem' && dashboardView.level === 'root'){
+    html = workSystemDetailHTML(dashboardView.rootId);
+    childWord = '';
   } else if(item){
     const d = item.details || {};
     const kpis = kpisFor(item.id);
     // Size the KPI chart for the space it will really get: the panel's
     // width, minus the right-hand column of tiles on wide screens (same
     // 900px breakpoint as the CSS), minus the panel and card padding.
-    const sideColumn = (hasChildren && window.innerWidth >= 900) ? 250 : 0;
+    const sideColumn = (childWord && window.innerWidth >= 900) ? 250 : 0;
     const cardInner = document.getElementById('explorer-split').clientWidth - sideColumn - 40 - 42;
     const chartBesideTable = false;
     const chartWidth = Math.max(240, Math.round(cardInner));
@@ -2550,9 +2556,14 @@ function renderExplorerDetail(){
     `.trim();
   }
 
+  const hasChildren = !!childWord;
   box.innerHTML = html;
   box.style.display = html ? '' : 'none';
   wireObjectiveJumpLinks(box);
+  box.querySelectorAll('.obj-ks-programs[data-drill-ks]').forEach(btn => btn.addEventListener('click', () => {
+    dashboardView = { rootMode:'workSystem', level:'keyservice', rootId: dashboardView.rootId, ksId: btn.dataset.drillKs };
+    renderDashboardHeatmap();
+  }));
   const split = document.getElementById('explorer-split');
   split.classList.toggle('has-detail', !!html);
   split.classList.toggle('no-children', !!html && !hasChildren);
@@ -2564,12 +2575,27 @@ function renderExplorerDetail(){
 // below, grouped by Key Service, so the numbers are one click from the
 // Objective. The list at the top jumps to each Key Service's group.
 function objectiveDetailHTML(obId){
+  return keyServicesKpiHTML(keyServicesForObjective(obId), { context:'objective' });
+}
+// Work System View, Work System level: the same layout, for the Work
+// System's own Key Services. Each title bar also opens its Programs.
+function workSystemDetailHTML(wsId){
+  const own = kpisFor(wsId);
+  const cardInner = document.getElementById('explorer-split').clientWidth - 40 - 42;
+  const ownHTML = own.length ? `<section class="obj-ks-section obj-ws-own">
+      <div class="obj-ks-head"><div class="obj-ks-head-text"><div class="obj-ks-type">Work System</div><h3 class="obj-ks-title">Work System KPIs</h3><div class="obj-ks-type obj-ks-kpicount">${plural(own.length, 'KPI')}</div></div></div>
+      ${objectiveKpisHTML(own, Math.max(240, Math.round(cardInner)))}
+    </section>` : '';
+  return keyServicesKpiHTML(keyServicesUnderWorkSystem(wsId), { context:'workSystem' }) + ownHTML;
+}
+function keyServicesKpiHTML(keyServices, { context }){
+  const wsMode = context === 'workSystem';
   // Key Services with results come first, then those with KPIs still
   // waiting on data, then those with no KPIs yet.
   const hasResults = ks => kpisFor(ks.id).some(k => !k.pending);
-  const services = keyServicesForObjective(obId).map((ks, i) => ({ ks, i }))
+  const services = keyServices.map((ks, i) => ({ ks, i }))
     .sort((a, b) => (hasResults(b.ks) - hasResults(a.ks)) || ((kpisFor(b.ks.id).length > 0) - (kpisFor(a.ks.id).length > 0)) || (a.i - b.i)).map(x => x.ks);
-  if(!services.length) return `<p class="ed-desc">No Key Services are aligned to this Objective yet.</p>`;
+  if(!services.length) return `<p class="ed-desc">${wsMode ? 'No Key Services are recorded under this Work System yet.' : 'No Key Services are aligned to this Objective yet.'}</p>`;
   const cardInner = document.getElementById('explorer-split').clientWidth - 40 - 42;
   const chartWidth = Math.max(240, Math.round(cardInner));
   const totalKpis = services.reduce((n, ks) => n + kpisFor(ks.id).length, 0);
@@ -2582,7 +2608,7 @@ function objectiveDetailHTML(obId){
     return `<li><a class="obj-ks-link${n ? '' : ' obj-ks-empty'}" href="#obj-ks-${ks.id}" data-obj-jump="${ks.id}">
         <span class="obj-ks-top">
           <span class="gauge-inline" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span></span>
-          <span class="obj-ks-text"><span class="obj-ks-name">${escHTML(ks.name)}</span>${ws ? `<span class="obj-ks-sub">${escHTML(ws.name)}</span>` : ''}<span class="obj-ks-status">${status}</span></span>
+          <span class="obj-ks-text"><span class="obj-ks-name">${escHTML(ks.name)}</span>${wsMode ? `<span class="obj-ks-sub">${plural(programsUnderKeyService(ks.id).length, 'Program')}</span>` : ws ? `<span class="obj-ks-sub">${escHTML(ws.name)}</span>` : ''}<span class="obj-ks-status">${status}</span></span>
         </span>
         ${n ? `<span class="obj-ks-btn">View ${plural(n, 'KPI')}</span>` : ''}
       </a></li>`;
@@ -2594,11 +2620,14 @@ function objectiveDetailHTML(obId){
     return `<section class="obj-ks-section" id="obj-ks-${ks.id}" aria-labelledby="obj-ks-h-${ks.id}">
         <div class="obj-ks-head">
           <div class="obj-ks-head-text">
-            <div class="obj-ks-type">Key Service${ws ? ' · ' + escHTML(ws.name) : ''}</div>
+            <div class="obj-ks-type">Key Service${ws && !wsMode ? ' · ' + escHTML(ws.name) : ''}</div>
             <h3 class="obj-ks-title" id="obj-ks-h-${ks.id}" tabindex="-1">${escHTML(ks.name)}</h3>
             <div class="obj-ks-type obj-ks-kpicount">${kpis.length ? plural(kpis.length, 'KPI') + ' below' : 'No KPIs yet'}</div>
           </div>
-          <span class="gauge-inline obj-ks-gauge" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 40)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span><span class="obj-ks-cap" aria-hidden="true">${escHTML(gaugeCaption(g))}</span></span>
+          <span class="obj-ks-head-right">
+            <span class="gauge-inline obj-ks-gauge" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 40)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span><span class="obj-ks-cap" aria-hidden="true">${escHTML(gaugeCaption(g))}</span></span>
+            ${wsMode && programsUnderKeyService(ks.id).length ? `<button type="button" class="obj-ks-programs" data-drill-ks="${ks.id}">See its ${plural(programsUnderKeyService(ks.id).length, 'Program')}</button>` : ''}
+          </span>
         </div>
         ${kpis.length ? objectiveKpisHTML(kpis, chartWidth)
           : `<p class="kpi-pending-note">No KPIs have been set up for this Key Service yet.</p>`}
@@ -2610,7 +2639,7 @@ function objectiveDetailHTML(obId){
         <h3 class="obj-ks-overview-title" id="obj-ks-overview-h">Go to a Key Service's KPIs</h3>
         <span class="obj-ks-count">${plural(services.length, 'Key Service')} · ${plural(totalKpis, 'KPI')}</span>
       </div>
-      <p class="obj-ks-overview-intro">These Key Services support this Objective. Select one to jump straight to its numbers, or scroll down to see them all.</p>
+      <p class="obj-ks-overview-intro">${wsMode ? 'These are the Key Services in this Work System.' : 'These Key Services support this Objective.'} Select one to jump straight to its numbers, or scroll down to see them all.</p>
       <ul class="obj-ks-list">${list}</ul>
     </nav>
     ${sections}`;
@@ -2811,17 +2840,9 @@ function renderDashboardHeatmapContent(){
       wireDashboardTiles(grid);
       return;
     }
-    // Work System View: this level is Key Services, each with its gauge.
-    const services = keyServicesUnderWorkSystem(dashboardView.rootId);
-    grid.classList.add('ks-grid');
-    grid.innerHTML = services.map(ks=>gaugeTileHTML({
-      typeLabel:'Key Service', name:ks.name, gauge:gaugeFor(ks.id),
-      subtitle: plural(programsUnderKeyService(ks.id).length, 'Program'),
-      dataAttrs:`data-drill-ks="${ks.id}"`,
-      exportKind:'ks', exportId:ks.id,
-      actionHint:'Open to see its KPIs and Programs',
-    })).join('') || `<div class="heatmap-empty">No Key Services recorded here yet.</div>`;
-    wireDashboardTiles(grid);
+    // Work System View: the Key Services and all of their KPIs are shown
+    // in the detail area above (renderExplorerDetail), like an Objective.
+    grid.innerHTML = '';
     return;
   }
 
