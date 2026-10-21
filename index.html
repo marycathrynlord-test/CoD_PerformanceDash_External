@@ -1200,27 +1200,64 @@
   @keyframes softIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
   #level-summary > *, #explorer-detail > *, #heatmap-grid > *{animation:softIn .35s ease-out both;}
   /* Goal / Work System definition panel tinted in its own color */
-  /* Slim row of Goal / Work System buttons once one is open. */
-  .drill-col.is-compact #goal-mountain-row-wrap, .drill-col.is-compact #worksystem-card-row-wrap{display:none !important;}
-  .root-strip{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:14px 20px 12px; border-bottom:1px solid var(--line);}
-  .root-strip[hidden]{display:none;}
-  .root-strip-label{font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#4B4B4B; margin-right:4px;}
-  .root-chip{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:13px; font-weight:700; color:#1E1E1E;
-    background:#fff; border:1.5px solid #D9E9E5; border-radius:999px; padding:6px 12px 6px 10px; cursor:pointer; line-height:1.2;}
-  .root-chip:hover{border-color:#7FB4A9; background:#FAFCFC;}
-  .root-chip:focus-visible{outline:3px solid #1E1E1E; outline-offset:2px;}
-  .root-chip-dot{width:10px; height:10px; border-radius:50%; background:var(--chip-bg); flex:none;}
-  .root-chip-pct{font-size:12px; font-weight:800; color:#4B4B4B; padding-left:7px; border-left:1px solid #D9E9E5;}
-  .root-chip.is-selected{background:var(--chip-bg); color:var(--chip-fg); border-color:var(--chip-bg); box-shadow:0 2px 6px rgba(0,0,0,.12);}
-  .root-chip.is-selected .root-chip-dot{background:var(--chip-fg);}
-  .root-chip.is-selected .root-chip-pct{color:var(--chip-fg); border-left-color:currentColor;}
-  .root-chip{text-align:left; position:relative;}
-  .root-strip{max-width:100%; min-width:0; box-sizing:border-box;}
   .drill-col{min-width:0;}
-  @media (max-width:640px){
-    .root-strip{flex-wrap:nowrap; overflow-x:auto; padding:10px 12px; gap:6px; scrollbar-width:thin; -webkit-overflow-scrolling:touch;}
-    .root-chip{flex:none; white-space:nowrap; font-size:12.5px; padding:6px 10px 6px 8px;}
-    .root-strip-label{flex:none;}
+  /* ---------- Scoreboard ---------- */
+  .sb{display:flex; flex-direction:column; gap:30px;}
+  .sb-intro{margin:0; font-size:14px; color:#1E1E1E;}
+  .sb-ks{scroll-margin-top:90px;}
+  .sb-ks-head{display:flex; align-items:flex-end; justify-content:space-between; gap:12px 20px; flex-wrap:wrap; padding-bottom:10px; border-bottom:2px solid #006A53;}
+  .sb-ks-name{margin:0; font-size:20px; font-weight:800; color:#006A53; line-height:1.25;}
+  .sb-ks-name:focus{outline:none;} .sb-ks-name:focus-visible{outline:2px solid #1E1E1E; outline-offset:3px;}
+  .sb-ks-sub{font-size:12.5px; color:#4B4B4B; margin-top:2px;}
+  .sb-ks-score{display:inline-flex; align-items:center; gap:8px; color:var(--forest); font-size:13px;}
+  .sb-ks-score span{color:#4B4B4B; font-weight:600;}
+  .sb-ks-score strong{color:#006A53; font-size:15px; font-weight:800; margin-right:2px;}
+  .sb-list{display:flex; flex-direction:column;}
+  .sb-colheads, .sb-row > summary{display:grid; grid-template-columns:minmax(0, 2.3fr) minmax(0, 1.1fr) minmax(0, 1.4fr) 104px 118px 18px; gap:14px; align-items:center;}
+  .sb-colheads{padding:10px 14px 6px; font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#4B4B4B;}
+  .sb-row{border-bottom:1px solid #D9E9E5;}
+  .sb-row > summary{list-style:none; cursor:pointer; padding:12px 14px; border-radius:8px;}
+  .sb-row > summary::-webkit-details-marker{display:none;}
+  .sb-row > summary:hover{background:#ECF4F2;}
+  .sb-row > summary:focus-visible{outline:3px solid #1E1E1E; outline-offset:-1px;}
+  .sb-row[open]{border:1px solid #7FB4A9; border-radius:10px; margin:8px 0; background:#FAFCFC;}
+  .sb-row[open] > summary{background:#ECF4F2; border-radius:10px 10px 0 0;}
+  .sb-name{font-size:14.5px; font-weight:700; color:#1E1E1E; line-height:1.35;}
+  .sb-latest{display:flex; align-items:baseline; gap:6px; flex-wrap:wrap;}
+  .sb-val{font-size:19px; font-weight:800; color:#1E1E1E; font-variant-numeric:tabular-nums; line-height:1.1;}
+  .sb-val-small{font-size:14px;}
+  .sb-period{font-size:11.5px; color:#4B4B4B;}
+  .sb-compare{display:flex; flex-direction:column; gap:1px; font-size:13px;}
+  .sb-cmp{font-weight:700;}
+  .sb-good{color:#006A53;} .sb-bad{color:#8A2E26;}
+  .sb-cmp-of{font-size:11.5px; color:#4B4B4B; text-transform:none;}
+  .sb-muted{color:#4B4B4B; font-size:12.5px; font-style:italic; font-weight:500;}
+  .sb-trend{display:flex; align-items:center;}
+  .sb-spark-none{color:#4B4B4B;}
+  .sb-chev{width:9px; height:9px; border-right:2px solid #006A53; border-bottom:2px solid #006A53; transform:rotate(45deg); margin-top:-4px; transition:transform .15s ease;}
+  .sb-row[open] .sb-chev{transform:rotate(225deg); margin-top:4px;}
+  .sb-detail{padding:4px 16px 16px;}
+  .sb-detail .kpi-block{border:0; padding:0; margin:0; background:none;}
+  .sb-detail .kpi-block > .kpi-head .kpi-name{display:none;}
+  .sb-detail .kpi-block > .kpi-head{justify-content:flex-end;}
+  .sb-detail .kpi-block > .kpi-figure, .sb-detail .kpi-head-right > .status-badge, .sb-detail .kpi-head-right > .kpi-bysegment{display:none;}
+  .sb-detail .kpi-compare{margin-top:0;}
+  .sb-waiting{margin:10px 14px 0; font-size:13px; color:#4B4B4B; line-height:1.55;}
+  .sb-waiting strong{color:#1E1E1E;}
+  .sb-progs{display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; margin:14px 14px 0;}
+  .sb-progs-label{font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#4B4B4B; margin-right:4px;}
+  .sb-prog{display:inline-flex; align-items:center; gap:6px; font:inherit; font-size:12.5px; font-weight:600; color:#1E1E1E; background:#fff; border:1px solid #D9E9E5; border-radius:999px; padding:4px 10px; cursor:pointer;}
+  .sb-prog:hover{border-color:#7FB4A9; background:#ECF4F2;}
+  .sb-prog:focus-visible{outline:3px solid #1E1E1E; outline-offset:2px;}
+  .sb-prog .status-dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .obj-ks-more .sb-ks{margin-top:18px;}
+  @media (prefers-reduced-motion: reduce){ .sb-chev{transition:none;} }
+  @media (max-width:760px){
+    .sb-colheads{display:none;}
+    .sb-row > summary{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"name chev" "latest status" "compare trend"; gap:6px 12px; padding:12px 8px;}
+    .sb-name{grid-area:name;} .sb-latest{grid-area:latest;} .sb-compare{grid-area:compare;} .sb-trend{grid-area:trend; justify-content:flex-end;} .sb-status{grid-area:status; justify-self:end;} .sb-chev{grid-area:chev; justify-self:end;}
+    .sb-detail{padding:4px 8px 12px;}
+    .sb-waiting, .sb-progs{margin-left:8px; margin-right:8px;}
   }
   .level-summary.ls-tinted{
     background:linear-gradient(90deg, var(--ls-tint-1) 0%, var(--ls-tint-2) 100%);
@@ -1430,7 +1467,6 @@
     <div id="selected-goal-banner"></div>
 
     <div class="drill-col">
-      <nav class="root-strip" id="root-strip" aria-label="Switch Goal or Work System" hidden></nav>
       <div class="heatmap-body" id="goal-mountain-row-wrap">
         <div class="heatmap-grid mountain-grid" id="goal-mountain-row"></div>
       </div>
@@ -2467,37 +2503,6 @@ function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false
 // greying out every one except whichever Goal is currently selected —
 // so the row itself IS the "you are here" indicator, rather than
 // replacing the row with a different view when you drill in.
-// Once a Goal or Work System is open, the big row of tiles shrinks to a
-// slim row of buttons, one per Goal or Work System, so the data starts
-// near the top of the screen. "All Goals" in the breadcrumb brings the
-// big tiles back.
-function renderRootStrip(){
-  const strip = document.getElementById('root-strip');
-  const col = strip && strip.closest('.drill-col');
-  if(!strip) return;
-  const compact = dashboardView.level !== 'roots';
-  if(col) col.classList.toggle('is-compact', compact);
-  strip.hidden = !compact;
-  if(!compact){ strip.innerHTML = ''; return; }
-  const goalMode = dashboardView.rootMode === 'goal';
-  const roots = goalMode ? sortGoalsCanonical(DATA.goals) : DATA.workSystems;
-  strip.setAttribute('aria-label', goalMode ? 'Switch Goal' : 'Switch Work System');
-  strip.innerHTML = `<span class="root-strip-label">${goalMode ? 'Goals' : 'Work Systems'}</span>` + roots.map(r => {
-    const g = gaugeFor(r.id);
-    const sel = r.id === dashboardView.rootId;
-    const color = goalMode && r.color ? readableTileColors(r.color) : { bg:'#006A53', fg:'#fff' };
-    const pct = g.withResult ? goalPctText(g) : '—';
-    return `<button type="button" class="root-chip${sel ? ' is-selected' : ''}" data-drill-root="${r.id}"
-        style="--chip-bg:${color.bg}; --chip-fg:${color.fg};"${sel ? ' aria-current="true"' : ''}>
-        <span class="root-chip-dot" aria-hidden="true"></span><span class="root-chip-name">${escHTML(r.name)}</span><span class="root-chip-pct" aria-hidden="true">${pct}</span><span class="sr-only">. ${escHTML(gaugeSpoken(g))}</span>
-      </button>`;
-  }).join('');
-  wireDashboardTiles(strip);
-  // Phones: the row scrolls sideways; bring the open one into view.
-  const sel = strip.querySelector('.is-selected');
-  if(sel && strip.scrollWidth > strip.clientWidth) strip.scrollLeft = Math.max(0, sel.offsetLeft - 80);
-}
-
 function renderGoalMountainRow(){
   const container = document.getElementById('goal-mountain-row');
   if(!container) return;
@@ -2530,8 +2535,7 @@ function renderSelectedGoalBanner(){
   const container = document.getElementById('selected-goal-banner');
   if(!container) return;
 
-  // Replaced by the slim row of Goal buttons (renderRootStrip).
-  if(true){
+  if(dashboardView.rootMode !== 'goal' || dashboardView.level === 'roots'){
     container.innerHTML = '';
     container.classList.remove('has-selection');
     return;
@@ -2684,7 +2688,7 @@ function renderExplorerDetail(){
   box.innerHTML = html;
   box.style.display = html ? '' : 'none';
   wireObjectiveJumpLinks(box);
-  box.querySelectorAll('.obj-ks-progs').forEach(col => { wireDashboardTiles(col); wireStatusTooltips(col); });
+  box.querySelectorAll('.sb-progs').forEach(col => wireDashboardTiles(col));
   const split = document.getElementById('explorer-split');
   split.classList.toggle('has-detail', !!html);
   split.classList.toggle('no-children', !!html && !hasChildren);
@@ -2709,102 +2713,112 @@ function workSystemDetailHTML(wsId){
     </section>` : '';
   return keyServicesKpiHTML(keyServicesUnderWorkSystem(wsId), { context:'workSystem' }) + ownHTML;
 }
-// A Key Service's Programs as status tiles, for the side column in the
-// Work System View. Each tile opens that Program's details.
-function programsColumnHTML(ks){
+// ---------- Scoreboard: Key Services and their KPIs ----------
+// Each Key Service is a plain heading with its gauge, then one row per
+// KPI: latest value, how it compares with its target, a small trend line
+// and its status. Selecting a row opens the full chart, cards and table
+// right there. KPIs still waiting on data are named in one line, and
+// Key Services with no KPIs yet are listed at the bottom.
+function sbSparkSVG(k){
+  const W = 96, H = 28, pad = 3;
+  const lines = k.segmentsOnly
+    ? (k.segmentSeries || []).map((sg, i) => ({ vals: sg.series.slice(-10).map(p => p.value), st: kpiSeriesStyle(i) }))
+    : [{ vals: (k.series || []).slice(-10).map(p => p.value), st: kpiSeriesStyle(0) }];
+  const all = lines.flatMap(l => l.vals);
+  if(!all.length || lines.every(l => l.vals.length < 2)) return '<span class="sb-spark-none">—</span>';
+  const lo = Math.min(...all), hi = Math.max(...all), span = hi - lo || 1;
+  const y = v => (H - pad - (v - lo) / span * (H - pad * 2)).toFixed(1);
+  return `<svg class="sb-spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true">${lines.map(l => {
+    const n = l.vals.length; if(n < 2) return '';
+    const x = i => (pad + i * (W - pad * 2) / (n - 1)).toFixed(1);
+    return `<polyline points="${l.vals.map((v, i) => x(i) + ',' + y(v)).join(' ')}" fill="none" stroke="${l.st.stroke}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(n - 1)}" cy="${y(l.vals[n - 1])}" r="2.6" fill="${l.st.stroke}"/>`;
+  }).join('')}</svg>`;
+}
+function sbRowHTML(k, chartWidth){
+  let latestHTML, compareHTML, statusHTML;
+  if(k.segmentsOnly){
+    const segs = (k.segmentSeries || []).map(sg => ({ label: sg.label, p: sg.series[sg.series.length - 1] })).filter(x => x.p);
+    const period = segs.length ? segs[0].p.period : '';
+    latestHTML = `<span class="sb-val sb-val-small">${plural(segs.length, 'segment')}</span><span class="sb-period">${escHTML(period)}</span>`;
+    const met = segs.filter(x => x.p.status === 'on-track' || x.p.status === 'at-risk').length;
+    const rated = segs.filter(x => x.p.status).length;
+    compareHTML = rated ? `<span class="sb-cmp">${met} of ${rated} on target</span>` : '<span class="sb-cmp sb-muted">No targets set</span>';
+    const worst = rated ? rollupStatus(segs.filter(x => x.p.status).map(x => x.p.status)) : null;
+    statusHTML = worst ? statusBadgeHTML(worst) : '<span class="sb-muted">No status</span>';
+  } else {
+    const p = k.series[k.series.length - 1];
+    const basis = kpiBasis(k);
+    const d = kpiDiff(p.value, p[basis], k);
+    latestHTML = `<span class="sb-val">${escHTML(fmtKpiValue(p.value, k))}</span><span class="sb-period">${escHTML(p.period)}</span>`;
+    compareHTML = d
+      ? `<span class="sb-cmp ${d.good ? 'sb-good' : 'sb-bad'}">${escHTML(d.phrase)}</span><span class="sb-cmp-of">${basis} ${escHTML(fmtKpiComparison(p[basis], k))}</span>`
+      : `<span class="sb-cmp sb-muted">No ${basis} set</span>`;
+    statusHTML = k.status ? statusBadgeHTML(k.status) : '<span class="sb-muted">No status</span>';
+  }
+  return `<details class="sb-row" data-kpi-row="${escHTML(k.id)}">
+      <summary>
+        <span class="sb-name">${escHTML(k.name)}</span>
+        <span class="sb-latest">${latestHTML}</span>
+        <span class="sb-compare">${compareHTML}</span>
+        <span class="sb-trend">${sbSparkSVG(k)}</span>
+        <span class="sb-status">${statusHTML}</span>
+        <span class="sb-chev" aria-hidden="true"></span>
+      </summary>
+      <div class="sb-detail">${kpiBlockHTML(k, chartWidth, false)}</div>
+    </details>`;
+}
+function sbProgramsHTML(ks){
   const progs = programsUnderKeyService(ks.id)
     .sort((a, b) => goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
-  return `<aside class="obj-ks-progs" aria-label="Programs in ${escHTML(ks.name)}">
-      <h4 class="obj-ks-progs-label">Programs <span>${progs.length}</span></h4>
-      ${progs.length ? `<div class="heatmap-grid obj-ks-progs-grid">${progs.map(p => heatTileHTML({
-        typeLabel:'Program', name:p.name, subtitle:kpiCountLabel(p.id), status:programStatus(p), trendItem:p,
-        dataAttrs:`data-open-detail="program" data-id="${p.id}"`, exportKind:'program', exportId:p.id,
-      })).join('')}</div>` : `<p class="obj-ks-progs-none">No Programs recorded yet.</p>`}
-    </aside>`;
+  if(!progs.length) return '';
+  return `<div class="sb-progs"><span class="sb-progs-label">Programs</span>${progs.map(p => {
+    const st = programStatus(p);
+    return `<button type="button" class="sb-prog" data-open-detail="program" data-id="${p.id}"><span class="status-dot" style="background:${statusDotColor(st)}" aria-hidden="true"></span>${escHTML(p.name)}<span class="sr-only">, ${escHTML(STATUS_META[st].label)}</span></button>`;
+  }).join('')}</div>`;
 }
 function keyServicesKpiHTML(keyServices, { context }){
   const wsMode = context === 'workSystem';
-  // Key Services with results come first, then those with KPIs still
-  // waiting on data, then those with no KPIs yet.
   const hasResults = ks => kpisFor(ks.id).some(k => !k.pending);
   const services = keyServices.map((ks, i) => ({ ks, i }))
     .sort((a, b) => (hasResults(b.ks) - hasResults(a.ks)) || ((kpisFor(b.ks.id).length > 0) - (kpisFor(a.ks.id).length > 0)) || (a.i - b.i)).map(x => x.ks);
   if(!services.length) return `<p class="ed-desc">${wsMode ? 'No Key Services are recorded under this Work System yet.' : 'No Key Services are aligned to this Objective yet.'}</p>`;
-  // Work System View: Program tiles sit in a 250px column beside the
-  // KPIs on wide screens, so the charts get that much less width.
-  const sideCol = wsMode && window.innerWidth >= 900 ? 250 + 20 : 0;
-  const cardInner = document.getElementById('explorer-split').clientWidth - 40 - 42 - sideCol;
-  const chartWidth = Math.max(240, Math.round(cardInner));
-  const totalKpis = services.reduce((n, ks) => n + kpisFor(ks.id).length, 0);
-  // Key Services with no KPIs yet are kept out of the way: listed under a
-  // "Show" toggle at the bottom (in the Work System View they still carry
-  // their Programs there).
+  const chartWidth = Math.max(240, Math.round(document.getElementById('explorer-split').clientWidth - 40 - 2 - 32));
   const withKpis = services.filter(ks => kpisFor(ks.id).length);
   const empty = services.filter(ks => !kpisFor(ks.id).length);
-  const list = withKpis.map(ks => {
-    const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
-    const g = gaugeFor(ks.id);
-    const n = kpisFor(ks.id).length;
-    const live = kpisFor(ks.id).filter(k => !k.pending).length;
-    const status = !n ? 'No KPIs set up yet' : live === n ? 'All with results' : live ? `${live} of ${n} with results` : 'Waiting on data';
-    return `<li><a class="obj-ks-link${n ? '' : ' obj-ks-empty'}" href="#obj-ks-${ks.id}" data-obj-jump="${ks.id}">
-        <span class="obj-ks-top">
-          <span class="gauge-inline" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span></span>
-          <span class="obj-ks-text"><span class="obj-ks-name">${escHTML(ks.name)}</span>${wsMode ? `<span class="obj-ks-sub">${plural(programsUnderKeyService(ks.id).length, 'Program')}</span>` : ws ? `<span class="obj-ks-sub">${escHTML(ws.name)}</span>` : ''}<span class="obj-ks-status">${status}</span></span>
-        </span>
-        ${n ? `<span class="obj-ks-btn">View ${plural(n, 'KPI')}</span>` : ''}
-      </a></li>`;
-  }).join('');
+  const totalLive = withKpis.reduce((n, ks) => n + kpisFor(ks.id).filter(k => !k.pending).length, 0);
+
   const sectionHTML = ks => {
     const kpis = kpisFor(ks.id);
+    const live = kpis.filter(k => !k.pending), waiting = kpis.filter(k => k.pending);
     const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
     const g = gaugeFor(ks.id);
-    const kpisHTML = kpis.length ? objectiveKpisHTML(kpis, chartWidth)
-      : `<p class="kpi-pending-note">No KPIs have been set up for this Key Service yet.</p>`;
-    return `<section class="obj-ks-section" id="obj-ks-${ks.id}" aria-labelledby="obj-ks-h-${ks.id}">
-        <div class="obj-ks-head">
-          <div class="obj-ks-head-text">
-            <div class="obj-ks-type">Key Service${ws && !wsMode ? ' · ' + escHTML(ws.name) : ''}</div>
-            <h3 class="obj-ks-title" id="obj-ks-h-${ks.id}" tabindex="-1">${escHTML(ks.name)}</h3>
-            <div class="obj-ks-type obj-ks-kpicount">${kpis.length ? plural(kpis.length, 'KPI') + ' below' : 'No KPIs yet'}</div>
+    return `<section class="sb-ks" id="obj-ks-${ks.id}" aria-labelledby="obj-ks-h-${ks.id}">
+        <div class="sb-ks-head">
+          <div>
+            <h3 class="sb-ks-name obj-ks-title" id="obj-ks-h-${ks.id}" tabindex="-1">${escHTML(ks.name)}</h3>
+            ${!wsMode && ws ? `<div class="sb-ks-sub">${escHTML(ws.name)}</div>` : ''}
           </div>
-          <span class="obj-ks-head-right">
-            <span class="gauge-inline obj-ks-gauge" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 40)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span><span class="obj-ks-cap" aria-hidden="true">${escHTML(gaugeCaption(g))}</span></span>
-          </span>
+          <span class="sb-ks-score${g.withResult ? '' : ' gauge-empty'}" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span aria-hidden="true"><strong>${gaugePctText(g)}</strong> ${escHTML(gaugeCaption(g))}</span></span>
         </div>
-        ${wsMode ? `<div class="obj-ks-body">
-          <div class="obj-ks-main">${kpisHTML}</div>
-          ${programsColumnHTML(ks)}
-        </div>` : kpisHTML}
+        ${live.length ? `<div class="sb-list">
+          <div class="sb-colheads" aria-hidden="true"><span>KPI</span><span>Latest</span><span>Compared with target</span><span>Trend</span><span>Status</span><span></span></div>
+          ${live.map(k => sbRowHTML(k, chartWidth)).join('')}
+        </div>` : ''}
+        ${waiting.length ? `<p class="sb-waiting"><strong>${live.length ? 'Also measured, waiting on data:' : 'Waiting on data:'}</strong> ${waiting.map(k => `<span data-kpi-block="${escHTML(k.id)}">${escHTML(k.name)}</span>`).join(', ')}</p>` : ''}
+        ${!kpis.length ? '<p class="sb-waiting">No KPIs set up yet.</p>' : ''}
+        ${wsMode ? sbProgramsHTML(ks) : ''}
       </section>`;
   };
-  const emptyListHTML = `<ul class="obj-ks-more-list">${empty.map(ks => {
-      const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
-      return `<li><strong>${escHTML(ks.name)}</strong>${ws ? ` <span>${escHTML(ws.name)}</span>` : ''}</li>`;
-    }).join('')}</ul>`;
-  const emptyContent = wsMode ? empty.map(sectionHTML).join('') : emptyListHTML;
   const moreWord = plural(empty.length, 'Key Service');
-  const emptyBlock = !empty.length ? ''
-    : withKpis.length ? `<details class="obj-ks-more" id="obj-ks-more">
-        <summary><span class="when-closed">Show</span><span class="when-open">Hide</span> ${moreWord} without KPIs yet${wsMode ? ' (and their Programs)' : ''} <span class="chev" aria-hidden="true">▾</span></summary>
-        <div class="obj-ks-more-body">${emptyContent}</div>
-      </details>`
-    : (wsMode ? emptyContent : '');
-  const intro = withKpis.length
-    ? `${wsMode ? 'Key Services in this Work System.' : 'Key Services that support this Objective.'} Select one to jump straight to its numbers, or scroll down to see them all.`
-    : `None of the ${moreWord} ${wsMode ? 'in this Work System' : 'supporting this Objective'} ${empty.length === 1 ? 'has' : 'have'} KPIs set up yet.`;
-  return `
-    <nav class="obj-ks-overview" aria-labelledby="obj-ks-overview-h">
-      <div class="obj-ks-overview-head">
-        <h3 class="obj-ks-overview-title" id="obj-ks-overview-h">${withKpis.length ? "Go to a Key Service's KPIs" : 'Key Services'}</h3>
-        <span class="obj-ks-count">${withKpis.length ? `${plural(withKpis.length, 'Key Service')} · ${plural(totalKpis, 'KPI')}` : plural(empty.length, 'Key Service')}</span>
-      </div>
-      <p class="obj-ks-overview-intro">${intro}</p>
-      ${withKpis.length ? `<ul class="obj-ks-list">${list}</ul>` : (!wsMode ? emptyListHTML : '')}
-      ${withKpis.length && empty.length ? `<button type="button" class="obj-ks-more-link" data-open-more>+ ${moreWord} without KPIs yet</button>` : ''}
-    </nav>
-    ${withKpis.map(sectionHTML).join('')}
-    ${emptyBlock}`;
+  const emptyBlock = !empty.length ? '' : withKpis.length
+    ? `<details class="obj-ks-more" id="obj-ks-more"><summary><span class="when-closed">Show</span><span class="when-open">Hide</span> ${moreWord} without KPIs yet${wsMode ? ' (and their Programs)' : ''} <span class="chev" aria-hidden="true">▾</span></summary>
+        <div class="obj-ks-more-body">${empty.map(sectionHTML).join('')}</div></details>`
+    : empty.map(sectionHTML).join('');
+  return `<div class="sb">
+      ${withKpis.length ? `<p class="sb-intro">${plural(withKpis.length, 'Key Service')} with ${plural(totalLive, 'KPI')} reporting. <strong>Select a KPI</strong> to see its chart and all of its numbers.</p>` : ''}
+      ${withKpis.map(sectionHTML).join('')}
+      ${emptyBlock}
+    </div>`;
 }
 // KPIs with results get their full card; measures still waiting on data
 // are listed together in one short box instead of a card each.
@@ -2968,7 +2982,6 @@ function renderDashboardHeatmapContent(){
   renderDashboardBreadcrumb();
   renderLevelSummary();
   renderExplorerDetail();
-  renderRootStrip();
   renderGoalMountainRow();
   renderSelectedGoalBanner();
   renderWorkSystemCardRow();
@@ -4159,7 +4172,7 @@ async function captureHeatmapLevel(view, sectionTitle, gridId='heatmap-grid'){
       // Below the overview, leave out the repeated row of Goal / Work System
       // tiles so the page's own content prints larger.
       if(gridId === 'heatmap-grid' && view.level !== 'roots'){
-        ['goal-mountain-row-wrap','worksystem-card-row-wrap','root-strip'].forEach(id => { const n = doc.getElementById(id); if(n) n.style.display = 'none'; });
+        ['goal-mountain-row-wrap','worksystem-card-row-wrap'].forEach(id => { const n = doc.getElementById(id); if(n) n.style.display = 'none'; });
       }
       if(el && el.style) el.style.maxWidth = '1240px';
       const st = doc.createElement('style');
@@ -4956,8 +4969,8 @@ const TOUR_STEPS = [
     body: 'Green is On Track, gold is At Risk and red is Off Track. An empty black circle means No Data yet, and the clock marks a result that hasn\'t been updated in 3 months or more. Hover a color for a quick meaning, or select Definitions for the full key.' },
   { target: '#root-mode-toggle', title: 'Two ways to explore',
     body: 'Strategic Plan Goal View follows the City\'s goals: Goals → Objectives → Key Services. Work System View follows how the City is organized: Work Systems → Key Services → Programs. Switch anytime.' },
-  { target: () => dashboardView.level !== 'roots' ? '#root-strip' : dashboardView.rootMode === 'workSystem' ? '#worksystem-card-row-wrap' : '#goal-mountain-row-wrap', title: 'Gauges show progress',
-    body: 'Each gauge shows how many KPIs are on target. A dash means results are still being collected. Select any tile to open it; once one is open, the tiles shrink to a row of buttons so you can switch quickly.' },
+  { target: () => dashboardView.rootMode === 'workSystem' ? '#worksystem-card-row-wrap' : '#goal-mountain-row-wrap', title: 'Gauges show progress',
+    body: 'Each gauge shows how many KPIs are on target. A dash means results are still being collected. Select any tile to open it.' },
   { target: '#dash-search', title: 'Search for anything',
     body: 'Type part of a name, like "uptime" or "library", to jump straight to a KPI, Key Service, Program, Goal or Objective.' },
   { target: '#explorer-bar', title: 'Drill in and find your way back',
