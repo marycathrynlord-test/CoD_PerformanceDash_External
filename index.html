@@ -4413,30 +4413,48 @@ function kpiEmailText(k){
       + `Dashboard: ${location.href}\n`,
   };
 }
+// Files for the Email button are built ahead of time (when the pointer or
+// keyboard reaches the button), so the share menu can open within the
+// click itself; browsers refuse to open it once a click is a few seconds old.
+const kpiEmailFiles = {};
+function prepareKpiEmailFiles(k){
+  if(!kpiEmailFiles[k.id]) kpiEmailFiles[k.id] = Promise.all([buildKpiSpreadsheet(k), buildKpiPdfBlob(k)])
+    .catch(err => { delete kpiEmailFiles[k.id]; throw err; });
+  return kpiEmailFiles[k.id];
+}
+// Use the computer's share menu only where it accepts Excel files
+// (Safari on Mac, iPhone and iPad). Chrome and Edge refuse .xlsx files
+// there, so they get the email draft file instead.
+function shareMenuTakesExcel(){
+  const ua = navigator.userAgent;
+  const safari = /Safari\//.test(ua) && !/Chrome\/|Chromium\/|CriOS\/|Edg\/|EdgiOS\/|FxiOS\/|Firefox\//.test(ua);
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return !!(navigator.share && navigator.canShare) && (safari || ios);
+}
 async function shareKpiByEmail(k){
-  const [sheet, pdfFile] = await Promise.all([buildKpiSpreadsheet(k), buildKpiPdfBlob(k)]);
-  const files = [sheet, pdfFile];
+  const files = await prepareKpiEmailFiles(k);
   const { subject, body } = kpiEmailText(k);
+  if(!shareMenuTakesExcel()) return downloadEmlDraft(k, subject, body, files);
   const shareFiles = files.map(f => new File([f.blob], f.name, { type: f.type }));
-  const canShareFiles = !!(navigator.canShare && navigator.share) && (() => { try{ return navigator.canShare({ files: shareFiles }); } catch(e){ return false; } })();
-  if(canShareFiles){
-    const doShare = async () => {
-      try{ await navigator.share({ files: shareFiles, title: subject, text: body }); }
-      catch(err){
-        if(err.name === 'AbortError') return;
-        if(err.name === 'NotAllowedError'){
-          // Preparing the files took too long for the browser to count it
-          // as part of the click: one more click opens the share sheet.
-          showToast(`Your email for <strong>${escHTML(k.name)}</strong> is ready.`, { action:{ label:'Open email', run: doShare } });
-          return;
-        }
-        await downloadEmlDraft(k, subject, body, files);
+  let ok = false;
+  try{ ok = navigator.canShare({ files: shareFiles }); } catch(e){ ok = false; }
+  if(!ok) return downloadEmlDraft(k, subject, body, files);
+  const attempt = async (isRetry) => {
+    try{ await navigator.share({ files: shareFiles, title: subject, text: body }); }
+    catch(err){
+      if(err.name === 'AbortError') return; // the person closed the share menu
+      const clickStillFresh = navigator.userActivation ? navigator.userActivation.isActive : false;
+      if(err.name === 'NotAllowedError' && !isRetry && !clickStillFresh){
+        // The click had gone stale while the files were made: one more
+        // click opens the share menu.
+        showToast(`Your email for <strong>${escHTML(k.name)}</strong> is ready.`, { action:{ label:'Open email', run: () => attempt(true) } });
+        return;
       }
-    };
-    await doShare();
-    return;
-  }
-  await downloadEmlDraft(k, subject, body, files);
+      // Any other refusal: fall back to the email draft file.
+      await downloadEmlDraft(k, subject, body, files);
+    }
+  };
+  await attempt(false);
 }
 async function downloadEmlDraft(k, subject, body, files){
   const eml = await buildEmlDraft(subject, body, files);
@@ -4484,7 +4502,11 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') hideToast(); 
 // Start fetching the Excel library as soon as someone reaches for a KPI
 // button, so the file is ready by the time they click.
 ['pointerover', 'focusin'].forEach(ev => document.addEventListener(ev, e => {
-  if(e.target.closest && e.target.closest('.kpi-tool')) loadSheetJS().catch(() => {});
+  const tool = e.target.closest && e.target.closest('.kpi-tool');
+  if(!tool) return;
+  loadSheetJS().catch(() => {});
+  const k = tool.dataset.kpiAction === 'email' ? KPI_BY_ID[tool.dataset.kpiId] : null;
+  if(k) prepareKpiEmailFiles(k).catch(() => {});
 }, { passive:true }));
 
 /* ---------- Guided first-visit tour ----------
