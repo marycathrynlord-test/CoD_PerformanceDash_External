@@ -190,6 +190,10 @@ def tidy(n):
     return int(n) if n == int(n) else n
 
 
+# Worst first: used to give a segment-only KPI its overall status.
+STATUS_RANK = {"off-track": 0, "at-risk": 1, "on-track": 2}
+
+
 def status_for(value, target, higher_is_better, on_within, off_beyond):
     if value is None or target is None or target == 0:
         return None
@@ -472,9 +476,15 @@ def build():
                 if entry["compareTo"] not in latest:
                     notes.append(f'{entry["id"]} / {label}: no {entry["compareTo"]} for {latest["period"]}, so no status for that segment.')
                 segment_series.append({"label": label, "series": series})
-            notes.append(f'{entry["id"]}: no headline rows (blank Segment), so it is shown by segment ({", ".join(order)}) with no overall status.')
+            # Overall status = the lowest of its segments' latest statuses, so a
+            # miss in any one segment shows. If any segment has no target (no
+            # status), the KPI has no overall status either.
+            seg_status = [sg["series"][-1].get("status") for sg in segment_series]
+            overall = min(seg_status, key=lambda st: STATUS_RANK[st]) if seg_status and all(seg_status) else None
+            notes.append(f'{entry["id"]}: no headline rows (blank Segment), so it is shown by segment ({", ".join(order)})'
+                         + (f'; overall status is the lowest segment: {overall}.' if overall else ' with no overall status (a segment has no target).'))
             entry = {k: v for k, v in entry.items() if v != "" and v != []}
-            entry["status"] = None
+            entry["status"] = overall
             entry["segmentsOnly"] = True
             entry["onTrackWithinPct"] = tidy(on_within)
             entry["offTrackBeyondPct"] = tidy(off_beyond)

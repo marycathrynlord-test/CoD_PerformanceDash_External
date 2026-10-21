@@ -1425,7 +1425,7 @@
             <span class="ref-icon dot" style="background:var(--forest);"></span>
             <div>
               <div class="ref-term">Gauge</div>
-              <div class="ref-desc">The share of Key Service KPIs meeting their target (On Track or At Risk). Shown for Goals, Objectives, Work Systems and Key Services. KPIs that don't have a result yet aren't counted. Programs keep their status color.</div>
+              <div class="ref-desc">The share of Key Service KPIs meeting their target (On Track or At Risk). Shown for Goals, Objectives, Work Systems and Key Services. KPIs that don't have a result yet aren't counted. Programs show a status color instead: On Track when all their KPIs are On Track, Off Track when more than half are Off Track, and At Risk in between. A KPI measured in parts (such as 15 and 20 seconds) takes the status of its lowest part.</div>
             </div>
           </div>
           <div class="ref-row">
@@ -1630,12 +1630,33 @@ function kpiCountLabel(id){
   return n ? `${n} KPI${n === 1 ? '' : 's'}` : '';
 }
 
-// A KPI marked "Drives Status = Yes" in the spreadsheet sets the status
-// of its Key Service / Program (the worst one wins if there are several).
-// Otherwise the hand-entered status in data.json is used.
+// KPIs marked "Drives Status = Yes" in the spreadsheet set a Program's
+// status, judged on the Program as a whole (like the gauges elsewhere):
+//   On Track  - every one of them is On Track
+//   Off Track - more than half of them are Off Track
+//   At Risk   - anything in between (some At Risk or Off Track, but most
+//               still meeting target)
+// A Program with a single KPI simply takes that KPI's status. Without any
+// such KPI the hand-entered status in data.json is used.
+function programRollupStatus(statuses){
+  const known = statuses.filter(s => s && s !== 'no-data');
+  if(!known.length) return null;
+  if(known.every(s => s === 'on-track')) return 'on-track';
+  if(known.filter(s => s === 'off-track').length > known.length / 2) return 'off-track';
+  return 'at-risk';
+}
+function statusDrivingKpis(id){ return kpisFor(id).filter(k => k.drivesStatus && k.status); }
 function kpiDrivenStatus(id){
-  const driving = kpisFor(id).filter(k => k.drivesStatus && k.status);
-  return driving.length ? rollupStatus(driving.map(k => k.status)) : null;
+  const driving = statusDrivingKpis(id);
+  return driving.length ? programRollupStatus(driving.map(k => k.status)) : null;
+}
+// "2 of 3 KPIs on target" for a Program tile (On Track and At Risk count
+// as on target, as in the gauges); otherwise just the number of KPIs.
+function programKpiLabel(id){
+  const driving = statusDrivingKpis(id);
+  if(driving.length < 2) return kpiCountLabel(id);
+  const met = driving.filter(k => k.status === 'on-track' || k.status === 'at-risk').length;
+  return `${met} of ${plural(driving.length, 'KPI')} on target`;
 }
 
 /* ---------- Gauges ----------
@@ -2743,8 +2764,8 @@ function sbRowHTML(k, chartWidth){
     const met = segs.filter(x => x.p.status === 'on-track' || x.p.status === 'at-risk').length;
     const rated = segs.filter(x => x.p.status).length;
     compareHTML = rated ? `<span class="sb-cmp">${met} of ${rated} on target</span>` : '<span class="sb-cmp sb-muted">No targets set</span>';
-    const worst = rated ? rollupStatus(segs.filter(x => x.p.status).map(x => x.p.status)) : null;
-    statusHTML = worst ? statusBadgeHTML(worst) : '<span class="sb-muted">No status</span>';
+    // Overall status = the lowest segment (set by build_kpi_data.py).
+    statusHTML = k.status ? statusBadgeHTML(k.status) : '<span class="sb-muted">No status</span>';
   } else {
     const p = k.series[k.series.length - 1];
     const basis = kpiBasis(k);
@@ -2773,7 +2794,8 @@ function sbProgramsHTML(ks){
   if(!progs.length) return '';
   return `<div class="sb-progs"><span class="sb-progs-label">Programs</span>${progs.map(p => {
     const st = programStatus(p);
-    return `<button type="button" class="sb-prog" data-open-detail="program" data-id="${p.id}"><span class="status-dot" style="background:${statusDotColor(st)}" aria-hidden="true"></span>${escHTML(p.name)}<span class="sr-only">, ${escHTML(STATUS_META[st].label)}</span></button>`;
+    const lbl = programKpiLabel(p.id);
+    return `<button type="button" class="sb-prog" data-open-detail="program" data-id="${p.id}"${lbl ? ` title="${escHTML(STATUS_META[st].label + ' · ' + lbl)}"` : ''}><span class="status-dot" style="background:${statusDotColor(st)}" aria-hidden="true"></span>${escHTML(p.name)}<span class="sr-only">, ${escHTML(STATUS_META[st].label)}${lbl ? ', ' + escHTML(lbl) : ''}</span></button>`;
   }).join('')}</div>`;
 }
 function keyServicesKpiHTML(keyServices, { context }){
@@ -3056,7 +3078,7 @@ function renderDashboardHeatmapContent(){
   grid.innerHTML = progs.map(p => heatTileHTML({
     typeLabel:'Program',
     name:p.name,
-    subtitle:kpiCountLabel(p.id),
+    subtitle:programKpiLabel(p.id),
     status:programStatus(p),
     trendItem:p,
     dataAttrs:`data-open-detail="program" data-id="${p.id}"`,
@@ -3704,7 +3726,9 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
     <div class="kpi-block" data-kpi-block="${escHTML(k.id)}">
       <div class="kpi-head">
         <span class="kpi-name">${escHTML(k.name)}</span>
-        <span class="kpi-head-right"><span class="kpi-bysegment">Shown by segment · no overall status</span>${kpiToolsHTML(k)}</span>
+        <span class="kpi-head-right">${k.status
+          ? `${statusBadgeHTML(k.status)}<span class="kpi-bysegment">Overall = lowest segment</span>`
+          : '<span class="kpi-bysegment">Shown by segment · no overall status</span>'}${kpiToolsHTML(k)}</span>
       </div>
       ${k.description ? `<p class="kpi-desc">${escHTML(k.description)}</p>` : ''}
       <div class="kpi-seg-grid">${tiles}</div>
