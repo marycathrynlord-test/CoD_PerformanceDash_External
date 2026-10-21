@@ -4443,13 +4443,12 @@ function wireSearch(){
    buttons. The Excel file has the KPI's numbers (every period, Total and
    segments, with Target, Benchmark and status) plus an "About" sheet.
    The PDF has real, selectable text: the KPI's details, its chart and its
-   data table. "Email" puts both files into a new email:
-   - where the browser can hand files to the computer's share sheet
-     (Safari, and Edge/Chrome for file types they allow), that sheet opens
-     and the person picks Mail or Outlook;
-   - otherwise an email draft file (.eml) with both files attached is
-     downloaded; opening it starts a new message in Outlook, ready to
-     address and send. */
+   data table. "Email" puts the files into a new email through the
+   computer's share menu (pick Mail or Outlook): Safari shares the Excel
+   file and the PDF; Chrome and Edge refuse Excel files there, so they
+   share the PDF and the data as CSV. Browsers with no share menu get an
+   email draft file (.eml) with the Excel file and PDF attached. Every
+   email also carries the latest result and a link to the KPI. */
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
 const ICON_DOWNLOAD = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.2M4.6 6.5 8 9.9l3.4-3.4M2.5 11.5v2h11v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -4465,7 +4464,7 @@ function kpiToolsHTML(k){
       <span class="kpi-share-menu" id="${mid}" hidden>
         <button type="button" class="kpi-menu-item" data-kpi-action="xlsx" data-kpi-id="${id}">${ICON_DOWNLOAD}<span><strong>Download Excel</strong><small>Every period's numbers</small></span></button>
         <button type="button" class="kpi-menu-item" data-kpi-action="pdf" data-kpi-id="${id}">${ICON_DOWNLOAD}<span><strong>Download PDF</strong><small>Chart and data table</small></span></button>
-        <button type="button" class="kpi-menu-item" data-kpi-action="email" data-kpi-id="${id}">${ICON_MAIL}<span><strong>Email</strong><small>Excel and PDF attached</small></span></button>
+        <button type="button" class="kpi-menu-item" data-kpi-action="email" data-kpi-id="${id}">${ICON_MAIL}<span><strong>Email</strong><small>Files attached, ready to send</small></span></button>
       </span>
     </span>`;
 }
@@ -4486,7 +4485,8 @@ function toggleKpiMenu(btn, focusFirst){
   btn.setAttribute('aria-expanded', String(open));
   menu.hidden = !open;
   if(open){
-    // Get the files started so Download and Email are quick.
+    // Build the files now, so Email can open the share menu straight
+    // away when it's chosen (browsers only allow that right after a click).
     loadSheetJS().catch(() => {});
     const k = KPI_BY_ID[btn.dataset.kpiId];
     if(k) prepareKpiEmailFiles(k).catch(() => {});
@@ -4820,6 +4820,65 @@ async function buildKpiPdfBlob(k){
 }
 
 // ---- Email ----
+// A link that opens this dashboard on the KPI's own view with that KPI open.
+function kpiDeepLink(k){
+  const base = location.href.split('#')[0];
+  const view = (/#view=([^&]+)/.exec(location.hash) || [])[1];
+  return `${base}#${view ? 'view=' + view + '&' : ''}kpi=${encodeURIComponent(k.id)}`;
+}
+function kpiEmailText(k){
+  const shown = kpiShownUnder(k).map(x => x.name).join(', ');
+  return {
+    subject: `${k.name}: City of Durango Performance Dashboard`,
+    body: `Here is the latest for "${k.name}"${shown ? ` (${shown})` : ''} from the City of Durango Performance Dashboard.\n\n`
+      + `Latest: ${kpiLatestSummary(k)}\n\n`
+      + `The attached files have every period's numbers and the chart. See it on the dashboard:\n${kpiDeepLink(k)}\n`,
+  };
+}
+// The email's files, built once per KPI (when its Share menu opens).
+const kpiEmailFiles = {};
+function prepareKpiEmailFiles(k){
+  if(!kpiEmailFiles[k.id]) kpiEmailFiles[k.id] = Promise.all([buildKpiSpreadsheet(k), buildKpiPdfBlob(k)])
+    .then(([sheet, pdf]) => ({ sheet, pdf, csv: buildKpiCsvFile(k) }))
+    .catch(err => { delete kpiEmailFiles[k.id]; throw err; });
+  return kpiEmailFiles[k.id];
+}
+const asFile = f => new File([f.blob], f.name, { type: f.type });
+function canShareFiles(files){
+  try{ return !!(navigator.share && navigator.canShare && navigator.canShare({ files })); } catch(e){ return false; }
+}
+// Safari (Mac, iPhone, iPad) shares Excel files; Chrome and Edge don't.
+function shareTakesExcel(){
+  const ua = navigator.userAgent;
+  const safari = /Safari\//.test(ua) && !/Chrome\/|Chromium\/|CriOS\/|Edg\/|EdgiOS\/|FxiOS\/|Firefox\//.test(ua);
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return safari || ios;
+}
+async function openKpiEmail(k){
+  const files = await prepareKpiEmailFiles(k);
+  const { subject, body } = kpiEmailText(k);
+  const withExcel = [asFile(files.sheet), asFile(files.pdf)];
+  const withCsv = [asFile(files.pdf), asFile(files.csv)];
+  const shareFiles = shareTakesExcel() && canShareFiles(withExcel) ? withExcel : canShareFiles(withCsv) ? withCsv : null;
+  if(!shareFiles){ await downloadEmlDraft(k, subject, body, [files.sheet, files.pdf]); return; }
+  const attempt = async (isRetry) => {
+    try{
+      await navigator.share({ files: shareFiles, title: subject, text: body });
+    } catch(err){
+      if(err.name === 'AbortError') return; // closed the share menu
+      if(err.name === 'NotAllowedError' && !isRetry){
+        // The files took a moment to build: one more click opens the menu.
+        showToast(`Your email for <strong>${escHTML(k.name)}</strong> is ready.`, { action:{ label:'Open email', run: () => attempt(true) } });
+        return;
+      }
+      await downloadEmlDraft(k, subject, body, [files.sheet, files.pdf]);
+    }
+  };
+  await attempt(false);
+}
+// Backup for browsers with no share menu: an email draft file with both
+// files attached. Opening it starts a new message (Outlook), or in Apple
+// Mail opens it to send with Message > Send Again.
 function b64FromBytes(bytes){
   let bin = '';
   for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
@@ -4827,87 +4886,47 @@ function b64FromBytes(bytes){
 }
 const b64Utf8 = s => b64FromBytes(new TextEncoder().encode(s));
 const wrap76 = s => s.replace(/.{1,76}/g, '$&\r\n');
-async function buildEmlDraft(subject, body, files){
+async function downloadEmlDraft(k, subject, body, files){
   const boundary = '----=_DurangoKPI_' + Math.random().toString(36).slice(2);
-  const parts = [
-    'X-Unsent: 1',
-    'To: ',
-    `Subject: =?UTF-8?B?${b64Utf8(subject)}?=`,
-    'MIME-Version: 1.0',
-    `Content-Type: multipart/mixed; boundary="${boundary}"`,
-    '',
-    `--${boundary}`,
-    'Content-Type: text/plain; charset="UTF-8"',
-    'Content-Transfer-Encoding: base64',
-    '',
-    wrap76(b64Utf8(body)),
-  ];
+  const parts = ['X-Unsent: 1', 'To: ', `Subject: =?UTF-8?B?${b64Utf8(subject)}?=`, 'MIME-Version: 1.0',
+    `Content-Type: multipart/mixed; boundary="${boundary}"`, '', `--${boundary}`,
+    'Content-Type: text/plain; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '', wrap76(b64Utf8(body))];
   for(const f of files){
-    const bytes = new Uint8Array(await f.blob.arrayBuffer());
-    const encName = `=?UTF-8?B?${b64Utf8(f.name)}?=`;
-    parts.push(`--${boundary}`, `Content-Type: ${f.type}; name="${encName}"`, 'Content-Transfer-Encoding: base64',
-      `Content-Disposition: attachment; filename="${encName}"`, '', wrap76(b64FromBytes(bytes)));
+    const enc = `=?UTF-8?B?${b64Utf8(f.name)}?=`;
+    parts.push(`--${boundary}`, `Content-Type: ${f.type}; name="${enc}"`, 'Content-Transfer-Encoding: base64',
+      `Content-Disposition: attachment; filename="${enc}"`, '', wrap76(b64FromBytes(new Uint8Array(await f.blob.arrayBuffer()))));
   }
   parts.push(`--${boundary}--`, '');
-  return parts.join('\r\n');
+  downloadBlob(parts.join('\r\n'), kpiFileBase(k) + '.eml', 'message/rfc822');
+  showToast('This browser can\'t open the share menu, so an email with the Excel file and PDF attached was downloaded. <strong>Open it</strong> to send it from Outlook. (In Apple Mail, open it, then choose Message › Send Again.)', { ms: 14000 });
 }
-function kpiEmailText(k){
-  const shown = kpiShownUnder(k).map(x => x.name).join(', ');
-  return {
-    subject: `${k.name}: City of Durango Performance Dashboard`,
-    body: `Here is the latest data for "${k.name}"${shown ? ` (${shown})` : ''} from the City of Durango Performance Dashboard.\n\n`
-      + `Latest: ${kpiLatestSummary(k)}\n\n`
-      + `The Excel file has every period's numbers; the PDF has the chart and data table.\n\n`
-      + `Dashboard: ${location.href}\n`,
-  };
-}
-// Files for the Email button are built ahead of time (when the pointer or
-// keyboard reaches the button), so the share menu can open within the
-// click itself; browsers refuse to open it once a click is a few seconds old.
-const kpiEmailFiles = {};
-function prepareKpiEmailFiles(k){
-  if(!kpiEmailFiles[k.id]) kpiEmailFiles[k.id] = Promise.all([buildKpiSpreadsheet(k), buildKpiPdfBlob(k)])
-    .catch(err => { delete kpiEmailFiles[k.id]; throw err; });
-  return kpiEmailFiles[k.id];
-}
-// Use the computer's share menu only where it accepts Excel files
-// (Safari on Mac, iPhone and iPad). Chrome and Edge refuse .xlsx files
-// there, so they get the email draft file instead.
-function shareMenuTakesExcel(){
-  const ua = navigator.userAgent;
-  const safari = /Safari\//.test(ua) && !/Chrome\/|Chromium\/|CriOS\/|Edg\/|EdgiOS\/|FxiOS\/|Firefox\//.test(ua);
-  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  return !!(navigator.share && navigator.canShare) && (safari || ios);
-}
-async function shareKpiByEmail(k){
-  const files = await prepareKpiEmailFiles(k);
-  const { subject, body } = kpiEmailText(k);
-  if(!shareMenuTakesExcel()) return downloadEmlDraft(k, subject, body, files);
-  const shareFiles = files.map(f => new File([f.blob], f.name, { type: f.type }));
-  let ok = false;
-  try{ ok = navigator.canShare({ files: shareFiles }); } catch(e){ ok = false; }
-  if(!ok) return downloadEmlDraft(k, subject, body, files);
-  const attempt = async (isRetry) => {
-    try{ await navigator.share({ files: shareFiles, title: subject, text: body }); }
-    catch(err){
-      if(err.name === 'AbortError') return; // the person closed the share menu
-      const clickStillFresh = navigator.userActivation ? navigator.userActivation.isActive : false;
-      if(err.name === 'NotAllowedError' && !isRetry && !clickStillFresh){
-        // The click had gone stale while the files were made: one more
-        // click opens the share menu.
-        showToast(`Your email for <strong>${escHTML(k.name)}</strong> is ready.`, { action:{ label:'Open email', run: () => attempt(true) } });
-        return;
-      }
-      // Any other refusal: fall back to the email draft file.
-      await downloadEmlDraft(k, subject, body, files);
+// Open the KPI named in the link (…#view=…&kpi=ID): its scoreboard row,
+// or the Program window that holds it.
+// Read once, as the page loads: drawing the first view rewrites the address.
+const INITIAL_KPI_LINK = (/[#&]kpi=([^&]+)/.exec(location.hash) || [])[1] || null;
+function openKpiFromURL(){
+  const m = INITIAL_KPI_LINK ? [null, INITIAL_KPI_LINK] : null;
+  if(!m) return;
+  const id = decodeURIComponent(m[1]);
+  const k = KPI_BY_ID[id];
+  if(!k) return;
+  setTimeout(() => {
+    const row = document.querySelector(`[data-kpi-row="${CSS.escape(id)}"]`);
+    if(row){
+      row.open = true;
+      const sum = row.querySelector('summary');
+      if(sum) sum.focus({ preventScroll:true });
+      softScrollTo(row, 16);
+      row.classList.add('search-flash');
+      return;
     }
-  };
-  await attempt(false);
-}
-async function downloadEmlDraft(k, subject, body, files){
-  const eml = await buildEmlDraft(subject, body, files);
-  downloadBlob(eml, kpiFileBase(k) + '.eml', 'message/rfc822');
-  showToast(`An email with the Excel file and PDF attached was downloaded. <strong>Open it</strong> to address and send it from Outlook. (In Apple Mail, open it, then choose Message › Send Again.)`, { ms: 14000 });
+    const homes = [k.attachTo, ...(Array.isArray(k.alsoUnder) ? k.alsoUnder : [])];
+    const prog = homes.map(h => DATA.programs.find(p => p.id === h)).find(Boolean);
+    if(prog){
+      openDetailModal('program', prog.id);
+      setTimeout(() => { const b = document.querySelector(`#modal-overlay [data-kpi-block="${CSS.escape(id)}"]`); if(b) b.scrollIntoView({ block:'start' }); }, 100);
+    }
+  }, 500);
 }
 
 async function runKpiAction(item){
@@ -4931,7 +4950,7 @@ async function runKpiAction(item){
       const f = await buildKpiPdfBlob(k);
       downloadBlob(f.blob, f.name, f.type);
     } else if(action === 'email'){
-      await shareKpiByEmail(k);
+      await openKpiEmail(k);
     }
   } catch(err){
     console.error(err);
@@ -4978,7 +4997,7 @@ const TOUR_STEPS = [
   { target: null, title: 'See the numbers behind each KPI',
     body: 'Open an Objective to see the Key Services that support it and all of their KPIs at once, or open a Key Service or Program. Each KPI has a chart; hover or tap a point for the exact value, target and breakdown, or select "View data table" for all of the numbers. Measures that are set up but still waiting on data say "Data not yet entered".' },
   { target: '#header-export', title: 'Share and take it with you',
-    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. Each KPI also has its own Share button to download it as Excel or PDF, or email both files. To share exactly what you are looking at, copy the page address: it updates as you click.' },
+    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. Each KPI also has its own Share button to download it as Excel or PDF, or email it with the files attached. To share exactly what you are looking at, copy the page address: it updates as you click.' },
 ];
 
 let tourStep = 0;
@@ -5074,6 +5093,7 @@ function init(){
   wireExportButtons();
   wireExportMenu();
   wireSearch();
+  openKpiFromURL();
   wireModalChrome();
   wireTour();
 }
