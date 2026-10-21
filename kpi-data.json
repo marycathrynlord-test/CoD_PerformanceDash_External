@@ -4122,8 +4122,7 @@
       "ks8": [
         "ob4",
         "ob5",
-        "ob6",
-        "ob18"
+        "ob6"
       ],
       "ks9": [
         "ob1",
@@ -4359,11 +4358,7 @@
           "HR-TIMETOHIRE",
           "HR-TURNRATE",
           "IT-TIXSLA",
-          "IT-LIAISONSURV",
-          "PROS-REGULATEDUNITS",
-          "COMDEV-ANNEXACRES",
-          "COMDEV-PERMIT48",
-          "COMDEV-LANDUSEDAYS"
+          "IT-LIAISONSURV"
         ],
         "kpis": [
           "HR-EMPENG",
@@ -4374,11 +4369,7 @@
           "IT-PITSURV",
           "IT-TIXSLA",
           "IT-UPTIME",
-          "IT-LIAISONSURV",
-          "PROS-REGULATEDUNITS",
-          "COMDEV-ANNEXACRES",
-          "COMDEV-PERMIT48",
-          "COMDEV-LANDUSEDAYS"
+          "IT-LIAISONSURV"
         ]
       },
       "ob1": {
@@ -4687,21 +4678,13 @@
           "HR-EMPENG",
           "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE",
-          "PROS-REGULATEDUNITS",
-          "COMDEV-ANNEXACRES",
-          "COMDEV-PERMIT48",
-          "COMDEV-LANDUSEDAYS"
+          "HR-TURNRATE"
         ],
         "kpis": [
           "HR-EMPENG",
           "HR-INTPROMO",
           "HR-TIMETOHIRE",
-          "HR-TURNRATE",
-          "PROS-REGULATEDUNITS",
-          "COMDEV-ANNEXACRES",
-          "COMDEV-PERMIT48",
-          "COMDEV-LANDUSEDAYS"
+          "HR-TURNRATE"
         ]
       },
       "ob19": {
