@@ -35,25 +35,126 @@
     },
     {
       "id": "911-DISPATCHTIME",
-      "name": "911 Answer Times;",
+      "name": "911 Answer Times",
       "level": "Key Service",
       "attachTo": "ks11",
       "alsoUnder": [
         "p101"
       ],
-      "unit": "number",
-      "decimals": 2,
+      "unit": "percent",
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
-      "frequency": "Every year",
-      "owner": "Chief of Police",
+      "frequency": "Every Quarter",
+      "owner": "911 Director",
+      "source": "Intrado 911 call data, via the Powermetrics reporting module (automated)",
+      "description": "Share of 911 calls answered within 15 seconds and within 20 seconds each fiscal year, each compared with its national standard.",
+      "footnote": "Target and benchmark (NENA standard, as set by the 911 center): 95% of calls answered within 15 seconds and 90% within 20 seconds. The center has been at critical staffing since Q2 2021, which has lengthened answer times; results remain above the standard.",
       "gaugeKeyServices": [
         "ks11"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "on-track",
+      "segmentsOnly": true,
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [],
+      "segmentSeries": [
+        {
+          "label": "Within 15 seconds",
+          "series": [
+            {
+              "period": "2020",
+              "value": 99,
+              "target": 95,
+              "benchmark": 95,
+              "status": "on-track"
+            },
+            {
+              "period": "2021",
+              "value": 98,
+              "target": 95,
+              "benchmark": 95,
+              "status": "on-track"
+            },
+            {
+              "period": "2022",
+              "value": 97,
+              "target": 95,
+              "benchmark": 95,
+              "status": "on-track"
+            },
+            {
+              "period": "2023",
+              "value": 96,
+              "target": 95,
+              "benchmark": 95,
+              "status": "on-track"
+            },
+            {
+              "period": "2024",
+              "value": 97,
+              "target": 95,
+              "benchmark": 95,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 97,
+              "target": 95,
+              "benchmark": 95,
+              "status": "on-track"
+            }
+          ]
+        },
+        {
+          "label": "Within 20 seconds",
+          "series": [
+            {
+              "period": "2020",
+              "value": 100,
+              "target": 90,
+              "benchmark": 90,
+              "status": "on-track"
+            },
+            {
+              "period": "2021",
+              "value": 99,
+              "target": 90,
+              "benchmark": 90,
+              "status": "on-track"
+            },
+            {
+              "period": "2022",
+              "value": 98,
+              "target": 90,
+              "benchmark": 90,
+              "status": "on-track"
+            },
+            {
+              "period": "2023",
+              "value": 98,
+              "target": 90,
+              "benchmark": 90,
+              "status": "on-track"
+            },
+            {
+              "period": "2024",
+              "value": 99,
+              "target": 90,
+              "benchmark": 90,
+              "status": "on-track"
+            },
+            {
+              "period": "2025",
+              "value": 98,
+              "target": 90,
+              "benchmark": 90,
+              "status": "on-track"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "911-NFPADROPTIME",
@@ -1683,19 +1784,66 @@
       "name": "Violent/property crime trend",
       "level": "Key Service",
       "attachTo": "ks11",
-      "unit": "number",
-      "decimals": 2,
-      "higherIsBetter": true,
+      "unit": "per 1,000 residents",
+      "decimals": 0,
+      "higherIsBetter": false,
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Chief of Police",
+      "description": "Part 1 crimes (violent and property crimes) in Durango per 1,000 residents each fiscal year.",
+      "footnote": "Target: at least 10% below the Colorado average. Benchmark: Colorado's Part 1 crime rate, 36.4 per 1,000. Rates use Durango's resident population of about 19,000; they do not include the more than 30,000 tourists, workers and other visitors in Durango each day.",
       "gaugeKeyServices": [
         "ks11"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "off-track",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [
+        {
+          "period": "2020",
+          "value": 56,
+          "target": 32.8,
+          "benchmark": 36.4,
+          "status": "off-track"
+        },
+        {
+          "period": "2021",
+          "value": 45,
+          "target": 32.8,
+          "benchmark": 36.4,
+          "status": "off-track"
+        },
+        {
+          "period": "2022",
+          "value": 41,
+          "target": 32.8,
+          "benchmark": 36.4,
+          "status": "off-track"
+        },
+        {
+          "period": "2023",
+          "value": 41,
+          "target": 32.8,
+          "benchmark": 36.4,
+          "status": "off-track"
+        },
+        {
+          "period": "2024",
+          "value": 53,
+          "target": 32.8,
+          "benchmark": 36.4,
+          "status": "off-track"
+        },
+        {
+          "period": "2025",
+          "value": 44,
+          "target": 32.8,
+          "benchmark": 36.4,
+          "status": "off-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "PD-WILDLIFETRENDS",
@@ -1747,7 +1895,7 @@
       "gaugeKeyServices": [
         "ks3"
       ],
-      "status": null,
+      "status": "on-track",
       "segmentsOnly": true,
       "onTrackWithinPct": 0,
       "offTrackBeyondPct": 0,
@@ -2926,18 +3074,65 @@
         "ks14"
       ],
       "unit": "number",
-      "decimals": 2,
-      "higherIsBetter": true,
+      "decimals": 0,
+      "higherIsBetter": false,
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Multimodal Manager",
+      "description": "Number of traffic crashes in which someone was injured or killed each fiscal year, including crashes involving pedestrians.",
+      "footnote": "Target: 10% fewer injury and fatal crashes than the previous year. Benchmark: 40.5 crashes, 10% below 2023. The approach follows Vision Zero principles: finding high-risk locations and underlying risk factors, and using proven fixes such as traffic calming, protected crossings and enforcement.",
       "gaugeKeyServices": [
         "ks14"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "off-track",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [
+        {
+          "period": "2020",
+          "value": 21,
+          "benchmark": 40.5,
+          "status": null,
+          "note": "Unusually low due to COVID restrictions; most people stayed home instead of driving"
+        },
+        {
+          "period": "2021",
+          "value": 54,
+          "target": 19,
+          "benchmark": 40.5,
+          "status": "off-track"
+        },
+        {
+          "period": "2022",
+          "value": 42,
+          "target": 49,
+          "benchmark": 40.5,
+          "status": "on-track"
+        },
+        {
+          "period": "2023",
+          "value": 45,
+          "target": 38,
+          "benchmark": 40.5,
+          "status": "off-track"
+        },
+        {
+          "period": "2024",
+          "value": 44,
+          "target": 41,
+          "benchmark": 40.5,
+          "status": "off-track"
+        },
+        {
+          "period": "2025",
+          "value": 51,
+          "target": 40,
+          "benchmark": 40.5,
+          "status": "off-track"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "TRAN-CUSTSAT",
@@ -4002,11 +4197,10 @@
     },
     "gauges": {
       "g1": {
-        "meeting": 3,
-        "withResult": 3,
+        "meeting": 4,
+        "withResult": 4,
         "percent": 100,
         "awaiting": [
-          "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP",
           "IT-TIXSLA",
@@ -4063,18 +4257,16 @@
         ]
       },
       "g3": {
-        "meeting": 1,
-        "withResult": 2,
+        "meeting": 2,
+        "withResult": 4,
         "percent": 50,
         "awaiting": [
-          "911-DISPATCHTIME",
           "911-STAFFING",
           "PD-CALLVOLUME",
           "PD-CRIMECLEARANCE",
           "PD-FATALCRASH",
           "PD-RESPONSETIME",
           "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME",
           "CLERK-SPECCOURT",
           "PR-PARKBUDGETACRE",
           "PR-OSBUDGET1000",
@@ -4109,11 +4301,10 @@
       },
       "g4": {
         "meeting": 4,
-        "withResult": 4,
-        "percent": 100,
+        "withResult": 5,
+        "percent": 80,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
           "IT-TIXSLA",
@@ -4133,16 +4324,15 @@
         ]
       },
       "g5": {
-        "meeting": 1,
-        "withResult": 2,
-        "percent": 50,
+        "meeting": 2,
+        "withResult": 3,
+        "percent": 67,
         "awaiting": [
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
-          "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ],
@@ -4214,11 +4404,10 @@
         ]
       },
       "ob2": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
-          "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ],
@@ -4309,18 +4498,16 @@
         ]
       },
       "ob7": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
-          "911-DISPATCHTIME",
           "911-STAFFING",
           "PD-CALLVOLUME",
           "PD-CRIMECLEARANCE",
           "PD-FATALCRASH",
           "PD-RESPONSETIME",
           "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME",
           "CLERK-SPECCOURT"
         ],
         "kpis": [
@@ -4373,11 +4560,10 @@
       },
       "ob10": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
           "TRAN-VACRATE"
         ],
@@ -4428,11 +4614,10 @@
       },
       "ob15": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
           "TRAN-VACRATE"
         ],
@@ -4445,16 +4630,15 @@
         ]
       },
       "ob16": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
-          "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ],
@@ -4470,16 +4654,15 @@
         ]
       },
       "ob17": {
-        "meeting": 1,
-        "withResult": 2,
-        "percent": 50,
+        "meeting": 2,
+        "withResult": 3,
+        "percent": 67,
         "awaiting": [
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
-          "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ],
@@ -4563,16 +4746,15 @@
         ]
       },
       "ws1": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
           "CLERK-AGENDAPOST",
           "CLERK-BIZLIC",
           "CLERK-CORARESPRATE",
           "CLERK-LIQMARJLIC",
           "CLERK-VOTERTURNOUT",
-          "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ],
@@ -4635,18 +4817,16 @@
         ]
       },
       "ws4": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
-          "911-DISPATCHTIME",
           "911-STAFFING",
           "PD-CALLVOLUME",
           "PD-CRIMECLEARANCE",
           "PD-FATALCRASH",
           "PD-RESPONSETIME",
           "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME",
           "CLERK-SPECCOURT"
         ],
         "kpis": [
@@ -4663,11 +4843,10 @@
       },
       "ws5": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
           "TRAN-VACRATE"
         ],
@@ -4733,11 +4912,10 @@
         ]
       },
       "ks3": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
-          "PIO-ENGRATE",
           "PIO-SEECLICKFIX",
           "PIO-VIEWERSHIP"
         ],
@@ -4834,18 +5012,16 @@
         "kpis": []
       },
       "ks11": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
-          "911-DISPATCHTIME",
           "911-STAFFING",
           "PD-CALLVOLUME",
           "PD-CRIMECLEARANCE",
           "PD-FATALCRASH",
           "PD-RESPONSETIME",
-          "PD-TRAFFICINJURY",
-          "PD-VIOLENTPROPCRIME"
+          "PD-TRAFFICINJURY"
         ],
         "kpis": [
           "911-DISPATCHTIME",
@@ -4878,11 +5054,10 @@
       },
       "ks14": {
         "meeting": 1,
-        "withResult": 1,
-        "percent": 100,
+        "withResult": 2,
+        "percent": 50,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
-          "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
           "TRAN-VACRATE"
         ],
