@@ -1210,6 +1210,10 @@
   .sb-ks-name{margin:0; font-size:20px; font-weight:800; color:#006A53; line-height:1.25;}
   .sb-ks-name:focus{outline:none;} .sb-ks-name:focus-visible{outline:2px solid #1E1E1E; outline-offset:3px;}
   .sb-ks-sub{font-size:12.5px; color:#4B4B4B; margin-top:2px;}
+  .sb-ks-right{display:inline-flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .ls-right{display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
+  .ls-right .kpi-share-btn{background:#fff;}
+  @media (max-width:640px){ .ls-right{align-items:flex-start;} }
   .sb-ks-score{display:inline-flex; align-items:center; gap:8px; color:var(--forest); font-size:13px;}
   .sb-ks-score span{color:#4B4B4B; font-weight:600;}
   .sb-ks-score strong{color:#006A53; font-size:15px; font-weight:800; margin-right:2px;}
@@ -1458,9 +1462,9 @@
       <div class="root-mode-toggle" id="root-mode-toggle"></div>
       <nav class="sticky-crumbs" id="sticky-crumbs" aria-label="Breadcrumb"></nav>
       <div class="dash-search" id="dash-search">
-        <label for="dash-search-input" class="sr-only">Search KPIs, Key Services, Programs and Goals</label>
+        <label for="dash-search-input" class="sr-only">Search KPIs by name, Key Service or Program</label>
         <svg class="dash-search-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m11 11 3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <input type="search" id="dash-search-input" placeholder="Search KPIs, services, programs…" autocomplete="off"
+        <input type="search" id="dash-search-input" placeholder="Search KPIs…" autocomplete="off"
           role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="dash-search-list">
         <ul id="dash-search-list" class="dash-search-list" role="listbox" aria-label="Search results" hidden></ul>
       </div>
@@ -2821,7 +2825,10 @@ function keyServicesKpiHTML(keyServices, { context }){
             <h3 class="sb-ks-name obj-ks-title" id="obj-ks-h-${ks.id}" tabindex="-1">${escHTML(ks.name)}</h3>
             ${!wsMode && ws ? `<div class="sb-ks-sub">${escHTML(ws.name)}</div>` : ''}
           </div>
-          <span class="sb-ks-score${g.withResult ? '' : ' gauge-empty'}" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span aria-hidden="true"><strong>${gaugePctText(g)}</strong> ${escHTML(gaugeCaption(g))}</span></span>
+          <span class="sb-ks-right">
+            <span class="sb-ks-score${g.withResult ? '' : ' gauge-empty'}" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span aria-hidden="true"><strong>${gaugePctText(g)}</strong> ${escHTML(gaugeCaption(g))}</span></span>
+            ${live.length ? groupShareHTML('ks:' + ks.id) : ''}
+          </span>
         </div>
         ${live.length ? `<div class="sb-list">
           <div class="sb-colheads" aria-hidden="true"><span>KPI</span><span>Latest</span><span>Compared with target</span><span>Trend</span><span>Status</span><span></span></div>
@@ -2926,6 +2933,7 @@ function renderLevelSummary(){
       <h2 class="ls-name">${escHTML(item.name)}</h2>
       ${def ? `<p class="ls-def">${escHTML(def)}${adopted ? ` <span class="ls-src">Adopted by City Council, 2024 Strategic Plan.</span>` : ''}</p>` : ''}
     </div>
+    <div class="ls-right">
     <div class="ls-gauge${g.withResult ? '' : ' gauge-empty'}" role="img" aria-label="${escHTML(gaugeSpoken(g))}">
       ${gaugeSVG(g, 70)}
       <div class="ls-gauge-text" aria-hidden="true">
@@ -2933,7 +2941,18 @@ function renderLevelSummary(){
         <div class="ls-cap">${escHTML(gaugeCaption(g))}</div>
         ${extra ? `<div class="ls-await">${escHTML(extra)}</div>` : ''}
       </div>
+    </div>
+    ${levelShareScope() ? groupShareHTML(levelShareScope()) : ''}
     </div>`;
+}
+
+// The group shared by the "Share data" button in the level header.
+function levelShareScope(){
+  const v = dashboardView;
+  if(v.level === 'objective') return 'ob:' + v.objectiveId;
+  if(v.level === 'keyservice') return 'ks:' + v.ksId;
+  if(v.level === 'root') return (v.rootMode === 'goal' ? 'goal:' : 'ws:') + v.rootId;
+  return null;
 }
 
 // Re-fit the on-page KPI charts when the window is resized.
@@ -4372,23 +4391,16 @@ function wireExportMenu(){
 }
 
 /* ---------- Search ----------
-   One box that finds KPIs, Key Services, Programs, Goals, Objectives and
-   Work Systems by name (and KPIs by description too), and goes straight
-   to them: KPIs and Key Services open in the Work System View with the
-   page scrolled to them; Programs open their details. */
+   One box that finds KPIs by name, description, or the Key Service or
+   Program they sit under, and goes straight to them: the KPI's row opens
+   in the Work System View (or its Program's window, for Program-only KPIs). */
 let searchIndex = null;
 function buildSearchIndex(){
   const items = [];
   const ksById = id => DATA.keyServices.find(k => k.id === id);
   const progById = id => DATA.programs.find(p => p.id === id);
-  DATA.goals.forEach(g => items.push({ type:'Goal', name:g.name, ctx:plural(objectivesUnderGoal(g.id).length, 'Objective'), go:() => goView({ rootMode:'goal', level:'root', rootId:g.id }) }));
-  DATA.objectives.forEach(o => { const g = DATA.goals.find(x => x.id === o.goal); items.push({ type:'Objective', name:o.name, ctx:g ? g.name : '', go:() => goView({ rootMode:'goal', level:'objective', rootId:o.goal, objectiveId:o.id }) }); });
-  DATA.workSystems.forEach(w => items.push({ type:'Work System', name:w.name, ctx:plural(keyServicesUnderWorkSystem(w.id).length, 'Key Service'), go:() => goView({ rootMode:'workSystem', level:'root', rootId:w.id }) }));
-  DATA.keyServices.forEach(ks => { const w = DATA.workSystems.find(x => x.id === ks.workSystem); items.push({ type:'Key Service', name:ks.name, ctx:w ? w.name : '', go:() => goView({ rootMode:'workSystem', level:'root', rootId:ks.workSystem }, '#obj-ks-' + ks.id, true) }); });
-  DATA.programs.forEach(p => { const ks = ksById(p.keyservice); items.push({ type:'Program', name:p.name, ctx:ks ? ks.name : '', go:() => {
-    if(ks) goView({ rootMode:'workSystem', level:'keyservice', rootId:ks.workSystem, ksId:ks.id });
-    setTimeout(() => openDetailModal('program', p.id), 350);
-  } }); });
+  // KPIs only. A KPI also matches on the Key Service or Program it sits
+  // under, so typing "Police Patrol" lists that Program's KPIs.
   Object.values(KPI_BY_ID).forEach(k => {
     const homes = [k.attachTo, ...(Array.isArray(k.alsoUnder) ? k.alsoUnder : [])];
     const ks = homes.map(ksById).find(Boolean);
@@ -4423,7 +4435,7 @@ function searchMatches(q){
   const words = q.toLowerCase().split(/\s+/).filter(Boolean);
   if(!words.length) return [];
   if(!searchIndex) searchIndex = buildSearchIndex();
-  const typeRank = { 'KPI':0, 'Key Service':1, 'Program':2, 'KPI · data not yet entered':2.5, 'Objective':3, 'Goal':4, 'Work System':5 };
+  const typeRank = { 'KPI':0, 'KPI · data not yet entered':1 };
   return searchIndex.map(it => {
     const name = it.name.toLowerCase(), hay = (name + ' ' + it.desc + ' ' + it.ctx).toLowerCase();
     if(!words.every(w => hay.includes(w))) return null;
@@ -4500,18 +4512,31 @@ const ICON_DOWNLOAD = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidd
 const ICON_MAIL = '<svg width="14" height="13" viewBox="0 0 16 14" aria-hidden="true"><rect x="1.2" y="1.5" width="13.6" height="11" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m1.8 2.5 6.2 5 6.2-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 
 const ICON_SHARE = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 4.8 8 1.8l3 3M3.5 7.5v6h9v-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-// One "Share" button per KPI, opening a short menu: Excel, PDF, Email.
-function kpiToolsHTML(k){
-  if(!k || k.pending) return '';
-  const n = escHTML(k.name), id = escHTML(k.id), mid = 'kpi-menu-' + slugify(k.id) + '-' + (++kpiMenuSeq);
+// A "Share" button opening a short menu: Excel, PDF, Email. Used for one
+// KPI (data-kpi-id) and for a group of KPIs (data-group-scope: a Key
+// Service, Objective, Work System or Goal).
+function shareMenuHTML({ attr, value, label, buttonText, what }){
+  const mid = 'kpi-menu-' + slugify(value) + '-' + (++kpiMenuSeq);
+  const a = `${attr}="${escHTML(value)}"`;
   return `<span class="kpi-share">
-      <button type="button" class="kpi-tool kpi-share-btn" aria-expanded="false" aria-controls="${mid}" data-kpi-id="${id}" aria-label="Share or download ${n}">${ICON_SHARE}Share<span class="kpi-share-chev" aria-hidden="true">▾</span></button>
+      <button type="button" class="kpi-tool kpi-share-btn" aria-expanded="false" aria-controls="${mid}" ${a} aria-label="${buttonText}: ${escHTML(label)}">${ICON_SHARE}${buttonText}<span class="kpi-share-chev" aria-hidden="true">▾</span></button>
       <span class="kpi-share-menu" id="${mid}" hidden>
-        <button type="button" class="kpi-menu-item" data-kpi-action="xlsx" data-kpi-id="${id}">${ICON_DOWNLOAD}<span><strong>Download Excel</strong><small>Every period's numbers</small></span></button>
-        <button type="button" class="kpi-menu-item" data-kpi-action="pdf" data-kpi-id="${id}">${ICON_DOWNLOAD}<span><strong>Download PDF</strong><small>Chart and data table</small></span></button>
-        <button type="button" class="kpi-menu-item" data-kpi-action="email" data-kpi-id="${id}">${ICON_MAIL}<span><strong>Email</strong><small>Files attached, ready to send</small></span></button>
+        <button type="button" class="kpi-menu-item" data-kpi-action="xlsx" ${a}>${ICON_DOWNLOAD}<span><strong>Download Excel</strong><small>${what.xlsx}</small></span></button>
+        <button type="button" class="kpi-menu-item" data-kpi-action="pdf" ${a}>${ICON_DOWNLOAD}<span><strong>Download PDF</strong><small>${what.pdf}</small></span></button>
+        <button type="button" class="kpi-menu-item" data-kpi-action="email" ${a}>${ICON_MAIL}<span><strong>Email</strong><small>Excel and PDF attached</small></span></button>
       </span>
     </span>`;
+}
+function kpiToolsHTML(k){
+  if(!k || k.pending) return '';
+  return shareMenuHTML({ attr:'data-kpi-id', value:k.id, label:k.name, buttonText:'Share',
+    what:{ xlsx:'Every period\'s numbers', pdf:'Chart and data table' } });
+}
+function groupShareHTML(scope){
+  const g = groupForScope(scope);
+  if(!g || !g.live.length) return '';
+  return shareMenuHTML({ attr:'data-group-scope', value:scope, label:`all KPIs for ${g.title}`, buttonText:'Share data',
+    what:{ xlsx:`${plural(g.live.length, 'KPI')}, every period`, pdf:'Summary, then each KPI\'s chart' } });
 }
 let kpiMenuSeq = 0;
 function closeKpiMenus(except){
@@ -4535,6 +4560,7 @@ function toggleKpiMenu(btn, focusFirst){
     loadSheetJS().catch(() => {});
     const k = KPI_BY_ID[btn.dataset.kpiId];
     if(k) prepareKpiEmailFiles(k).catch(() => {});
+    if(btn.dataset.groupScope) prepareGroupFiles(btn.dataset.groupScope).catch(() => {});
     if(focusFirst) menu.querySelector('.kpi-menu-item').focus();
   }
 }
@@ -4777,12 +4803,34 @@ function pdfSafe(t){
   return String(t ?? '').replace(/−/g, '-').replace(/[▲▼↑↓→←]/g, '').replace(/ /g, ' ')
     .replace(/[^\x00-\xFF–—‘’“”•…€™]/g, '');
 }
-async function buildKpiPdfBlob(k){
+function newDashboardPdf(title){
   if(!window.jspdf) throw new Error('The PDF library could not be loaded (it comes from cdnjs.cloudflare.com).');
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({ unit:'pt', format:'letter' });
-  pdf.setProperties({ title: k.name, subject: 'City of Durango Performance Dashboard KPI', author: 'City of Durango', creator: 'City of Durango Performance Dashboard' });
+  pdf.setProperties({ title, subject: 'City of Durango Performance Dashboard', author: 'City of Durango', creator: 'City of Durango Performance Dashboard' });
   if(pdf.setLanguage) pdf.setLanguage('en-US');
+  return pdf;
+}
+// Page footer (date, link, page numbers) on every page.
+function finishDashboardPdf(pdf){
+  const PW = pdf.internal.pageSize.getWidth(), PH = pdf.internal.pageSize.getHeight(), M = 48;
+  const pages = pdf.getNumberOfPages();
+  for(let i = 1; i <= pages; i++){
+    pdf.setPage(i);
+    pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8); pdf.setTextColor(75,75,75);
+    pdf.text(pdfSafe(`Generated ${new Date().toLocaleString('en-US')}  ·  ${location.href.split('#')[0]}`), M, PH - 24);
+    pdf.text(`Page ${i} of ${pages}`, PW - M, PH - 24, { align:'right' });
+  }
+  return pdf.output('blob');
+}
+async function buildKpiPdfBlob(k){
+  const pdf = newDashboardPdf(k.name);
+  await writeKpiPdfPages(pdf, k);
+  return { blob: finishDashboardPdf(pdf), name: kpiFileBase(k) + '.pdf', type: 'application/pdf' };
+}
+// One KPI's pages: details, chart, data table and notes, starting at the
+// top of the current page.
+async function writeKpiPdfPages(pdf, k){
   const PW = pdf.internal.pageSize.getWidth(), PH = pdf.internal.pageSize.getHeight(), M = 48, CW = PW - M * 2;
   let y = M;
   const ink = [30,30,30], forest = [0,106,83], slate = [75,75,75], line = [217,233,229];
@@ -4854,15 +4902,6 @@ async function buildKpiPdfBlob(k){
   if(k.footnote) notes.push(k.footnote);
   notes.push([k.segmentsOnly ? `Each segment is compared with its own ${basis}` : `Status based on the ${basis}`, k.source ? `Source: ${k.source}` : '', k.frequency ? `Updated ${kpiFreqText(k)}` : '', k.owner ? `Owner: ${k.owner}` : ''].filter(Boolean).join('  ·  '));
   [...new Set(notes)].forEach(n => para(n, 9, slate, 'normal', 2));
-
-  const pages = pdf.getNumberOfPages();
-  for(let i = 1; i <= pages; i++){
-    pdf.setPage(i);
-    pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8); pdf.setTextColor(...slate);
-    pdf.text(pdfSafe(`Generated ${new Date().toLocaleString('en-US')}  ·  ${location.href.split('#')[0]}`), M, PH - 24);
-    pdf.text(`Page ${i} of ${pages}`, PW - M, PH - 24, { align:'right' });
-  }
-  return { blob: pdf.output('blob'), name: kpiFileBase(k) + '.pdf', type: 'application/pdf' };
 }
 
 // ---- Email ----
@@ -4889,42 +4928,17 @@ function prepareKpiEmailFiles(k){
     .catch(err => { delete kpiEmailFiles[k.id]; throw err; });
   return kpiEmailFiles[k.id];
 }
-const asFile = f => new File([f.blob], f.name, { type: f.type });
-function canShareFiles(files){
-  try{ return !!(navigator.share && navigator.canShare && navigator.canShare({ files })); } catch(e){ return false; }
-}
-// Safari (Mac, iPhone, iPad) shares Excel files; Chrome and Edge don't.
-function shareTakesExcel(){
-  const ua = navigator.userAgent;
-  const safari = /Safari\//.test(ua) && !/Chrome\/|Chromium\/|CriOS\/|Edg\/|EdgiOS\/|FxiOS\/|Firefox\//.test(ua);
-  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  return safari || ios;
-}
 async function openKpiEmail(k){
   const files = await prepareKpiEmailFiles(k);
   const { subject, body } = kpiEmailText(k);
-  const withExcel = [asFile(files.sheet), asFile(files.pdf)];
-  const withCsv = [asFile(files.pdf), asFile(files.csv)];
-  const shareFiles = shareTakesExcel() && canShareFiles(withExcel) ? withExcel : canShareFiles(withCsv) ? withCsv : null;
-  if(!shareFiles){ await downloadEmlDraft(k, subject, body, [files.sheet, files.pdf]); return; }
-  const attempt = async (isRetry) => {
-    try{
-      await navigator.share({ files: shareFiles, title: subject, text: body });
-    } catch(err){
-      if(err.name === 'AbortError') return; // closed the share menu
-      if(err.name === 'NotAllowedError' && !isRetry){
-        // The files took a moment to build: one more click opens the menu.
-        showToast(`Your email for <strong>${escHTML(k.name)}</strong> is ready.`, { action:{ label:'Open email', run: () => attempt(true) } });
-        return;
-      }
-      await downloadEmlDraft(k, subject, body, [files.sheet, files.pdf]);
-    }
-  };
-  await attempt(false);
+  await downloadEmlDraft(kpiFileBase(k), subject, body, [files.sheet, files.pdf]);
 }
-// Backup for browsers with no share menu: an email draft file with both
-// files attached. Opening it starts a new message (Outlook), or in Apple
-// Mail opens it to send with Message > Send Again.
+// Email: a ready-to-send email file (.eml) with the Excel file and PDF
+// attached. Browsers can't hand attachments to the email app directly, so
+// the file is downloaded; opening it starts a new message in the default
+// email app (Outlook opens it ready to send; Apple Mail shows it as a
+// message to send with Message > Send Again). In Chrome or Edge, "Always
+// open files of this type" makes these open straight away.
 function b64FromBytes(bytes){
   let bin = '';
   for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
@@ -4932,7 +4946,7 @@ function b64FromBytes(bytes){
 }
 const b64Utf8 = s => b64FromBytes(new TextEncoder().encode(s));
 const wrap76 = s => s.replace(/.{1,76}/g, '$&\r\n');
-async function downloadEmlDraft(k, subject, body, files){
+async function downloadEmlDraft(baseName, subject, body, files){
   const boundary = '----=_DurangoKPI_' + Math.random().toString(36).slice(2);
   const parts = ['X-Unsent: 1', 'To: ', `Subject: =?UTF-8?B?${b64Utf8(subject)}?=`, 'MIME-Version: 1.0',
     `Content-Type: multipart/mixed; boundary="${boundary}"`, '', `--${boundary}`,
@@ -4943,8 +4957,8 @@ async function downloadEmlDraft(k, subject, body, files){
       `Content-Disposition: attachment; filename="${enc}"`, '', wrap76(b64FromBytes(new Uint8Array(await f.blob.arrayBuffer()))));
   }
   parts.push(`--${boundary}--`, '');
-  downloadBlob(parts.join('\r\n'), kpiFileBase(k) + '.eml', 'message/rfc822');
-  showToast('This browser can\'t open the share menu, so an email with the Excel file and PDF attached was downloaded. <strong>Open it</strong> to send it from Outlook. (In Apple Mail, open it, then choose Message › Send Again.)', { ms: 14000 });
+  downloadBlob(parts.join('\r\n'), baseName + '.eml', 'message/rfc822');
+  showEmailReadyToast();
 }
 // Open the KPI named in the link (…#view=…&kpi=ID): its scoreboard row,
 // or the Program window that holds it.
@@ -4975,11 +4989,139 @@ function openKpiFromURL(){
   }, 500);
 }
 
+// ---- Sharing a group of KPIs (a Key Service, Objective, Work System or
+// Goal): one Excel file with a summary and every KPI's numbers, one PDF
+// with a summary page and then each KPI's own pages, and an email with both.
+function groupForScope(scope){
+  const [kind, id] = String(scope).split(':');
+  let item = null, type = '', services = [];
+  if(kind === 'ks'){ item = DATA.keyServices.find(x => x.id === id); type = 'Key Service'; services = item ? [item] : []; }
+  else if(kind === 'ws'){ item = DATA.workSystems.find(x => x.id === id); type = 'Work System'; services = keyServicesUnderWorkSystem(id); }
+  else if(kind === 'ob'){ item = DATA.objectives.find(x => x.id === id); type = 'Objective'; services = keyServicesForObjective(id); }
+  else if(kind === 'goal'){
+    item = DATA.goals.find(x => x.id === id); type = 'Strategic Plan Goal';
+    const seen = new Set();
+    objectivesUnderGoal(id).forEach(o => keyServicesForObjective(o.id).forEach(ks => { if(!seen.has(ks.id)){ seen.add(ks.id); services.push(ks); } }));
+  }
+  if(!item) return null;
+  const seenK = new Set(), groups = [];
+  services.forEach(ks => {
+    const ks_kpis = kpisFor(ks.id).filter(k => !seenK.has(k.id));
+    ks_kpis.forEach(k => seenK.add(k.id));
+    if(ks_kpis.length) groups.push({ ks, live: ks_kpis.filter(k => !k.pending), waiting: ks_kpis.filter(k => k.pending) });
+  });
+  return { scope, type, title: item.name, groups, live: groups.flatMap(g => g.live), waiting: groups.flatMap(g => g.waiting) };
+}
+const groupFileBase = g => `durango-${slugify(g.title).slice(0, 60)}-kpis-${todayStamp()}`;
+const kpiUnitLabel = k => k.unit === 'percent' ? '%' : k.unit === 'currency' ? '$' : (!k.unit || k.unit === 'number') ? '' : k.unit;
+
+async function buildGroupSpreadsheet(g){
+  const sumHead = ['Key Service', 'KPI', 'Measure', 'Latest period', 'Result', 'Target', 'Benchmark', 'Status', 'Unit'];
+  const dataHead = ['Key Service', 'KPI', 'Period', 'Measure', 'Result', 'Target', 'Benchmark', 'Difference vs status basis', 'Status', 'Note', 'Unit'];
+  const sum = [sumHead], data = [dataHead];
+  g.groups.forEach(gr => gr.live.forEach(k => {
+    const rows = kpiExportRows(k);
+    const latest = rows.length ? rows[rows.length - 1].period : '';
+    rows.filter(r => r.period === latest).forEach(r => sum.push([gr.ks.name, k.name, r.measure, r.period, r.value, r.target, r.benchmark, r.status, kpiUnitLabel(k)]));
+    rows.forEach(r => data.push([gr.ks.name, k.name, r.period, r.measure, r.value, r.target, r.benchmark, r.diff, r.status, r.note, kpiUnitLabel(k)]));
+  }));
+  const about = [['City of Durango Performance Dashboard', ''], [g.type, g.title],
+    ['KPIs with results', g.live.map(k => k.name).join('; ')],
+    ['KPIs waiting on data', g.waiting.map(k => k.name).join('; ') || 'None'],
+    ['Exported', new Date().toLocaleString('en-US')], ['Dashboard', location.href]];
+  try{
+    await loadSheetJS();
+    const wb = XLSX.utils.book_new();
+    wb.Props = { Title: g.title + ' KPIs', Author: 'City of Durango' };
+    const add = (aoa, name, widths) => { const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = widths.map(w => ({ wch: w })); if(aoa.length > 1) ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s:{ r:0, c:0 }, e:{ r: aoa.length - 1, c: aoa[0].length - 1 } }) }; XLSX.utils.book_append_sheet(wb, ws, name); };
+    add(sum, 'Summary', [34, 44, 22, 13, 12, 12, 12, 12, 18]);
+    add(data, 'All data', [34, 44, 12, 22, 12, 12, 12, 16, 12, 40, 18]);
+    const a = XLSX.utils.aoa_to_sheet(about); a['!cols'] = [{ wch: 22 }, { wch: 100 }]; XLSX.utils.book_append_sheet(wb, a, 'About');
+    const out = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+    return { blob: new Blob([out], { type: XLSX_MIME }), name: groupFileBase(g) + '.xlsx', type: XLSX_MIME };
+  } catch(err){
+    console.warn('Excel library unavailable, using CSV', err);
+    const csv = data.map(r => r.map(v => csvEscape(v ?? '')).join(',')).join('\r\n');
+    return { blob: new Blob(['﻿' + csv], { type:'text/csv;charset=utf-8' }), name: groupFileBase(g) + '.csv', type:'text/csv' };
+  }
+}
+async function buildGroupPdf(g){
+  const pdf = newDashboardPdf(g.title + ' KPIs');
+  const PW = pdf.internal.pageSize.getWidth(), PH = pdf.internal.pageSize.getHeight(), M = 48, CW = PW - M * 2;
+  let y = M;
+  const ink = [30,30,30], forest = [0,106,83], slate = [75,75,75], line = [217,233,229];
+  const ensure = need => { if(y + need > PH - M - 18){ pdf.addPage(); y = M; return true; } return false; };
+  const para = (text, size = 10, color = ink, style = 'normal', gap = 4) => {
+    if(!text) return;
+    pdf.setFont('helvetica', style); pdf.setFontSize(size); pdf.setTextColor(...color);
+    pdf.splitTextToSize(pdfSafe(text), CW).forEach(l => { ensure(size * 1.3); pdf.text(l, M, y + size); y += size * 1.3; });
+    y += gap;
+  };
+  const [kind, id] = g.scope.split(':');
+  const gauge = gaugeFor(id);
+  para('CITY OF DURANGO  ·  PERFORMANCE DASHBOARD', 8.5, slate, 'bold', 6);
+  para(g.type.toUpperCase(), 9, slate, 'bold', 2);
+  para(g.title, 18, forest, 'bold', 4);
+  para(definitionFor(id), 10, ink, 'normal', 6);
+  if(gauge && gauge.kpis && gauge.kpis.length) para(`${gaugePctText(gauge)} of Key Service KPIs on target: ${gaugeCaption(gauge)}${gaugeAwaitingText(gauge) ? '; ' + gaugeAwaitingText(gauge) : ''}.`, 10.5, ink, 'bold', 10);
+  // Summary table: one row per KPI.
+  const cols = [{ h:'KPI', w:230 }, { h:'Latest', w:110 }, { h:'Target', w:70 }, { h:'Status', w:0 }];
+  cols[3].w = CW - 410;
+  const header = () => { pdf.setFont('helvetica','bold'); pdf.setFontSize(8.5); pdf.setTextColor(...slate); let x = M; cols.forEach(c => { pdf.text(c.h, x, y + 9); x += c.w; }); y += 14; pdf.setDrawColor(...line); pdf.line(M, y, M + CW, y); y += 4; };
+  g.groups.forEach(gr => {
+    if(!gr.live.length && !gr.waiting.length) return;
+    ensure(46); para(gr.ks.name, 11, forest, 'bold', 2); header();
+    gr.live.forEach(k => {
+      const rows = kpiExportRows(k); const latest = rows.length ? rows[rows.length - 1].period : '';
+      const head = k.segmentsOnly ? null : rows.filter(r => r.period === latest)[0];
+      const cells = [k.name,
+        k.segmentsOnly ? `By segment (${latest})` : `${fmtKpiValue(head.value, k)} (${latest})`,
+        k.segmentsOnly ? 'Each segment' : (kpiHas(head && head[kpiBasis(k)]) ? fmtKpiComparison(head[kpiBasis(k)], k) : '—'),
+        k.status ? STATUS_META[k.status].label : 'No status'];
+      pdf.setFont('helvetica','normal'); pdf.setFontSize(9.5); pdf.setTextColor(...ink);
+      const nameLines = pdf.splitTextToSize(pdfSafe(cells[0]), cols[0].w - 10);
+      if(ensure(13 * nameLines.length + 4)) header();
+      let x = M; cols.forEach((c, j) => { pdf.text(j ? pdfSafe(cells[j]) : nameLines, x, y + 10); x += c.w; });
+      y += 13 * nameLines.length + 3; pdf.setDrawColor(236,244,242); pdf.line(M, y - 2, M + CW, y - 2);
+    });
+    if(gr.waiting.length) para('Waiting on data: ' + gr.waiting.map(k => k.name).join('; '), 9, slate, 'italic', 4);
+    y += 6;
+  });
+  para('Each KPI follows on its own page.', 9, slate, 'italic', 2);
+  for(const k of g.live){ pdf.addPage(); await writeKpiPdfPages(pdf, k); }
+  return { blob: finishDashboardPdf(pdf), name: groupFileBase(g) + '.pdf', type: 'application/pdf' };
+}
+const groupFiles = {};
+function prepareGroupFiles(scope){
+  const g = groupForScope(scope);
+  if(!g) return Promise.reject(new Error('Nothing to share here yet.'));
+  if(!groupFiles[scope]) groupFiles[scope] = Promise.all([buildGroupSpreadsheet(g), buildGroupPdf(g)])
+    .then(([sheet, pdf]) => ({ g, sheet, pdf }))
+    .catch(err => { delete groupFiles[scope]; throw err; });
+  return groupFiles[scope];
+}
+async function emailGroup(scope){
+  const { g, sheet, pdf } = await prepareGroupFiles(scope);
+  const lines = g.live.map(k => `- ${k.name}: ${kpiLatestSummary(k)}`).join('\n');
+  const subject = `${g.title}: City of Durango Performance Dashboard`;
+  const body = `Here is the latest for ${g.title} (${g.type}) from the City of Durango Performance Dashboard.\n\n${lines}\n\n`
+    + (g.waiting.length ? `Still waiting on data: ${g.waiting.map(k => k.name).join('; ')}.\n\n` : '')
+    + `The Excel file has every KPI's numbers; the PDF has a summary and each KPI's chart and data table.\n\nDashboard: ${location.href}\n`;
+  await downloadEmlDraft(groupFileBase(g), subject, body, [sheet, pdf]);
+}
+function showEmailReadyToast(){
+  const chromium = /Chrome\/|Edg\//.test(navigator.userAgent);
+  showToast('Your email is ready, with the Excel file and PDF attached. <strong>Open the downloaded email file</strong> and it opens in your email app, ready to address and send.'
+    + (chromium ? '<br><small>Tip: to have these open straight away next time, open the downloads list, click ⋮ next to the email file, and choose <strong>Always open files of this type</strong>.</small>' : '')
+    + '<br><small>In Apple Mail, choose Message › Send Again to send it.</small>', { ms: 16000 });
+}
+
 async function runKpiAction(item){
   const k = KPI_BY_ID[item.dataset.kpiId];
+  const scope = item.dataset.groupScope;
   const wrap = item.closest('.kpi-share');
   const btn = wrap ? wrap.querySelector('.kpi-share-btn') : item;
-  if(!k || btn.disabled) return;
+  if((!k && !scope) || btn.disabled) return;
   const action = item.dataset.kpiAction;
   closeKpiMenus();
   btn.focus();
@@ -4988,7 +5130,12 @@ async function runKpiAction(item){
   btn.setAttribute('aria-busy', 'true');
   btn.innerHTML = action === 'email' ? 'Preparing email…' : 'Creating file…';
   try{
-    if(action === 'xlsx'){
+    if(scope){
+      const files = await prepareGroupFiles(scope);
+      if(action === 'xlsx') downloadBlob(files.sheet.blob, files.sheet.name, files.sheet.type);
+      else if(action === 'pdf') downloadBlob(files.pdf.blob, files.pdf.name, files.pdf.type);
+      else if(action === 'email') await emailGroup(scope);
+    } else if(action === 'xlsx'){
       const f = await buildKpiSpreadsheet(k);
       downloadBlob(f.blob, f.name, f.type);
       if(f.name.endsWith('.csv')) showToast('The Excel library couldn\'t load, so a CSV file was downloaded instead. It opens in Excel.');
@@ -5037,7 +5184,7 @@ const TOUR_STEPS = [
   { target: () => dashboardView.rootMode === 'workSystem' ? '#worksystem-card-row-wrap' : '#goal-mountain-row-wrap', title: 'Gauges show progress',
     body: 'Each gauge shows how many KPIs are on target. A dash means results are still being collected. Select any tile to open it.' },
   { target: '#dash-search', title: 'Search for anything',
-    body: 'Type part of a name, like "uptime" or "library", to jump straight to a KPI, Key Service, Program, Goal or Objective.' },
+    body: 'Type part of a KPI\'s name, like "uptime" or "circulation", or a Key Service or Program name to list its KPIs. Pick one to jump straight to it.' },
   { target: '#explorer-bar', title: 'Drill in and find your way back',
     body: 'Opening a Goal or Work System shows its definition, its gauge and what sits under it. The path next to the view switch shows where you are; select any step to go back. It stays pinned at the top as you scroll.' },
   { target: null, title: 'See the numbers behind each KPI',
