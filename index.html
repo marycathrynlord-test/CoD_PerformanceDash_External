@@ -270,13 +270,25 @@
   .kpi-tool:focus-visible{outline:2px solid #1E1E1E; outline-offset:2px;}
   .kpi-tool[disabled]{cursor:progress; opacity:.75;}
   .kpi-tool svg{flex:none;}
+  .kpi-share{position:relative; display:inline-flex;}
+  .kpi-share-chev{font-size:10px; margin-left:1px;}
+  .kpi-share-menu{position:absolute; top:calc(100% + 6px); right:0; z-index:60; min-width:230px; display:flex; flex-direction:column; padding:6px;
+    background:#fff; border:1px solid #D9E9E5; border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.16);}
+  .kpi-share-menu[hidden]{display:none;}
+  .kpi-menu-item{display:flex; align-items:flex-start; gap:10px; width:100%; text-align:left; font:inherit; color:#1E1E1E; background:none; border:0; border-radius:7px; padding:9px 10px; cursor:pointer;}
+  .kpi-menu-item svg{margin-top:2px; color:#006A53; flex:none;}
+  .kpi-menu-item span{display:flex; flex-direction:column; gap:1px;}
+  .kpi-menu-item strong{font-size:13px; color:#006A53;}
+  .kpi-menu-item small{font-size:11.5px; color:#4B4B4B;}
+  .kpi-menu-item:hover, .kpi-menu-item:focus-visible{background:#ECF4F2; outline:none;}
+  .kpi-menu-item:focus-visible{box-shadow:inset 0 0 0 2px #1E1E1E;}
   .kpi-toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:3000; max-width:min(560px, calc(100vw - 32px));
     background:#1E1E1E; color:#fff; border-radius:10px; padding:12px 44px 12px 16px; font-size:13.5px; line-height:1.5; box-shadow:0 10px 30px rgba(0,0,0,.25);}
   .kpi-toast[hidden]{display:none;}
   .kpi-toast button{position:absolute; top:8px; right:8px; background:none; border:0; color:#fff; font-size:18px; line-height:1; cursor:pointer; padding:4px 6px; border-radius:4px;}
   .kpi-toast button:focus-visible{outline:2px solid #fff;}
   .kpi-toast .kpi-toast-action{position:static; display:inline-block; margin-top:8px; font-size:13px; font-weight:700; background:#fff; color:#1E1E1E; padding:6px 12px;}
-  @media print{ .kpi-tools, .kpi-toast{display:none !important;} }
+  @media print{ .kpi-share, .kpi-toast{display:none !important;} }
   .kpi-desc{font-size:12.5px; color:var(--slate); line-height:1.5; margin:4px 0 0;}
   .kpi-figure{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-top:10px;}
   .kpi-big{font-size:30px; font-weight:700; color:var(--ink); letter-spacing:-.01em; line-height:1;}
@@ -292,6 +304,11 @@
   .kpi-notset{color:var(--slate); font-style:italic; font-size:11.5px;}
   .kpi-table-wrap{overflow-x:auto;}
   .kpi-chart{display:block; width:100%; height:auto; margin-top:12px;}
+  .kpi-range-note{margin-top:10px; font-size:11.5px; font-weight:700; color:#4B4B4B; text-transform:uppercase; letter-spacing:.06em;}
+  .kpi-range-btn{margin-top:8px; font:inherit; font-size:12.5px; font-weight:700; color:#006A53; background:#fff; border:1px solid #7FB4A9; border-radius:6px; padding:5px 10px; cursor:pointer;}
+  .kpi-range-btn:hover{background:#ECF4F2;}
+  .kpi-range-btn:focus-visible{outline:2px solid #1E1E1E; outline-offset:2px;}
+  @media print{ .kpi-range-btn{display:none;} }
   .kpi-legend{display:flex; gap:16px; font-size:11.5px; color:var(--slate); margin-top:2px;}
   .kpi-legend span{display:inline-flex; align-items:center; gap:6px;}
   .kpi-table{width:100%; border-collapse:collapse; margin-top:12px; font-size:12.5px;}
@@ -368,6 +385,19 @@
   #explorer-children-label{margin-bottom:10px;}
   /* Objective level: aligned Key Services listed at the top, then all
      of their KPIs grouped by Key Service. */
+  .obj-ks-more{margin-top:28px; border:1px dashed #7FB4A9; border-radius:10px; background:#FAFCFC;}
+  .obj-ks-more > summary{cursor:pointer; list-style:none; padding:14px 18px; font-size:14px; font-weight:800; color:#006A53; display:flex; align-items:center; gap:6px;}
+  .obj-ks-more > summary::-webkit-details-marker{display:none;}
+  .obj-ks-more > summary:focus-visible{outline:3px solid #1E1E1E; outline-offset:2px; border-radius:10px;}
+  .obj-ks-more > summary .chev{margin-left:auto; transition:transform .15s ease;}
+  .obj-ks-more[open] > summary .chev{transform:rotate(180deg);}
+  .obj-ks-more .when-open{display:none;} .obj-ks-more[open] .when-open{display:inline;} .obj-ks-more[open] .when-closed{display:none;}
+  .obj-ks-more-body{padding:0 18px 18px;}
+  .obj-ks-more-body .obj-ks-section:first-child{margin-top:4px;}
+  .obj-ks-more-list{margin:10px 0 0; padding-left:18px; font-size:13.5px; line-height:1.7;}
+  .obj-ks-more-list span{color:#4B4B4B; font-size:12.5px;}
+  .obj-ks-more-link{margin-top:12px; font:inherit; font-size:13px; font-weight:700; color:#006A53; background:none; border:0; padding:4px 0; cursor:pointer; text-decoration:underline; text-underline-offset:3px;}
+  .obj-ks-more-link:focus-visible{outline:3px solid #1E1E1E; outline-offset:2px; border-radius:3px;}
   .obj-ks-overview{margin:0 0 22px; padding:18px 20px 20px; background:#ECF4F2; border:1px solid #D9E9E5; border-left:5px solid #006A53; border-radius:10px;}
   .obj-ks-overview-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
   .obj-ks-overview-title{margin:0; font-size:18px; font-weight:800; color:#006A53; line-height:1.3;}
@@ -407,10 +437,17 @@
   .obj-ks-title:focus{outline:none;}
   .obj-ks-title:focus-visible{outline:2px solid #fff; outline-offset:3px;}
   .obj-ks-head-right{display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;}
-  .obj-ks-programs{font:inherit; font-size:13px; font-weight:800; color:#006A53; background:#fff; border:2px solid #fff; border-radius:8px; padding:9px 14px; cursor:pointer;
-    box-shadow:0 2px 0 rgba(0,0,0,.18);}
-  .obj-ks-programs:hover{background:#ECF4F2;}
-  .obj-ks-programs:focus-visible{outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 6px #1E1E1E;}
+  .obj-ks-body{display:block;}
+  .obj-ks-progs{margin-top:4px;}
+  .obj-ks-progs-label{margin:0 0 10px; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#4B4B4B; display:flex; align-items:center; gap:8px;}
+  .obj-ks-progs-label span{font-size:11px; font-weight:700; letter-spacing:0; background:#ECF4F2; border:1px solid #D9E9E5; border-radius:999px; padding:1px 8px;}
+  .obj-ks-progs-grid{grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));}
+  .obj-ks-progs-none{margin:0; font-size:12.5px; color:#4B4B4B; font-style:italic;}
+  @media (min-width:900px){
+    .obj-ks-body{display:grid; grid-template-columns:minmax(0, 1fr) 250px; gap:20px; align-items:start;}
+    .obj-ks-progs{margin-top:0; padding:14px; background:#FAFCFC; border:1px solid #D9E9E5; border-radius:10px;}
+    .obj-ks-progs-grid{grid-template-columns:1fr;}
+  }
   .obj-ks-gauge{display:inline-flex; align-items:center; gap:8px; background:#fff; color:var(--forest); border-radius:10px; padding:8px 14px;}
   .obj-ks-gauge .gauge-pct{color:#006A53; font-weight:800;}
   .obj-ks-cap{font-size:12px; color:#4B4B4B; font-weight:600;}
@@ -1021,9 +1058,6 @@
   .side-nav a:hover, .side-nav a[aria-current]{background:rgba(255,255,255,.12); text-decoration:underline; text-underline-offset:4px;}
   .content-card{background:#fff; border-radius:0 22px 22px 0; box-shadow:0 4px 20px rgba(0,0,0,.08); padding:28px 0 36px; min-width:0;}
   .content-card .wrap{max-width:none; padding:0 30px 10px;}
-  .crumbs{font-size:13px; padding:0 30px 6px; color:#1E1E1E;}
-  .crumbs a{color:#1E1E1E; text-decoration:none;}
-  .crumbs a:hover{text-decoration:underline;}
   #load-state, #error-state{margin-left:30px; margin-right:30px;}
 
   /* Headings and text like the template: black, no eyebrow labels */
@@ -1129,6 +1163,27 @@
   .explorer-bar{position:sticky; top:0; z-index:30; background:#fff; display:flex; align-items:center; flex-wrap:wrap; gap:8px 20px; padding:8px 0; margin:0 0 4px; border-bottom:1px solid transparent; transition:border-color .2s, box-shadow .2s;}
   .explorer-bar.stuck{border-bottom-color:var(--line); box-shadow:0 6px 10px -8px rgba(0,0,0,.18);}
   .explorer-bar .root-mode-toggle{margin:0;}
+  .dash-search{position:relative; margin-left:auto; flex:0 1 300px; min-width:220px;}
+  .dash-search-icon{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:#4B4B4B; pointer-events:none;}
+  .dash-search input{width:100%; font:inherit; font-size:14px; color:#1E1E1E; padding:8px 12px 8px 34px; border:1.5px solid #7FB4A9; border-radius:999px; background:#fff;}
+  .dash-search input::placeholder{color:#5E6A68;}
+  .dash-search input:focus{outline:3px solid #1E1E1E; outline-offset:1px; border-color:#006A53;}
+  .dash-search-list{position:absolute; right:0; top:calc(100% + 6px); z-index:80; width:min(440px, calc(100vw - 32px)); max-height:min(70vh, 460px); overflow-y:auto;
+    margin:0; padding:6px; list-style:none; background:#fff; border:1px solid #D9E9E5; border-radius:12px; box-shadow:0 14px 32px rgba(0,0,0,.18);}
+  .dash-search-list[hidden]{display:none;}
+  .dash-search-list li{display:flex; flex-direction:column; gap:2px; padding:9px 12px; border-radius:8px; cursor:pointer;}
+  .dash-search-list li[aria-selected="true"], .dash-search-list li:hover{background:#ECF4F2;}
+  .dash-search-list li[aria-selected="true"]{box-shadow:inset 0 0 0 2px #006A53;}
+  .ds-type{font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#4B4B4B;}
+  .ds-name{font-size:14px; font-weight:700; color:#006A53; line-height:1.3;}
+  .ds-name mark{background:#FFF1C9; color:inherit; border-radius:2px;}
+  .ds-ctx{font-size:12px; color:#4B4B4B;}
+  .dash-search-list li.ds-none{cursor:default; color:#4B4B4B; font-size:13px;}
+  .dash-search-list li.ds-none:hover{background:none;}
+  @media (max-width:640px){ .dash-search{flex:1 1 100%; margin-left:0;} .dash-search-list{left:0; right:auto;} }
+  .search-flash{animation:searchFlash 2.2s ease-out;}
+  @keyframes searchFlash{0%,35%{box-shadow:0 0 0 4px #1E1E1E;} 100%{box-shadow:0 0 0 4px rgba(30,30,30,0);}}
+  @media (prefers-reduced-motion: reduce){ .search-flash{animation:none; box-shadow:0 0 0 3px #1E1E1E;} }
   .sticky-crumbs{display:flex; align-items:center; flex-wrap:wrap; gap:2px 6px; font-size:14px;}
   .sticky-crumbs .crumb{background:none; border:none; font:inherit; font-size:14px; color:var(--forest); font-weight:700; cursor:pointer; padding:4px 2px; text-decoration:underline; text-underline-offset:3px;}
   .sticky-crumbs .crumb.current{color:#1E1E1E; text-decoration:none; cursor:default;}
@@ -1145,17 +1200,48 @@
   @keyframes softIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
   #level-summary > *, #explorer-detail > *, #heatmap-grid > *{animation:softIn .35s ease-out both;}
   /* Goal / Work System definition panel tinted in its own color */
+  /* Slim row of Goal / Work System buttons once one is open. */
+  .drill-col.is-compact #goal-mountain-row-wrap, .drill-col.is-compact #worksystem-card-row-wrap{display:none !important;}
+  .root-strip{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:14px 20px 12px; border-bottom:1px solid var(--line);}
+  .root-strip[hidden]{display:none;}
+  .root-strip-label{font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#4B4B4B; margin-right:4px;}
+  .root-chip{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:13px; font-weight:700; color:#1E1E1E;
+    background:#fff; border:1.5px solid #D9E9E5; border-radius:999px; padding:6px 12px 6px 10px; cursor:pointer; line-height:1.2;}
+  .root-chip:hover{border-color:#7FB4A9; background:#FAFCFC;}
+  .root-chip:focus-visible{outline:3px solid #1E1E1E; outline-offset:2px;}
+  .root-chip-dot{width:10px; height:10px; border-radius:50%; background:var(--chip-bg); flex:none;}
+  .root-chip-pct{font-size:12px; font-weight:800; color:#4B4B4B; padding-left:7px; border-left:1px solid #D9E9E5;}
+  .root-chip.is-selected{background:var(--chip-bg); color:var(--chip-fg); border-color:var(--chip-bg); box-shadow:0 2px 6px rgba(0,0,0,.12);}
+  .root-chip.is-selected .root-chip-dot{background:var(--chip-fg);}
+  .root-chip.is-selected .root-chip-pct{color:var(--chip-fg); border-left-color:currentColor;}
+  .root-chip{text-align:left; position:relative;}
+  .root-strip{max-width:100%; min-width:0; box-sizing:border-box;}
+  .drill-col{min-width:0;}
+  @media (max-width:640px){
+    .root-strip{flex-wrap:nowrap; overflow-x:auto; padding:10px 12px; gap:6px; scrollbar-width:thin; -webkit-overflow-scrolling:touch;}
+    .root-chip{flex:none; white-space:nowrap; font-size:12.5px; padding:6px 10px 6px 8px;}
+    .root-strip-label{flex:none;}
+  }
   .level-summary.ls-tinted{
     background:linear-gradient(90deg, var(--ls-tint-1) 0%, var(--ls-tint-2) 100%);
-    border-left:8px solid var(--ls-accent); border-bottom:none; border-radius:12px; margin:6px 20px 16px; padding:22px 24px 20px;
+    border-left:6px solid var(--ls-accent); border-bottom:none; border-radius:10px; margin:14px 20px 16px; padding:14px 20px; gap:20px;
   }
+  .level-summary .ls-main{min-width:0;}
+  .level-summary.ls-tinted .ls-name{margin:2px 0 0; font-size:22px; line-height:1.25;}
+  .level-summary.ls-tinted .ls-def{margin:6px 0 0; font-size:13.5px; line-height:1.55; max-width:900px;}
+  .level-summary .ls-def .ls-src{font-size:12px; margin:0;}
+  .ls-gauge{display:flex; align-items:center; gap:12px; background:#fff; border-radius:10px; padding:8px 14px; box-shadow:0 2px 8px rgba(0,0,0,.06); color:var(--forest);}
+  .ls-gauge-text{display:flex; flex-direction:column; gap:2px;}
+  .ls-pct{font-size:20px; font-weight:800; color:#006A53; line-height:1;}
+  .ls-cap{font-size:12px; font-weight:700; color:#4B4B4B; line-height:1.3; max-width:190px;}
+  .ls-await{font-size:11.5px; color:#4B4B4B;}
   .level-summary.ls-tinted .ls-type{color:var(--ls-dark-55);}
   .level-summary.ls-tinted .ls-name{color:var(--ls-dark-60); font-size:24px; font-weight:800;}
   .level-summary.ls-tinted .ls-def{color:#1E1E1E;}
   .level-summary.ls-tinted .ls-src{color:#3F4A48;}
   .level-summary.ls-tinted .ls-awaiting summary{color:var(--ls-dark-55);}
   .level-summary.ls-tinted .gauge-block{background:#fff; border-radius:12px; padding:14px 18px; box-shadow:0 2px 8px rgba(0,0,0,.06);}
-  @media (max-width:640px){ .level-summary.ls-tinted{margin:6px 10px 14px; padding:18px 16px;} }
+  @media (max-width:640px){ .level-summary.ls-tinted{margin:10px 10px 12px; padding:12px 14px;} .level-summary.ls-tinted .ls-name{font-size:19px;} .ls-gauge{justify-self:start;} }
   .titleband .intro{max-width:900px;}
   .titleband .intro p{margin:0 0 10px; font-size:16px; line-height:1.6;}
   .titleband .intro p:last-child{margin-bottom:0;}
@@ -1214,7 +1300,6 @@
 
 <div class="page-shell">
   <div class="content-card">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="https://durangoco.gov">Home</a> › <a href="https://durangoco.gov">Local Government</a> › <span aria-current="page">Performance Dashboard</span></nav>
 
 
 
@@ -1333,18 +1418,28 @@
 
     <div class="explorer-bar" id="explorer-bar">
       <div class="root-mode-toggle" id="root-mode-toggle"></div>
-      <nav class="sticky-crumbs" id="sticky-crumbs" aria-label="Current location (pinned)"></nav>
+      <nav class="sticky-crumbs" id="sticky-crumbs" aria-label="Breadcrumb"></nav>
+      <div class="dash-search" id="dash-search">
+        <label for="dash-search-input" class="sr-only">Search KPIs, Key Services, Programs and Goals</label>
+        <svg class="dash-search-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m11 11 3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input type="search" id="dash-search-input" placeholder="Search KPIs, services, programs…" autocomplete="off"
+          role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="dash-search-list">
+        <ul id="dash-search-list" class="dash-search-list" role="listbox" aria-label="Search results" hidden></ul>
+      </div>
     </div>
     <div id="selected-goal-banner"></div>
 
     <div class="drill-col">
+      <nav class="root-strip" id="root-strip" aria-label="Switch Goal or Work System" hidden></nav>
       <div class="heatmap-body" id="goal-mountain-row-wrap">
         <div class="heatmap-grid mountain-grid" id="goal-mountain-row"></div>
       </div>
       <div class="heatmap-body" id="worksystem-card-row-wrap">
         <div class="heatmap-grid ws-card-grid" id="worksystem-card-row"></div>
       </div>
-      <div class="drill-col-head" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <!-- Hidden: the pinned breadcrumb at the top is the only one shown. This
+           copy stays in the page because the pinned one passes its clicks here. -->
+      <div class="drill-col-head" hidden style="display:none;">
         <div class="heatmap-breadcrumb" id="heatmap-breadcrumb"></div>
       </div>
       <div class="level-summary" id="level-summary"></div>
@@ -1366,7 +1461,7 @@
   <!-- GUIDED TOUR CARD -->
   <div class="tour-card" id="tour-card" role="dialog" aria-modal="false" aria-labelledby="tour-title" aria-describedby="tour-body">
     <div class="tour-card-head">
-      <span class="tour-progress" id="tour-progress">1 / 7</span>
+      <span class="tour-progress" id="tour-progress">1 / 8</span>
       <button class="tour-skip-link" id="tour-skip">Skip tour</button>
     </div>
     <h4 class="tour-title" id="tour-title"></h4>
@@ -1527,17 +1622,17 @@ function keyServicesForObjective(obId){
 }
 
 function gaugeCaption(g){
-  if(!g.kpis.length) return 'No Key Service KPIs yet';
-  if(!g.withResult) return `${plural(g.kpis.length, 'Key Service KPI')} awaiting results`;
-  return `${g.meeting} of ${plural(g.withResult, 'Key Service KPI')} meeting target`;
+  if(!g.kpis.length) return 'No KPIs yet';
+  if(!g.withResult) return `${plural(g.kpis.length, 'KPI')} waiting on data`;
+  return `${g.meeting} of ${plural(g.withResult, 'KPI')} on target`;
 }
 function gaugeAwaitingText(g){
-  return (g.withResult && g.awaiting.length) ? `${g.awaiting.length} more awaiting results` : '';
+  return (g.withResult && g.awaiting.length) ? `${g.awaiting.length} more waiting on data` : '';
 }
 function gaugePctText(g){ return g.percent === null || g.percent === undefined ? '—' : `${g.percent}%`; }
 // Full sentence for screen readers (the drawing itself is hidden from them).
 function gaugeSpoken(g){
-  const pct = g.percent === null || g.percent === undefined ? 'No gauge yet' : `${g.percent}% of Key Service KPIs meeting target`;
+  const pct = g.percent === null || g.percent === undefined ? 'No results yet' : `${g.percent}% of KPIs on target`;
   const extra = gaugeAwaitingText(g);
   return `${pct}. ${gaugeCaption(g)}${extra ? '. ' + extra : ''}`;
 }
@@ -1593,9 +1688,9 @@ function gaugeInlineHTML(g, width){
 
 // White card with a gauge: Key Services (both views) and Objectives.
 function gaugeTileHTML({ typeLabel, name, gauge, subtitle='', definition='', dataAttrs='', exportKind='', exportId='', extraClass='', tileStyle='', interactive=true, actionHint='' }){
-  const exportBtnHTML = exportKind
-    ? `<button type="button" class="tile-export-btn" data-export-kind="${exportKind}" data-export-id="${exportId}" title="Export this ${typeLabel}" aria-label="Export ${escHTML(name)} as CSV">⬇</button>`
-    : '';
+  // The small ⬇ CSV icon on tiles was removed: each KPI's Share menu and
+  // the Export menu at the top cover downloads.
+  const exportBtnHTML = '';
   const spoken = `${typeLabel}: ${name}. ${gaugeSpoken(gauge)}${subtitle ? '. ' + subtitle : ''}${actionHint ? '. ' + actionHint : ''}`;
   return `
     <div class="heat-tile gauge-tile${extraClass ? ' ' + extraClass : ''}${interactive ? '' : ' heat-tile-static'}"${tileStyle ? ` style="${tileStyle}"` : ''} ${dataAttrs}>
@@ -1915,8 +2010,8 @@ document.addEventListener('click', ()=>{ hideTooltip(); });
 function gaugeBreakdownHTML(items){
   const groups = [
     { key:'with', label:'Reporting (has a gauge reading)', color:'#006A53', names:[] },
-    { key:'await', label:'Awaiting results', color:'#7FB4A9', names:[] },
-    { key:'none', label:'No Key Service KPIs yet', color:'#E3EAE8', names:[] },
+    { key:'await', label:'Waiting on data', color:'#7FB4A9', names:[] },
+    { key:'none', label:'No KPIs yet', color:'#E3EAE8', names:[] },
   ];
   items.forEach(item=>{
     const g = gaugeFor(item.id);
@@ -2000,7 +2095,7 @@ function renderHeadline(){
   let icon, cls, html;
   if(!seen.size){
     icon = '•'; cls = 'caution';
-    html = 'No Key Service KPIs have been set up yet, so the gauges are empty.';
+    html = 'No KPIs have been set up yet, so the gauges are empty.';
   } else if(!withResult){
     icon = '•'; cls = 'caution';
     html = `<strong>${plural(seen.size, 'Key Service KPI')}</strong> are set up; their gauges will fill in as results are entered.`;
@@ -2013,8 +2108,8 @@ function renderHeadline(){
       .filter(o => gaugeFor(o.id).withResult && gaugeFor(o.id).percent < 100)
       .sort((a,b) => gaugeFor(a.id).percent - gaugeFor(b.id).percent)
       .slice(0, 3);
-    html = `<strong>${meeting} of ${plural(withResult, 'Key Service KPI')} with results (${pct}%)</strong> are meeting their target.`
-      + (awaiting ? ` ${plural(awaiting, 'more is', 'more are')} awaiting results.` : '')
+    html = `<strong>${meeting} of ${plural(withResult, 'KPI')} with results (${pct}%)</strong> are on target.`
+      + (awaiting ? ` ${plural(awaiting, 'more is', 'more are')} waiting on data.` : '')
       + (lowest.length ? ` Lowest Objective gauge${lowest.length === 1 ? '' : 's'}: <strong>${lowest.map(o => `${escHTML(o.name)} (${gaugeFor(o.id).percent}%)`).join(', ')}</strong>.` : '');
   }
   banner.className = `headline-banner ${cls}`;
@@ -2128,9 +2223,9 @@ function staleFlagHTML(item){
 function heatTileHTML({ typeLabel, name, status, trendItem, extraFoot='', dataAttrs='', subtitle='', exportKind='', exportId='', tileStyle='', extraClass='', statusAsHighlight=false, interactive=true }){
   const trend = trendItem ? computeTrend(trendItem.history) : null;
   const trendHTML = trend ? `<span class="heat-trend" role="img" aria-label="Trend: ${TREND_META[trend].label}">${TREND_META[trend].arrow}</span>` : '';
-  const exportBtnHTML = exportKind
-    ? `<button type="button" class="tile-export-btn" data-export-kind="${exportKind}" data-export-id="${exportId}" title="Export this ${typeLabel}" aria-label="Export ${escHTML(name)} as CSV">⬇</button>`
-    : '';
+  // The small ⬇ CSV icon on tiles was removed: each KPI's Share menu and
+  // the Export menu at the top cover downloads.
+  const exportBtnHTML = '';
   const styleAttr = tileStyle ? ` style="${tileStyle}"` : '';
   const classAttr = `heat-tile status-${status}${extraClass ? ' ' + extraClass : ''}${interactive ? '' : ' heat-tile-static'}`;
   // When the tile's own background carries brand color rather than
@@ -2265,10 +2360,10 @@ function updateExplorerHeading(){
   if(!heading || !sub) return;
   if(dashboardView.rootMode === 'goal'){
     heading.textContent = 'Strategic Plan Goals → Objectives → Key Services';
-    sub.textContent = "Pick a Goal to see its Objectives, then an Objective to see the Key Services that support it. Each gauge shows the share of Key Service KPIs meeting their target."
+    sub.textContent = "Pick a Goal, then an Objective, to see the Key Services that support it and their KPIs. Each gauge shows how many KPIs are on target."
   } else {
     heading.textContent = 'Work Systems → Key Services → Programs';
-    sub.textContent = "Start at a Work System, drill into its Key Services, then into the Programs each one runs. Gauges show the share of Key Service KPIs meeting their target; Programs keep their status color.";
+    sub.textContent = "Pick a Work System to see its Key Services, their KPIs and the Programs they run. Each gauge shows how many KPIs are on target.";
   }
 }
 
@@ -2294,12 +2389,11 @@ function renderDashboardBreadcrumb(){
     parts.push(`<button class="crumb current" data-crumb="keyservice">${ks ? ks.name : 'Key Service'}</button>`);
   }
   bc.innerHTML = parts.join('').replace(/class="crumb current"/g, 'class="crumb current" aria-current="location"').replace(/<span class="sep">/g, '<span class="sep" aria-hidden="true">');
-  bc.setAttribute('role', 'navigation');
-  bc.setAttribute('aria-label', 'Breadcrumb');
+
 
   const sc = document.getElementById('sticky-crumbs');
   if(sc){
-    sc.innerHTML = dashboardView.level === 'roots' ? '' : bc.innerHTML.replace(/ aria-current="location"/g,'');
+    sc.innerHTML = dashboardView.level === 'roots' ? '' : bc.innerHTML;
     sc.querySelectorAll('.crumb').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const orig = bc.querySelector(`.crumb[data-crumb="${btn.dataset.crumb}"]`);
@@ -2349,7 +2443,7 @@ function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false
   const nKs = new Set(objectivesUnderGoal(g.id).flatMap(o => keyServicesForObjective(o.id).map(k => k.id))).size;
   const cls = `goal-col${selected ? ' goal-col-selected' : ''}${dimmed ? ' goal-col-dimmed' : ''}${interactive ? '' : ' goal-col-static'}`;
   const clip = `polygon(0% 100%, 0% ${left}%, 50% ${peak}%, 100% ${right}%, 100% 100%)`;
-  const cap = gauge.withResult ? `${gauge.meeting} of ${plural(gauge.withResult, 'KPI')} meeting target` : (gauge.kpis.length ? 'Awaiting results' : 'No KPIs yet');
+  const cap = gauge.withResult ? `${gauge.meeting} of ${plural(gauge.withResult, 'KPI')} on target` : (gauge.kpis.length ? 'Waiting on data' : 'No KPIs yet');
   return `
     <div class="${cls}" style="color:#fff; --goal-bg:${block.bg};${width ? ` width:${width}px;` : ''}" ${interactive ? `data-drill-root="${g.id}"` : ''}>
       <div class="goal-mtn" style="clip-path:${clip}; background:${c.bg}; color:${c.fg};">
@@ -2361,7 +2455,6 @@ function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false
       <div class="goal-band-gap"></div>
       <div class="goal-gauge-block" style="background:${block.bg};">
         ${interactive ? `<button type="button" class="tile-hit" aria-label="${escHTML(`Goal: ${g.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>` : ''}
-        <button type="button" class="tile-export-btn" data-export-kind="goal" data-export-id="${g.id}" title="Export this Goal" aria-label="Export ${escHTML(g.name)} as CSV">⬇</button>
         <div class="ggb-dial${gauge.withResult ? '' : ' gauge-empty'}" aria-hidden="true">${gaugeSVG(gauge, 138)}</div>
         <div class="ggb-pct" aria-hidden="true">${goalPctText(gauge)}</div>
         <div class="ggb-cap" aria-hidden="true">${escHTML(cap)}</div>
@@ -2374,6 +2467,37 @@ function goalMountainTileHTML(g, status, { left, peak, right }, { selected=false
 // greying out every one except whichever Goal is currently selected —
 // so the row itself IS the "you are here" indicator, rather than
 // replacing the row with a different view when you drill in.
+// Once a Goal or Work System is open, the big row of tiles shrinks to a
+// slim row of buttons, one per Goal or Work System, so the data starts
+// near the top of the screen. "All Goals" in the breadcrumb brings the
+// big tiles back.
+function renderRootStrip(){
+  const strip = document.getElementById('root-strip');
+  const col = strip && strip.closest('.drill-col');
+  if(!strip) return;
+  const compact = dashboardView.level !== 'roots';
+  if(col) col.classList.toggle('is-compact', compact);
+  strip.hidden = !compact;
+  if(!compact){ strip.innerHTML = ''; return; }
+  const goalMode = dashboardView.rootMode === 'goal';
+  const roots = goalMode ? sortGoalsCanonical(DATA.goals) : DATA.workSystems;
+  strip.setAttribute('aria-label', goalMode ? 'Switch Goal' : 'Switch Work System');
+  strip.innerHTML = `<span class="root-strip-label">${goalMode ? 'Goals' : 'Work Systems'}</span>` + roots.map(r => {
+    const g = gaugeFor(r.id);
+    const sel = r.id === dashboardView.rootId;
+    const color = goalMode && r.color ? readableTileColors(r.color) : { bg:'#006A53', fg:'#fff' };
+    const pct = g.withResult ? goalPctText(g) : '—';
+    return `<button type="button" class="root-chip${sel ? ' is-selected' : ''}" data-drill-root="${r.id}"
+        style="--chip-bg:${color.bg}; --chip-fg:${color.fg};"${sel ? ' aria-current="true"' : ''}>
+        <span class="root-chip-dot" aria-hidden="true"></span><span class="root-chip-name">${escHTML(r.name)}</span><span class="root-chip-pct" aria-hidden="true">${pct}</span><span class="sr-only">. ${escHTML(gaugeSpoken(g))}</span>
+      </button>`;
+  }).join('');
+  wireDashboardTiles(strip);
+  // Phones: the row scrolls sideways; bring the open one into view.
+  const sel = strip.querySelector('.is-selected');
+  if(sel && strip.scrollWidth > strip.clientWidth) strip.scrollLeft = Math.max(0, sel.offsetLeft - 80);
+}
+
 function renderGoalMountainRow(){
   const container = document.getElementById('goal-mountain-row');
   if(!container) return;
@@ -2389,7 +2513,7 @@ function renderGoalMountainRow(){
   const peaks = [26, 30, 10, 2, 26, 32];
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span></div>` + goals.map((g,i)=>{
+  container.innerHTML = `<div class="goal-band"><span class="gb-title">How each Goal is doing</span></div>` + goals.map((g,i)=>{
     const left = boundaries[i] ?? 40, peak = peaks[i] ?? 30, right = boundaries[i+1] ?? 40;
     return goalMountainTileHTML(g, null, { left, peak, right }, {
       selected: selectedId === g.id,
@@ -2406,7 +2530,8 @@ function renderSelectedGoalBanner(){
   const container = document.getElementById('selected-goal-banner');
   if(!container) return;
 
-  if(dashboardView.rootMode !== 'goal' || dashboardView.level === 'roots'){
+  // Replaced by the slim row of Goal buttons (renderRootStrip).
+  if(true){
     container.innerHTML = '';
     container.classList.remove('has-selection');
     return;
@@ -2415,7 +2540,7 @@ function renderSelectedGoalBanner(){
   if(!g){ container.innerHTML = ''; container.classList.remove('has-selection'); return; }
 
   container.classList.add('has-selection');
-  container.innerHTML = `<div class="goal-band"><span class="gb-title">Goal Area Target Success Indicators</span></div>` + goalMountainTileHTML(
+  container.innerHTML = `<div class="goal-band"><span class="gb-title">How each Goal is doing</span></div>` + goalMountainTileHTML(
     g, null, { left:55, peak:15, right:55 },
     { selected:true, width:260, interactive:false }
   );
@@ -2454,7 +2579,7 @@ function workSystemCardHTML(ws, status, { selected=false, dimmed=false } = {}){
   // block (ink text, 7.15:1). The Work System colors in data.json are not used.
   const c = { bg:'#006A53', fg:'#fff' };
   const nKs = keyServicesUnderWorkSystem(ws.id).length;
-  const cap = gauge.withResult ? `${gauge.meeting} of ${plural(gauge.withResult, 'KPI')} meeting target` : (gauge.kpis.length ? 'Awaiting results' : 'No KPIs yet');
+  const cap = gauge.withResult ? `${gauge.meeting} of ${plural(gauge.withResult, 'KPI')} on target` : (gauge.kpis.length ? 'Waiting on data' : 'No KPIs yet');
   return `
     <div class="goal-col ws-col${selected ? ' goal-col-selected' : ''}${dimmed ? ' goal-col-dimmed' : ''}"
          style="color:${c.fg}; --goal-bg:${c.bg};" data-drill-root="${ws.id}">
@@ -2463,10 +2588,9 @@ function workSystemCardHTML(ws, status, { selected=false, dimmed=false } = {}){
         <div class="ws-top-name">${escHTML(ws.name)}</div>
         <div class="ws-top-meta">${plural(nKs, 'Key Service')} · ${plural(gauge.kpis.length, 'KPI')}</div>
       </div>
-      <div class="goal-band-gap"><span class="ws-band-mini" aria-hidden="true">Target success</span></div>
+      <div class="goal-band-gap"><span class="ws-band-mini" aria-hidden="true">On target</span></div>
       <div class="goal-gauge-block ws-gauge-block">
         <button type="button" class="tile-hit" aria-label="${escHTML(`Work System: ${ws.name}. ${gaugeSpoken(gauge)}`)}"${selected ? ' aria-current="true"' : ''}></button>
-        <button type="button" class="tile-export-btn" data-export-kind="workSystem" data-export-id="${ws.id}" title="Export this Work System" aria-label="Export ${escHTML(ws.name)} as CSV">⬇</button>
         <div class="ggb-dial${gauge.withResult ? '' : ' gauge-empty'}" aria-hidden="true">${gaugeSVG(gauge, 138)}</div>
         <div class="ggb-pct" aria-hidden="true">${goalPctText(gauge)}</div>
         <div class="ggb-cap" aria-hidden="true">${escHTML(cap)}</div>
@@ -2491,7 +2615,7 @@ function renderWorkSystemCardRow(){
   const sorted = DATA.workSystems;
   const selectedId = dashboardView.level !== 'roots' ? dashboardView.rootId : null;
 
-  container.innerHTML = `<div class="goal-band ws-band"><span class="gb-title">Work System Target Success Indicators</span></div>`
+  container.innerHTML = `<div class="goal-band ws-band"><span class="gb-title">How each Work System is doing</span></div>`
     + sorted.map(ws=> workSystemCardHTML(ws, null, {
       selected: selectedId === ws.id,
     })).join('');
@@ -2560,10 +2684,7 @@ function renderExplorerDetail(){
   box.innerHTML = html;
   box.style.display = html ? '' : 'none';
   wireObjectiveJumpLinks(box);
-  box.querySelectorAll('.obj-ks-programs[data-drill-ks]').forEach(btn => btn.addEventListener('click', () => {
-    dashboardView = { rootMode:'workSystem', level:'keyservice', rootId: dashboardView.rootId, ksId: btn.dataset.drillKs };
-    renderDashboardHeatmap();
-  }));
+  box.querySelectorAll('.obj-ks-progs').forEach(col => { wireDashboardTiles(col); wireStatusTooltips(col); });
   const split = document.getElementById('explorer-split');
   split.classList.toggle('has-detail', !!html);
   split.classList.toggle('no-children', !!html && !hasChildren);
@@ -2588,6 +2709,19 @@ function workSystemDetailHTML(wsId){
     </section>` : '';
   return keyServicesKpiHTML(keyServicesUnderWorkSystem(wsId), { context:'workSystem' }) + ownHTML;
 }
+// A Key Service's Programs as status tiles, for the side column in the
+// Work System View. Each tile opens that Program's details.
+function programsColumnHTML(ks){
+  const progs = programsUnderKeyService(ks.id)
+    .sort((a, b) => goalSortWeight(programStatus(a)) - goalSortWeight(programStatus(b)));
+  return `<aside class="obj-ks-progs" aria-label="Programs in ${escHTML(ks.name)}">
+      <h4 class="obj-ks-progs-label">Programs <span>${progs.length}</span></h4>
+      ${progs.length ? `<div class="heatmap-grid obj-ks-progs-grid">${progs.map(p => heatTileHTML({
+        typeLabel:'Program', name:p.name, subtitle:kpiCountLabel(p.id), status:programStatus(p), trendItem:p,
+        dataAttrs:`data-open-detail="program" data-id="${p.id}"`, exportKind:'program', exportId:p.id,
+      })).join('')}</div>` : `<p class="obj-ks-progs-none">No Programs recorded yet.</p>`}
+    </aside>`;
+}
 function keyServicesKpiHTML(keyServices, { context }){
   const wsMode = context === 'workSystem';
   // Key Services with results come first, then those with KPIs still
@@ -2596,15 +2730,23 @@ function keyServicesKpiHTML(keyServices, { context }){
   const services = keyServices.map((ks, i) => ({ ks, i }))
     .sort((a, b) => (hasResults(b.ks) - hasResults(a.ks)) || ((kpisFor(b.ks.id).length > 0) - (kpisFor(a.ks.id).length > 0)) || (a.i - b.i)).map(x => x.ks);
   if(!services.length) return `<p class="ed-desc">${wsMode ? 'No Key Services are recorded under this Work System yet.' : 'No Key Services are aligned to this Objective yet.'}</p>`;
-  const cardInner = document.getElementById('explorer-split').clientWidth - 40 - 42;
+  // Work System View: Program tiles sit in a 250px column beside the
+  // KPIs on wide screens, so the charts get that much less width.
+  const sideCol = wsMode && window.innerWidth >= 900 ? 250 + 20 : 0;
+  const cardInner = document.getElementById('explorer-split').clientWidth - 40 - 42 - sideCol;
   const chartWidth = Math.max(240, Math.round(cardInner));
   const totalKpis = services.reduce((n, ks) => n + kpisFor(ks.id).length, 0);
-  const list = services.map(ks => {
+  // Key Services with no KPIs yet are kept out of the way: listed under a
+  // "Show" toggle at the bottom (in the Work System View they still carry
+  // their Programs there).
+  const withKpis = services.filter(ks => kpisFor(ks.id).length);
+  const empty = services.filter(ks => !kpisFor(ks.id).length);
+  const list = withKpis.map(ks => {
     const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
     const g = gaugeFor(ks.id);
     const n = kpisFor(ks.id).length;
     const live = kpisFor(ks.id).filter(k => !k.pending).length;
-    const status = !n ? 'No KPIs set up yet' : live === n ? 'All with results' : live ? `${live} of ${n} with results` : 'Awaiting results';
+    const status = !n ? 'No KPIs set up yet' : live === n ? 'All with results' : live ? `${live} of ${n} with results` : 'Waiting on data';
     return `<li><a class="obj-ks-link${n ? '' : ' obj-ks-empty'}" href="#obj-ks-${ks.id}" data-obj-jump="${ks.id}">
         <span class="obj-ks-top">
           <span class="gauge-inline" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 34)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span></span>
@@ -2613,10 +2755,12 @@ function keyServicesKpiHTML(keyServices, { context }){
         ${n ? `<span class="obj-ks-btn">View ${plural(n, 'KPI')}</span>` : ''}
       </a></li>`;
   }).join('');
-  const sections = services.map(ks => {
+  const sectionHTML = ks => {
     const kpis = kpisFor(ks.id);
     const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
     const g = gaugeFor(ks.id);
+    const kpisHTML = kpis.length ? objectiveKpisHTML(kpis, chartWidth)
+      : `<p class="kpi-pending-note">No KPIs have been set up for this Key Service yet.</p>`;
     return `<section class="obj-ks-section" id="obj-ks-${ks.id}" aria-labelledby="obj-ks-h-${ks.id}">
         <div class="obj-ks-head">
           <div class="obj-ks-head-text">
@@ -2626,23 +2770,41 @@ function keyServicesKpiHTML(keyServices, { context }){
           </div>
           <span class="obj-ks-head-right">
             <span class="gauge-inline obj-ks-gauge" role="img" aria-label="${escHTML(gaugeSpoken(g))}">${gaugeSVG(g, 40)}<span class="gauge-pct" aria-hidden="true">${gaugePctText(g)}</span><span class="obj-ks-cap" aria-hidden="true">${escHTML(gaugeCaption(g))}</span></span>
-            ${wsMode && programsUnderKeyService(ks.id).length ? `<button type="button" class="obj-ks-programs" data-drill-ks="${ks.id}">See its ${plural(programsUnderKeyService(ks.id).length, 'Program')}</button>` : ''}
           </span>
         </div>
-        ${kpis.length ? objectiveKpisHTML(kpis, chartWidth)
-          : `<p class="kpi-pending-note">No KPIs have been set up for this Key Service yet.</p>`}
+        ${wsMode ? `<div class="obj-ks-body">
+          <div class="obj-ks-main">${kpisHTML}</div>
+          ${programsColumnHTML(ks)}
+        </div>` : kpisHTML}
       </section>`;
-  }).join('');
+  };
+  const emptyListHTML = `<ul class="obj-ks-more-list">${empty.map(ks => {
+      const ws = DATA.workSystems.find(w => w.id === ks.workSystem);
+      return `<li><strong>${escHTML(ks.name)}</strong>${ws ? ` <span>${escHTML(ws.name)}</span>` : ''}</li>`;
+    }).join('')}</ul>`;
+  const emptyContent = wsMode ? empty.map(sectionHTML).join('') : emptyListHTML;
+  const moreWord = plural(empty.length, 'Key Service');
+  const emptyBlock = !empty.length ? ''
+    : withKpis.length ? `<details class="obj-ks-more" id="obj-ks-more">
+        <summary><span class="when-closed">Show</span><span class="when-open">Hide</span> ${moreWord} without KPIs yet${wsMode ? ' (and their Programs)' : ''} <span class="chev" aria-hidden="true">▾</span></summary>
+        <div class="obj-ks-more-body">${emptyContent}</div>
+      </details>`
+    : (wsMode ? emptyContent : '');
+  const intro = withKpis.length
+    ? `${wsMode ? 'Key Services in this Work System.' : 'Key Services that support this Objective.'} Select one to jump straight to its numbers, or scroll down to see them all.`
+    : `None of the ${moreWord} ${wsMode ? 'in this Work System' : 'supporting this Objective'} ${empty.length === 1 ? 'has' : 'have'} KPIs set up yet.`;
   return `
     <nav class="obj-ks-overview" aria-labelledby="obj-ks-overview-h">
       <div class="obj-ks-overview-head">
-        <h3 class="obj-ks-overview-title" id="obj-ks-overview-h">Go to a Key Service's KPIs</h3>
-        <span class="obj-ks-count">${plural(services.length, 'Key Service')} · ${plural(totalKpis, 'KPI')}</span>
+        <h3 class="obj-ks-overview-title" id="obj-ks-overview-h">${withKpis.length ? "Go to a Key Service's KPIs" : 'Key Services'}</h3>
+        <span class="obj-ks-count">${withKpis.length ? `${plural(withKpis.length, 'Key Service')} · ${plural(totalKpis, 'KPI')}` : plural(empty.length, 'Key Service')}</span>
       </div>
-      <p class="obj-ks-overview-intro">${wsMode ? 'These are the Key Services in this Work System.' : 'These Key Services support this Objective.'} Select one to jump straight to its numbers, or scroll down to see them all.</p>
-      <ul class="obj-ks-list">${list}</ul>
+      <p class="obj-ks-overview-intro">${intro}</p>
+      ${withKpis.length ? `<ul class="obj-ks-list">${list}</ul>` : (!wsMode ? emptyListHTML : '')}
+      ${withKpis.length && empty.length ? `<button type="button" class="obj-ks-more-link" data-open-more>+ ${moreWord} without KPIs yet</button>` : ''}
     </nav>
-    ${sections}`;
+    ${withKpis.map(sectionHTML).join('')}
+    ${emptyBlock}`;
 }
 // KPIs with results get their full card; measures still waiting on data
 // are listed together in one short box instead of a card each.
@@ -2652,11 +2814,19 @@ function objectiveKpisHTML(kpis, chartWidth){
       ${live.map(k => kpiBlockHTML(k, chartWidth, false)).join('')}
       ${waiting.length ? `<div class="kpi-block kpi-waiting-list">
         <div class="kpi-head"><span class="kpi-name">${live.length ? 'Also measured, data not yet entered' : 'Measures set up, data not yet entered'}</span><span class="kpi-bysegment">${plural(waiting.length, 'KPI')}</span></div>
-        <ul>${waiting.map(k => `<li><strong>${escHTML(k.name)}</strong>${k.description ? ` <span>${escHTML(k.description)}</span>` : ''}${k.owner || k.frequency ? ` <span class="kpi-waiting-meta">(${[k.owner, k.frequency ? 'updated ' + k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1) : ''].filter(Boolean).map(escHTML).join(', ')})</span>` : ''}</li>`).join('')}</ul>
+        <ul>${waiting.map(k => `<li data-kpi-block="${escHTML(k.id)}"><strong>${escHTML(k.name)}</strong>${k.description ? ` <span>${escHTML(k.description)}</span>` : ''}${k.owner || k.frequency ? ` <span class="kpi-waiting-meta">(${[k.owner, k.frequency ? 'updated ' + k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1) : ''].filter(Boolean).map(escHTML).join(', ')})</span>` : ''}</li>`).join('')}</ul>
       </div>` : ''}
     </div>`;
 }
 function wireObjectiveJumpLinks(scope){
+  scope.querySelectorAll('[data-open-more]').forEach(b => b.addEventListener('click', () => {
+    const d = document.getElementById('obj-ks-more');
+    if(!d) return;
+    d.open = true;
+    const sum = d.querySelector('summary');
+    if(sum) sum.focus({ preventScroll:true });
+    softScrollTo(d, 12);
+  }));
   scope.querySelectorAll('[data-obj-jump]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -2710,14 +2880,23 @@ function renderLevelSummary(){
   box.style.setProperty('--ls-dark-55', mix(acc, '#000000', .55));
   box.style.setProperty('--ls-dark-60', mix(acc, '#000000', .60));
   box.classList.add('ls-tinted');
+  // A compact header: what this is, its name and definition, and a small
+  // gauge with its caption on the right.
+  const extra = gaugeAwaitingText(g);
   box.innerHTML = `
-    <div>
+    <div class="ls-main">
       <div class="ls-type">${type}</div>
-      <h3 class="ls-name">${escHTML(item.name)}</h3>
-      ${def ? `<p class="ls-def">${escHTML(def)}</p>` : ''}
-      ${def && adopted ? `<p class="ls-src">Definition adopted by City Council in the 2024 Strategic Plan.</p>` : ''}
+      <h2 class="ls-name">${escHTML(item.name)}</h2>
+      ${def ? `<p class="ls-def">${escHTML(def)}${adopted ? ` <span class="ls-src">Adopted by City Council, 2024 Strategic Plan.</span>` : ''}</p>` : ''}
     </div>
-    ${gaugeBlockHTML(g)}`;
+    <div class="ls-gauge${g.withResult ? '' : ' gauge-empty'}" role="img" aria-label="${escHTML(gaugeSpoken(g))}">
+      ${gaugeSVG(g, 70)}
+      <div class="ls-gauge-text" aria-hidden="true">
+        <div class="ls-pct">${gaugePctText(g)}</div>
+        <div class="ls-cap">${escHTML(gaugeCaption(g))}</div>
+        ${extra ? `<div class="ls-await">${escHTML(extra)}</div>` : ''}
+      </div>
+    </div>`;
 }
 
 // Re-fit the on-page KPI charts when the window is resized.
@@ -2744,7 +2923,7 @@ function renderDashboardHeatmap(){
   if(prevMode) target = document.querySelector(`[data-root-mode="${prevMode}"]`);
   if(!target && detail && detail.style.display !== 'none' && detail.innerHTML.trim()){ detail.setAttribute('tabindex', '-1'); target = detail; }
   if(!target) target = document.querySelector('#heatmap-grid .tile-hit');
-  if(!target) target = document.querySelector('#heatmap-breadcrumb [aria-current]');
+  if(!target) target = document.querySelector('#sticky-crumbs [aria-current]') || document.querySelector('#root-mode-toggle [aria-pressed="true"], #root-mode-toggle button');
   if(target){
     target.focus({ preventScroll:true });
     if(target !== prev && !target.matches('[data-root-mode]')) softScrollTo(target);
@@ -2789,6 +2968,7 @@ function renderDashboardHeatmapContent(){
   renderDashboardBreadcrumb();
   renderLevelSummary();
   renderExplorerDetail();
+  renderRootStrip();
   renderGoalMountainRow();
   renderSelectedGoalBanner();
   renderWorkSystemCardRow();
@@ -3236,6 +3416,51 @@ document.addEventListener('keydown', e => {
   if(el && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); showSegTip(el); }
 });
 
+// Long histories (more than KPI_RECENT_PERIODS periods) show the most
+// recent ones first, with a button to show them all. The data table and
+// the PDF always have every period.
+const KPI_RECENT_PERIODS = 8;
+const KPI_CHART_ALL = new Set();
+function kpiAllPeriods(k){
+  return k.segmentsOnly ? kpiSegmentPeriods(k) : (k.series || []).map(p => p.period);
+}
+function kpiRecentOnly(k){
+  const periods = kpiAllPeriods(k);
+  const keep = new Set(periods.slice(-KPI_RECENT_PERIODS));
+  const trim = arr => (arr || []).filter(p => keep.has(p.period));
+  return Object.assign({}, k, {
+    series: trim(k.series),
+    segmentSeries: Array.isArray(k.segmentSeries) ? k.segmentSeries.map(sg => Object.assign({}, sg, { series: trim(sg.series) })).filter(sg => sg.series.length) : k.segmentSeries,
+  });
+}
+function kpiChartWrapHTML(k, width){
+  const periods = kpiAllPeriods(k);
+  const long = periods.length > KPI_RECENT_PERIODS;
+  const all = !long || KPI_CHART_ALL.has(k.id);
+  const kk = all ? k : kpiRecentOnly(k);
+  const svg = k.segmentsOnly ? kpiSegmentChartSVG(kk, width) : kpiChartSVG(kk, width);
+  if(!svg) return '';
+  const btn = long ? `<button type="button" class="kpi-range-btn" data-kpi-range="${escHTML(k.id)}" aria-pressed="${all}">${all
+      ? `Show the last ${KPI_RECENT_PERIODS} periods only`
+      : `Show all ${periods.length} periods (${escHTML(periods[0])} to ${escHTML(periods[periods.length - 1])})`}</button>` : '';
+  return `<div class="kpi-chart-wrap" data-chart-w="${width || ''}">${long && !all ? `<div class="kpi-range-note">Last ${KPI_RECENT_PERIODS} of ${periods.length} periods</div>` : ''}${svg}${btn}</div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-kpi-range]');
+  if(!b) return;
+  const k = KPI_BY_ID[b.dataset.kpiRange];
+  const wrap = b.closest('.kpi-chart-wrap');
+  if(!k || !wrap) return;
+  if(KPI_CHART_ALL.has(k.id)) KPI_CHART_ALL.delete(k.id); else KPI_CHART_ALL.add(k.id);
+  const w = Number(wrap.dataset.chartW) || undefined;
+  const holder = document.createElement('div');
+  holder.innerHTML = kpiChartWrapHTML(k, w);
+  const fresh = holder.firstElementChild;
+  wrap.replaceWith(fresh);
+  const nb = fresh.querySelector('[data-kpi-range]');
+  if(nb) nb.focus();
+});
+
 function kpiChartSVG(k, width){
   const pts = k.series;
   if(pts.length < 2) return '';
@@ -3461,9 +3686,9 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
   const facts = [`Each segment is compared with its own ${basisLabel.toLowerCase()}`, k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
   noteLines.push(facts.join(' · '));
 
-  const chartHTML = kpiSegmentChartSVG(k, chartWidth);
+  const chartHTML = kpiChartWrapHTML(k, chartWidth);
   return `
-    <div class="kpi-block">
+    <div class="kpi-block" data-kpi-block="${escHTML(k.id)}">
       <div class="kpi-head">
         <span class="kpi-name">${escHTML(k.name)}</span>
         <span class="kpi-head-right"><span class="kpi-bysegment">Shown by segment · no overall status</span>${kpiToolsHTML(k)}</span>
@@ -3645,10 +3870,10 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
   const facts = [`Status based on the ${basisLabel.toLowerCase()}`, k.source ? `Source: ${escHTML(k.source)}` : '', k.frequency ? `Updated ${escHTML(k.frequency.charAt(0).toLowerCase() + k.frequency.slice(1))}` : '', k.owner ? `Owner: ${escHTML(k.owner)}` : ''].filter(Boolean);
   noteLines.push(facts.join(' · '));
 
-  const chartHTML = kpiChartSVG(k, chartWidth);
+  const chartHTML = kpiChartWrapHTML(k, chartWidth);
 
   return `
-    <div class="kpi-block">
+    <div class="kpi-block" data-kpi-block="${escHTML(k.id)}">
       <div class="kpi-head">
         <span class="kpi-name">${escHTML(k.name)}</span>
         <span class="kpi-head-right">${k.status && !showCards ? statusBadgeHTML(k.status) : ''}${kpiToolsHTML(k)}</span>
@@ -3934,7 +4159,7 @@ async function captureHeatmapLevel(view, sectionTitle, gridId='heatmap-grid'){
       // Below the overview, leave out the repeated row of Goal / Work System
       // tiles so the page's own content prints larger.
       if(gridId === 'heatmap-grid' && view.level !== 'roots'){
-        ['goal-mountain-row-wrap','worksystem-card-row-wrap'].forEach(id => { const n = doc.getElementById(id); if(n) n.style.display = 'none'; });
+        ['goal-mountain-row-wrap','worksystem-card-row-wrap','root-strip'].forEach(id => { const n = doc.getElementById(id); if(n) n.style.display = 'none'; });
       }
       if(el && el.style) el.style.maxWidth = '1240px';
       const st = doc.createElement('style');
@@ -4088,6 +4313,118 @@ function wireExportMenu(){
   document.getElementById('export-pdf-btn').addEventListener('click', closeMenu);
 }
 
+/* ---------- Search ----------
+   One box that finds KPIs, Key Services, Programs, Goals, Objectives and
+   Work Systems by name (and KPIs by description too), and goes straight
+   to them: KPIs and Key Services open in the Work System View with the
+   page scrolled to them; Programs open their details. */
+let searchIndex = null;
+function buildSearchIndex(){
+  const items = [];
+  const ksById = id => DATA.keyServices.find(k => k.id === id);
+  const progById = id => DATA.programs.find(p => p.id === id);
+  DATA.goals.forEach(g => items.push({ type:'Goal', name:g.name, ctx:plural(objectivesUnderGoal(g.id).length, 'Objective'), go:() => goView({ rootMode:'goal', level:'root', rootId:g.id }) }));
+  DATA.objectives.forEach(o => { const g = DATA.goals.find(x => x.id === o.goal); items.push({ type:'Objective', name:o.name, ctx:g ? g.name : '', go:() => goView({ rootMode:'goal', level:'objective', rootId:o.goal, objectiveId:o.id }) }); });
+  DATA.workSystems.forEach(w => items.push({ type:'Work System', name:w.name, ctx:plural(keyServicesUnderWorkSystem(w.id).length, 'Key Service'), go:() => goView({ rootMode:'workSystem', level:'root', rootId:w.id }) }));
+  DATA.keyServices.forEach(ks => { const w = DATA.workSystems.find(x => x.id === ks.workSystem); items.push({ type:'Key Service', name:ks.name, ctx:w ? w.name : '', go:() => goView({ rootMode:'workSystem', level:'root', rootId:ks.workSystem }, '#obj-ks-' + ks.id, true) }); });
+  DATA.programs.forEach(p => { const ks = ksById(p.keyservice); items.push({ type:'Program', name:p.name, ctx:ks ? ks.name : '', go:() => {
+    if(ks) goView({ rootMode:'workSystem', level:'keyservice', rootId:ks.workSystem, ksId:ks.id });
+    setTimeout(() => openDetailModal('program', p.id), 350);
+  } }); });
+  Object.values(KPI_BY_ID).forEach(k => {
+    const homes = [k.attachTo, ...(Array.isArray(k.alsoUnder) ? k.alsoUnder : [])];
+    const ks = homes.map(ksById).find(Boolean);
+    const prog = homes.map(progById).find(Boolean);
+    const ctx = [ks ? ks.name : '', prog ? prog.name : ''].filter(Boolean).join(' · ');
+    items.push({ type: k.pending ? 'KPI · data not yet entered' : 'KPI', name:k.name, desc:k.description || '', ctx, go:() => {
+      if(ks) goView({ rootMode:'workSystem', level:'root', rootId:ks.workSystem }, `#obj-ks-${ks.id} [data-kpi-block="${CSS.escape(k.id)}"]`);
+      else if(prog){ const pk = ksById(prog.keyservice); if(pk) goView({ rootMode:'workSystem', level:'keyservice', rootId:pk.workSystem, ksId:pk.id }); setTimeout(() => openDetailModal('program', prog.id), 350); }
+    } });
+  });
+  return items;
+}
+// Go to a view, then scroll to (and briefly outline) one thing on it.
+function goView(view, selector, openMore){
+  dashboardView = view;
+  renderDashboardHeatmap();
+  scrollToExplorer();
+  if(!selector) return;
+  setTimeout(() => {
+    let el = document.querySelector(selector);
+    if(el && openMore){ const d = el.closest('details'); if(d) d.open = true; }
+    if(el){ const d = el.closest('details'); if(d && !d.open) d.open = true; }
+    if(!el) return;
+    const focusEl = el.querySelector('.obj-ks-title') || el;
+    if(!focusEl.hasAttribute('tabindex')) focusEl.setAttribute('tabindex', '-1');
+    focusEl.focus({ preventScroll:true });
+    softScrollTo(el, 16);
+    el.classList.remove('search-flash'); void el.offsetWidth; el.classList.add('search-flash');
+  }, 380);
+}
+function searchMatches(q){
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+  if(!words.length) return [];
+  if(!searchIndex) searchIndex = buildSearchIndex();
+  const typeRank = { 'KPI':0, 'Key Service':1, 'Program':2, 'KPI · data not yet entered':2.5, 'Objective':3, 'Goal':4, 'Work System':5 };
+  return searchIndex.map(it => {
+    const name = it.name.toLowerCase(), hay = (name + ' ' + it.desc + ' ' + it.ctx).toLowerCase();
+    if(!words.every(w => hay.includes(w))) return null;
+    const inName = words.every(w => name.includes(w));
+    const score = (name.startsWith(words[0]) ? 0 : inName ? 1 : 2) * 10 + (typeRank[it.type] ?? 0.5);
+    return { it, score };
+  }).filter(Boolean).sort((a, b) => a.score - b.score || a.it.name.localeCompare(b.it.name)).slice(0, 10).map(x => x.it);
+}
+function highlightMatch(name, q){
+  let out = escHTML(name);
+  q.split(/\s+/).filter(w => w.length > 1).forEach(w => {
+    out = out.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<mark>$1</mark>');
+  });
+  return out;
+}
+function wireSearch(){
+  const input = document.getElementById('dash-search-input');
+  const list = document.getElementById('dash-search-list');
+  if(!input || !list) return;
+  let results = [], active = -1;
+  const close = () => { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; };
+  const setActive = i => {
+    active = i;
+    [...list.children].forEach((li, j) => li.setAttribute('aria-selected', String(j === i)));
+    if(i >= 0 && list.children[i]){ input.setAttribute('aria-activedescendant', list.children[i].id); list.children[i].scrollIntoView({ block:'nearest' }); }
+    else input.removeAttribute('aria-activedescendant');
+  };
+  const choose = i => {
+    const it = results[i];
+    if(!it) return;
+    close(); input.value = ''; input.blur();
+    it.go();
+  };
+  const render = () => {
+    const q = input.value.trim();
+    if(!q){ close(); return; }
+    results = searchMatches(q);
+    list.innerHTML = results.length ? results.map((it, i) => `<li role="option" id="ds-opt-${i}" aria-selected="false" data-i="${i}">
+        <span class="ds-type">${escHTML(it.type)}</span><span class="ds-name">${highlightMatch(it.name, q)}</span>${it.ctx ? `<span class="ds-ctx">${escHTML(it.ctx)}</span>` : ''}</li>`).join('')
+      : `<li class="ds-none" role="option" aria-disabled="true" id="ds-opt-none">No matches for “${escHTML(q)}”</li>`;
+    list.hidden = false; input.setAttribute('aria-expanded', 'true');
+    setActive(results.length ? 0 : -1);
+    const sr = document.getElementById('sr-status');
+    if(sr) sr.textContent = results.length ? `${plural(results.length, 'result')}. Use the arrow keys to choose, then Enter.` : 'No matches.';
+  };
+  input.addEventListener('input', render);
+  input.addEventListener('focus', () => { if(input.value.trim()) render(); });
+  input.addEventListener('keydown', e => {
+    if(e.key === 'ArrowDown' && results.length){ e.preventDefault(); if(list.hidden) render(); setActive((active + 1) % results.length); }
+    else if(e.key === 'ArrowUp' && results.length){ e.preventDefault(); setActive((active - 1 + results.length) % results.length); }
+    else if(e.key === 'Enter'){ if(!list.hidden && active >= 0){ e.preventDefault(); choose(active); } }
+    else if(e.key === 'Escape'){ if(!list.hidden){ e.stopPropagation(); close(); } else input.value = ''; }
+  });
+  list.addEventListener('mousedown', e => e.preventDefault()); // keep focus in the box
+  list.addEventListener('click', e => { const li = e.target.closest('li[data-i]'); if(li) choose(Number(li.dataset.i)); });
+  list.addEventListener('mousemove', e => { const li = e.target.closest('li[data-i]'); if(li && Number(li.dataset.i) !== active) setActive(Number(li.dataset.i)); });
+  input.addEventListener('blur', () => setTimeout(close, 120));
+}
+
 /* ---------- One KPI: Excel, PDF and email ----------
    Every KPI card has its own Download Excel, Download PDF and Email
    buttons. The Excel file has the KPI's numbers (every period, Total and
@@ -4105,15 +4442,65 @@ const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.m
 const ICON_DOWNLOAD = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.2M4.6 6.5 8 9.9l3.4-3.4M2.5 11.5v2h11v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_MAIL = '<svg width="14" height="13" viewBox="0 0 16 14" aria-hidden="true"><rect x="1.2" y="1.5" width="13.6" height="11" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m1.8 2.5 6.2 5 6.2-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 
+const ICON_SHARE = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 4.8 8 1.8l3 3M3.5 7.5v6h9v-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// One "Share" button per KPI, opening a short menu: Excel, PDF, Email.
 function kpiToolsHTML(k){
   if(!k || k.pending) return '';
-  const n = escHTML(k.name);
-  return `<span class="kpi-tools" role="group" aria-label="Download or share ${n}">
-      <button type="button" class="kpi-tool" data-kpi-action="xlsx" data-kpi-id="${escHTML(k.id)}" aria-label="Download ${n} as an Excel file">${ICON_DOWNLOAD}Excel</button>
-      <button type="button" class="kpi-tool" data-kpi-action="pdf" data-kpi-id="${escHTML(k.id)}" aria-label="Download ${n} as a PDF">${ICON_DOWNLOAD}PDF</button>
-      <button type="button" class="kpi-tool" data-kpi-action="email" data-kpi-id="${escHTML(k.id)}" aria-label="Email ${n} with the Excel file and PDF attached">${ICON_MAIL}Email</button>
+  const n = escHTML(k.name), id = escHTML(k.id), mid = 'kpi-menu-' + slugify(k.id) + '-' + (++kpiMenuSeq);
+  return `<span class="kpi-share">
+      <button type="button" class="kpi-tool kpi-share-btn" aria-expanded="false" aria-controls="${mid}" data-kpi-id="${id}" aria-label="Share or download ${n}">${ICON_SHARE}Share<span class="kpi-share-chev" aria-hidden="true">▾</span></button>
+      <span class="kpi-share-menu" id="${mid}" hidden>
+        <button type="button" class="kpi-menu-item" data-kpi-action="xlsx" data-kpi-id="${id}">${ICON_DOWNLOAD}<span><strong>Download Excel</strong><small>Every period's numbers</small></span></button>
+        <button type="button" class="kpi-menu-item" data-kpi-action="pdf" data-kpi-id="${id}">${ICON_DOWNLOAD}<span><strong>Download PDF</strong><small>Chart and data table</small></span></button>
+        <button type="button" class="kpi-menu-item" data-kpi-action="email" data-kpi-id="${id}">${ICON_MAIL}<span><strong>Email</strong><small>Excel and PDF attached</small></span></button>
+      </span>
     </span>`;
 }
+let kpiMenuSeq = 0;
+function closeKpiMenus(except){
+  document.querySelectorAll('.kpi-share-btn[aria-expanded="true"]').forEach(b => {
+    if(b === except) return;
+    b.setAttribute('aria-expanded', 'false');
+    const m = document.getElementById(b.getAttribute('aria-controls'));
+    if(m) m.hidden = true;
+  });
+}
+function toggleKpiMenu(btn, focusFirst){
+  const menu = document.getElementById(btn.getAttribute('aria-controls'));
+  if(!menu) return;
+  const open = btn.getAttribute('aria-expanded') !== 'true';
+  closeKpiMenus(btn);
+  btn.setAttribute('aria-expanded', String(open));
+  menu.hidden = !open;
+  if(open){
+    // Get the files started so Download and Email are quick.
+    loadSheetJS().catch(() => {});
+    const k = KPI_BY_ID[btn.dataset.kpiId];
+    if(k) prepareKpiEmailFiles(k).catch(() => {});
+    if(focusFirst) menu.querySelector('.kpi-menu-item').focus();
+  }
+}
+document.addEventListener('click', e => {
+  const btn = e.target.closest && e.target.closest('.kpi-share-btn');
+  if(btn){ e.preventDefault(); e.stopPropagation(); toggleKpiMenu(btn, e.detail === 0); return; }
+  if(!(e.target.closest && e.target.closest('.kpi-share-menu'))) closeKpiMenus();
+});
+document.addEventListener('keydown', e => {
+  const menu = e.target.closest && e.target.closest('.kpi-share-menu');
+  const btn = e.target.closest && e.target.closest('.kpi-share-btn');
+  if(e.key === 'Escape' && (menu || btn)){
+    const owner = menu ? document.querySelector(`[aria-controls="${menu.id}"]`) : btn;
+    closeKpiMenus(); if(owner) owner.focus(); e.stopPropagation(); return;
+  }
+  if(btn && e.key === 'ArrowDown'){ e.preventDefault(); if(btn.getAttribute('aria-expanded') !== 'true') toggleKpiMenu(btn, true); else document.getElementById(btn.getAttribute('aria-controls')).querySelector('.kpi-menu-item').focus(); return; }
+  if(menu && (e.key === 'ArrowDown' || e.key === 'ArrowUp')){
+    e.preventDefault();
+    const items = [...menu.querySelectorAll('.kpi-menu-item')];
+    const i = items.indexOf(document.activeElement);
+    items[(i + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length].focus();
+  }
+  if(menu && e.key === 'Tab') closeKpiMenus();
+}, true);
 
 let toastTimer = null;
 function showToast(html, { action = null, ms = 9000 } = {}){
@@ -4510,14 +4897,18 @@ async function downloadEmlDraft(k, subject, body, files){
   showToast(`An email with the Excel file and PDF attached was downloaded. <strong>Open it</strong> to address and send it from Outlook. (In Apple Mail, open it, then choose Message › Send Again.)`, { ms: 14000 });
 }
 
-async function runKpiAction(btn){
-  const k = KPI_BY_ID[btn.dataset.kpiId];
+async function runKpiAction(item){
+  const k = KPI_BY_ID[item.dataset.kpiId];
+  const wrap = item.closest('.kpi-share');
+  const btn = wrap ? wrap.querySelector('.kpi-share-btn') : item;
   if(!k || btn.disabled) return;
-  const action = btn.dataset.kpiAction;
+  const action = item.dataset.kpiAction;
+  closeKpiMenus();
+  btn.focus();
   const label = btn.innerHTML;
   btn.disabled = true;
   btn.setAttribute('aria-busy', 'true');
-  btn.innerHTML = action === 'email' ? 'Preparing…' : 'Creating…';
+  btn.innerHTML = action === 'email' ? 'Preparing email…' : 'Creating file…';
   try{
     if(action === 'xlsx'){
       const f = await buildKpiSpreadsheet(k);
@@ -4550,11 +4941,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') hideToast(); 
 // Start fetching the Excel library as soon as someone reaches for a KPI
 // button, so the file is ready by the time they click.
 ['pointerover', 'focusin'].forEach(ev => document.addEventListener(ev, e => {
-  const tool = e.target.closest && e.target.closest('.kpi-tool');
-  if(!tool) return;
-  loadSheetJS().catch(() => {});
-  const k = tool.dataset.kpiAction === 'email' ? KPI_BY_ID[tool.dataset.kpiId] : null;
-  if(k) prepareKpiEmailFiles(k).catch(() => {});
+  if(e.target.closest && e.target.closest('.kpi-share-btn')) loadSheetJS().catch(() => {});
 }, { passive:true }));
 
 /* ---------- Guided first-visit tour ----------
@@ -4569,14 +4956,16 @@ const TOUR_STEPS = [
     body: 'Green is On Track, gold is At Risk and red is Off Track. An empty black circle means No Data yet, and the clock marks a result that hasn\'t been updated in 3 months or more. Hover a color for a quick meaning, or select Definitions for the full key.' },
   { target: '#root-mode-toggle', title: 'Two ways to explore',
     body: 'Strategic Plan Goal View follows the City\'s goals: Goals → Objectives → Key Services. Work System View follows how the City is organized: Work Systems → Key Services → Programs. Switch anytime.' },
-  { target: () => dashboardView.rootMode === 'workSystem' ? '#worksystem-card-row-wrap' : '#goal-mountain-row-wrap', title: 'Gauges show progress',
-    body: 'Each gauge shows the share of Key Service KPIs meeting their target. A dash means results are still being collected. Select any tile to open it.' },
+  { target: () => dashboardView.level !== 'roots' ? '#root-strip' : dashboardView.rootMode === 'workSystem' ? '#worksystem-card-row-wrap' : '#goal-mountain-row-wrap', title: 'Gauges show progress',
+    body: 'Each gauge shows how many KPIs are on target. A dash means results are still being collected. Select any tile to open it; once one is open, the tiles shrink to a row of buttons so you can switch quickly.' },
+  { target: '#dash-search', title: 'Search for anything',
+    body: 'Type part of a name, like "uptime" or "library", to jump straight to a KPI, Key Service, Program, Goal or Objective.' },
   { target: '#explorer-bar', title: 'Drill in and find your way back',
     body: 'Opening a Goal or Work System shows its definition, its gauge and what sits under it. The path next to the view switch shows where you are; select any step to go back. It stays pinned at the top as you scroll.' },
   { target: null, title: 'See the numbers behind each KPI',
     body: 'Open an Objective to see the Key Services that support it and all of their KPIs at once, or open a Key Service or Program. Each KPI has a chart; hover or tap a point for the exact value, target and breakdown, or select "View data table" for all of the numbers. Measures that are set up but still waiting on data say "Data not yet entered".' },
   { target: '#header-export', title: 'Share and take it with you',
-    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. Each KPI also has its own Excel, PDF and Email buttons; Email puts both files into a new message. To share exactly what you are looking at, copy the page address: it updates as you click.' },
+    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. Each KPI also has its own Share button to download it as Excel or PDF, or email both files. To share exactly what you are looking at, copy the page address: it updates as you click.' },
 ];
 
 let tourStep = 0;
@@ -4671,6 +5060,7 @@ function init(){
   renderDashboardHeatmap();
   wireExportButtons();
   wireExportMenu();
+  wireSearch();
   wireModalChrome();
   wireTour();
 }
