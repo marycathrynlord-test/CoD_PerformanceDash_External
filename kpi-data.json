@@ -3448,12 +3448,53 @@
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
+      "frequency": "Every year",
+      "description": "Total rides on Durango Transit each fiscal year, including fixed routes, paratransit and DuranGO! microtransit.",
+      "footnote": "Target: at least 3% more rides than the previous year (the goal is 3–5% growth a year, in line with the 2–5% industry standard). Growth under 3% shows At Risk; fewer rides than the year before shows Off Track. The 7.7% increase from 2023 to 2024 is mostly due to the evening DuranGO! microtransit expansion.",
       "gaugeKeyServices": [
         "ks14"
       ],
-      "status": null,
-      "pending": true,
-      "series": []
+      "status": "at-risk",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 3,
+      "series": [
+        {
+          "period": "2020",
+          "value": 232798,
+          "status": null
+        },
+        {
+          "period": "2021",
+          "value": 243989,
+          "target": 239782,
+          "status": "on-track"
+        },
+        {
+          "period": "2022",
+          "value": 329743,
+          "target": 251309,
+          "status": "on-track"
+        },
+        {
+          "period": "2023",
+          "value": 425244,
+          "target": 339635,
+          "status": "on-track"
+        },
+        {
+          "period": "2024",
+          "value": 458061,
+          "target": 438001,
+          "status": "on-track"
+        },
+        {
+          "period": "2025",
+          "value": 470023,
+          "target": 471803,
+          "status": "at-risk"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "PR-PARKBUDGETACRE",
@@ -4067,15 +4108,14 @@
         ]
       },
       "g4": {
-        "meeting": 3,
-        "withResult": 3,
+        "meeting": 4,
+        "withResult": 4,
         "percent": 100,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
           "TRAN-VACRATE",
-          "TRAN-TOTALRIDERSHIP",
           "IT-TIXSLA",
           "IT-LIAISONSURV"
         ],
@@ -4332,15 +4372,14 @@
         ]
       },
       "ob10": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
-          "TRAN-VACRATE",
-          "TRAN-TOTALRIDERSHIP"
+          "TRAN-VACRATE"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
@@ -4388,15 +4427,14 @@
         ]
       },
       "ob15": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
-          "TRAN-VACRATE",
-          "TRAN-TOTALRIDERSHIP"
+          "TRAN-VACRATE"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
@@ -4624,15 +4662,14 @@
         ]
       },
       "ws5": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
-          "TRAN-VACRATE",
-          "TRAN-TOTALRIDERSHIP"
+          "TRAN-VACRATE"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
@@ -4840,15 +4877,14 @@
         "kpis": []
       },
       "ks14": {
-        "meeting": 0,
-        "withResult": 0,
-        "percent": null,
+        "meeting": 1,
+        "withResult": 1,
+        "percent": 100,
         "awaiting": [
           "TRAN-BIKEANDSWLINFT",
           "TRAN-CRASHDATA",
           "TRAN-DEPENDENCY",
-          "TRAN-VACRATE",
-          "TRAN-TOTALRIDERSHIP"
+          "TRAN-VACRATE"
         ],
         "kpis": [
           "TRAN-BIKEANDSWLINFT",
