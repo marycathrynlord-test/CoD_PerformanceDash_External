@@ -1962,16 +1962,33 @@
       "name": "Local Spend from grants awarded Annually",
       "level": "Program",
       "attachTo": "p100",
-      "unit": "number",
-      "decimals": 2,
+      "unit": "currency",
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
-      "status": null,
-      "pending": true,
-      "series": []
+      "source": "Submittable grant reimbursement forms (local spend reported), with some manual adjustments",
+      "description": "Money spent locally by grant recipients, as reported on their reimbursement forms, for Lodgers' Tax Arts and Culture, Local Event Marketing, Re:New and Durango Creates! grants. Counted by the year of the grant round.",
+      "status": "off-track",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [
+        {
+          "period": "2025",
+          "value": 342859.57,
+          "status": null
+        },
+        {
+          "period": "2026",
+          "value": 121350.25,
+          "target": 368438,
+          "status": "off-track",
+          "note": "Year to date as of Oct 15, 2026; 2026 grant reimbursements are still coming in"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "PROS-NIGHTONTOUR",
@@ -1982,15 +1999,27 @@
         "p43"
       ],
       "unit": "number",
-      "decimals": 2,
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
       "frequency": "Every year",
       "owner": "Prosperity Officer",
-      "status": null,
-      "pending": true,
-      "series": []
+      "description": "Room nights sold during the year to new tour companies, meeting planners and FIT (independent traveler) contracts, including nights booked now for stays in later years.",
+      "footnote": "Counts new organizations only. Ongoing accounts are not included; for example, the two Tauck Tours series sold in 2024 bring about 400 room nights a year but are not in the 2026 count.",
+      "status": "on-track",
+      "onTrackWithinPct": 0,
+      "offTrackBeyondPct": 0,
+      "series": [
+        {
+          "period": "2026",
+          "value": 1949,
+          "target": 1000,
+          "status": "on-track",
+          "note": "Estimate as of Oct 21, 2026: nights already stayed plus nights booked for later stays (e.g., Model A Ford Club, June 2027)"
+        }
+      ],
+      "segments": []
     },
     {
       "id": "PROS-OCCRATE",
