@@ -269,9 +269,14 @@
   .kpi-tool:hover{background:var(--mist); border-color:var(--forest);}
   .kpi-tool:focus-visible{outline:2px solid #1E1E1E; outline-offset:2px;}
   .kpi-tool[disabled]{cursor:progress; opacity:.75;}
+  .kpi-share-busy{width:14px; height:14px; border-radius:50%; border:2px solid #7FB4A9; border-top-color:#006A53; animation:kpiSpin .8s linear infinite;}
+  @keyframes kpiSpin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){ .kpi-share-busy{animation:none;} }
   .kpi-tool svg{flex:none;}
   .kpi-share{position:relative; display:inline-flex;}
   .kpi-share-chev{font-size:10px; margin-left:1px;}
+  .kpi-share-btn.kpi-share-icon{width:32px; height:32px; padding:0; justify-content:center; border-radius:8px;}
+  .kpi-share-btn.kpi-share-icon[aria-expanded="true"]{background:#ECF4F2; border-color:#006A53;}
   .kpi-share-menu{position:absolute; top:calc(100% + 6px); right:0; z-index:60; min-width:230px; display:flex; flex-direction:column; padding:6px;
     background:#fff; border:1px solid #D9E9E5; border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.16);}
   .kpi-share-menu[hidden]{display:none;}
@@ -343,7 +348,7 @@
   .kpi-table-toggle .kpi-table{margin-top:6px;}
   .seg-hover:focus-visible .seg-hover-ring{stroke:#1E1E1E; stroke-width:2.5;}
   .seg-hover-hint{font-style:italic; color:var(--slate);}
-  .hover-tooltip.wide{max-width:320px; width:max-content;}
+  .hover-tooltip.wide{max-width:min(380px, calc(100vw - 24px)); width:max-content;}
   .tt-seg-sub{font-size:10.5px; color:var(--slate); text-align:right; margin:-4px 0 4px;}
   .tt-seg-list{list-style:none; margin:0; padding:0;}
   .tt-seg-list li{display:grid; grid-template-columns:minmax(0,1fr) auto 44px; gap:10px; align-items:baseline; padding:3px 0; border-top:1px solid var(--line); font-size:11.5px;}
@@ -3324,7 +3329,7 @@ function kpiDiff(value, comparison, k){
   const diff = value - comparison;
   const absText = Math.abs(diff).toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
   const isZero = Number(absText.replace(/,/g,'')) === 0;
-  const amount = k.unit === 'percent' ? absText + ' pts'
+  const amount = (k.unit === 'percent' || kpiScaleMax(k)) ? absText + ' pts'
     : k.unit === 'currency' ? '$' + absText
     : (!k.unit || k.unit === 'number') ? absText : absText + ' ' + k.unit;
   const good = isZero ? true : (k.higherIsBetter === false ? diff < 0 : diff > 0);
@@ -3409,10 +3414,10 @@ function kpiPointTipHTML(k, p, prevPeriod, label){
     if(r.prev == null) return '<span class="tt-seg-chg"></span>';
     const diff = r.value - r.prev;
     const good = k.higherIsBetter === false ? diff < 0 : diff > 0;
-    return `<span class="tt-seg-chg ${diff === 0 ? '' : good ? 'up' : 'down'}">${diff > 0 ? '▲' : diff < 0 ? '▼' : ''}${diff ? ' ' + escHTML(fmtKpiValue(Math.abs(diff), k)) : '0'}</span>`;
+    return `<span class="tt-seg-chg ${diff === 0 ? '' : good ? 'up' : 'down'}">${diff > 0 ? '▲' : diff < 0 ? '▼' : ''}${diff ? ' ' + escHTML(kpiScaleMax(k) ? fmtKpiNumber(Math.abs(diff), k) + ' pts' : fmtKpiValue(Math.abs(diff), k)) : '0'}</span>`;
   };
   const anyPrev = prevPeriod && segs.some(r => r.prev != null);
-  const word = label || (segs.length ? (k.unit === 'percent' ? 'overall' : 'total') : '');
+  const word = label || (segs.length ? kpiTotalLabel(k).toLowerCase() : '');
   return `
     <div class="tt-head"><span class="status-dot" style="background:${p.status ? statusDotColor(p.status) : '#006A53'}"></span>${escHTML(p.period)} · ${escHTML(fmtKpiValue(p.value, k))}${word ? ' ' + escHTML(word) : ''}${p.status ? `<span class="tt-status">${escHTML(STATUS_META[p.status].label)}</span>` : ''}</div>
     ${comps}
@@ -3557,7 +3562,7 @@ function kpiChartSVG(k, width){
           <line class="seg-hover-guide" x1="${cx}" y1="${padT - 10}" x2="${cx}" y2="${H - padB}" stroke="#7FB4A9" stroke-width="1"/>
           <circle class="seg-hover-ring" cx="${cx}" cy="${cy}" r="9" fill="none" stroke="#006A53" stroke-width="1.5"/>
           <circle cx="${cx}" cy="${cy}" r="5" fill="${p.status ? statusDotColor(p.status) : '#006A53'}" stroke="${p.status==='no-data' ? '#1E1E1E' : '#fff'}" stroke-width="2"/></g>
-      ${labelled.has(i) ? `<text x="${cx}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#1E1E1E" stroke="#fff" stroke-width="3" paint-order="stroke" pointer-events="none">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>` : ''}`;
+      ${labelled.has(i) ? `<text x="${i === pts.length - 1 && pts.length > 1 ? (x(i) + 6).toFixed(1) : cx}" y="${ly.toFixed(1)}" text-anchor="${i === pts.length - 1 && pts.length > 1 ? 'end' : 'middle'}" font-size="12" font-weight="700" fill="#1E1E1E" stroke="#fff" stroke-width="3" paint-order="stroke" pointer-events="none">${escHTML(fmtKpiValue(p.value, k))}${p.note ? '*' : ''}</text>` : ''}`;
     }).join('')}`;
 
   // Breakdown segments (e.g. Digital and Physical): a thinner line each,
@@ -3593,7 +3598,7 @@ function kpiChartSVG(k, width){
       ${comparisonLayers}${breakdownLayer}${valueLayer}${xLabels}
     </svg>
     <div class="kpi-legend" style="flex-wrap:wrap;">
-      <span>${kpiLegendSwatchSVG(kpiSeriesStyle(0))}${breakdown.length || hasSegs ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result'}</span>
+      <span>${kpiLegendSwatchSVG(kpiSeriesStyle(0))}${breakdown.length || hasSegs ? kpiTotalLabel(k) : 'Result'}</span>
       ${breakdown.map((sg,n) => `<span>${kpiLegendSwatchSVG(kpiSeriesStyle(n + 1))}${escHTML(sg.label)}</span>`).join('')}
       ${lines.map(c => `<span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="22" y2="4" stroke="${c.stroke}" stroke-width="1.5" stroke-dasharray="${c.dash}" stroke-linecap="round"/></svg>${c.label}</span>`).join('')}
       <span class="seg-hover-hint">${hasSegs ? 'Hover or tap a point for details and the breakdown' : 'Hover or tap a point for details'}</span>
@@ -3607,9 +3612,19 @@ function kpiChartSVG(k, width){
 // scale instead of a zoom that makes 0.2 points look like a collapse.
 function kpiNiceNumber(v){ const pw = Math.pow(10, Math.floor(Math.log10(v))); const m = v / pw; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * pw; }
 function kpiIsNice(v){ if(v <= 0) return false; const pw = Math.pow(10, Math.floor(Math.log10(v) + 1e-9)); const m = Math.round(v / pw * 1000) / 1000; return [1, 2, 2.5, 5].includes(m); }
+// Rating scales ("out of 5") get a fixed 1-to-N axis; differences on them
+// are shown in points.
+function kpiScaleMax(k){ const m = /^out of (\d+(?:\.\d+)?)$/i.exec(String(k.unit || '').trim()); return m ? Number(m[1]) : null; }
 function kpiYScale(values, k){
   const min = Math.min(...values), max = Math.max(...values);
   let lo, hi;
+  const top = kpiScaleMax(k);
+  if(top && min >= 1 && max <= top){
+    const step = top <= 5 ? 1 : top <= 10 ? 2 : kpiNiceNumber(top / 5);
+    const ticks = []; for(let v = 1; v <= top + 1e-9; v += step) ticks.push(Math.round(v * 1e6) / 1e6);
+    if(ticks[ticks.length - 1] !== top) ticks.push(top);
+    return { lo: 1, hi: top, ticks };
+  }
   if(k.unit === 'percent' && min >= 0){
     lo = [99.5, 99, 90, 50, 0].find(c => c <= min);
     if(lo >= 50 && max <= 100) hi = 100;
@@ -3786,6 +3801,9 @@ function kpiSegmentsBlockHTML(k, chartWidth, chartBesideTable){
 // lowest latest value. (Chart lines keep their own fixed colors, so a
 // card's top border always matches its line.)
 const kpiIsTotalLabel = l => /^(total|overall)$/i.test(String(l).trim());
+// The headline of a KPI with segments: a "Total" for counts and dollars,
+// an "Overall" figure for rates, averages and scores.
+function kpiTotalLabel(k){ return (!k.unit || k.unit === 'number' || k.unit === 'currency') ? 'Total' : 'Overall'; }
 function kpiOrderCards(cards){
   return [...cards].sort((a, b) => (b.isTotal - a.isTotal) || (b.value - a.value));
 }
@@ -3904,7 +3922,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
 
   const segs = kpiAllSegments(k);
   const cards = segs.length ? kpiOrderCards([
-    { label: k.unit === 'percent' ? 'Overall' : 'Total', point: latest, value: latest.value, color: '#006A53', style: kpiSeriesStyle(0), isTotal: true, series: k.series },
+    { label: kpiTotalLabel(k), point: latest, value: latest.value, color: '#006A53', style: kpiSeriesStyle(0), isTotal: true, series: k.series },
     ...segs.map((sg, n) => {
       const pt = segAt(sg, latest.period) || sg.series[sg.series.length - 1];
       const lineIdx = breakdown.indexOf(sg);
@@ -3918,7 +3936,7 @@ function kpiBlockHTML(k, chartWidth, chartBesideTable){
   const tableHTML = segs.length ? kpiLongTableHTML(k, cards, k.series.map(p => p.period)) : `
     <div class="kpi-table-wrap">
     <table class="kpi-table">
-      <thead><tr><th scope="col">Period</th>${tableSegs.map(sg => `<th scope="col">${escHTML(sg.label)}</th>`).join('')}<th scope="col">${tableSegs.length ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result'}</th><th scope="col">Target</th><th scope="col">Benchmark</th><th scope="col">vs ${basisLabel.toLowerCase()}</th></tr></thead>
+      <thead><tr><th scope="col">Period</th>${tableSegs.map(sg => `<th scope="col">${escHTML(sg.label)}</th>`).join('')}<th scope="col">${tableSegs.length ? kpiTotalLabel(k) : 'Result'}</th><th scope="col">Target</th><th scope="col">Benchmark</th><th scope="col">vs ${basisLabel.toLowerCase()}</th></tr></thead>
       <tbody>${[...k.series].reverse().map(p=>{
         const d = kpiDiff(p.value, p[basis], k);
         return `<tr><td>${escHTML(p.period)}${p.note ? '*' : ''}</td>${tableSegs.map(sg => { const q = segAt(sg, p.period); return `<td>${q ? escHTML(fmtKpiValue(q.value, k)) : '—'}</td>`; }).join('')}<td${tableSegs.length ? ' class="kpi-total-col"' : ''}>${escHTML(fmtKpiValue(p.value, k))}</td>
@@ -4495,35 +4513,28 @@ function wireSearch(){
   input.addEventListener('blur', () => setTimeout(close, 120));
 }
 
-/* ---------- One KPI: Excel, PDF and email ----------
-   Every KPI card has its own Download Excel, Download PDF and Email
-   buttons. The Excel file has the KPI's numbers (every period, Total and
-   segments, with Target, Benchmark and status) plus an "About" sheet.
-   The PDF has real, selectable text: the KPI's details, its chart and its
-   data table. "Email" puts the files into a new email through the
-   computer's share menu (pick Mail or Outlook): Safari shares the Excel
-   file and the PDF; Chrome and Edge refuse Excel files there, so they
-   share the PDF and the data as CSV. Browsers with no share menu get an
-   email draft file (.eml) with the Excel file and PDF attached. Every
-   email also carries the latest result and a link to the KPI. */
+/* ---------- One KPI or a group: Excel and PDF ----------
+   Every KPI card, and every Key Service, Objective, Work System and Goal,
+   has a Share menu with Download Excel and Download PDF. The Excel file has
+   the numbers (every period, Total and segments, with Target, Benchmark and
+   status) plus an "About" sheet; the PDF has real, selectable text with the
+   KPI's details, chart and data table. */
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
 const ICON_DOWNLOAD = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.2M4.6 6.5 8 9.9l3.4-3.4M2.5 11.5v2h11v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const ICON_MAIL = '<svg width="14" height="13" viewBox="0 0 16 14" aria-hidden="true"><rect x="1.2" y="1.5" width="13.6" height="11" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m1.8 2.5 6.2 5 6.2-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 
-const ICON_SHARE = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 4.8 8 1.8l3 3M3.5 7.5v6h9v-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-// A "Share" button opening a short menu: Excel, PDF, Email. Used for one
+const ICON_SHARE = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 4.8 8 1.8l3 3M3.5 7.5v6h9v-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// A "Share" button opening a short menu: Download Excel, Download PDF. Used for one
 // KPI (data-kpi-id) and for a group of KPIs (data-group-scope: a Key
 // Service, Objective, Work System or Goal).
 function shareMenuHTML({ attr, value, label, buttonText, what }){
   const mid = 'kpi-menu-' + slugify(value) + '-' + (++kpiMenuSeq);
   const a = `${attr}="${escHTML(value)}"`;
   return `<span class="kpi-share">
-      <button type="button" class="kpi-tool kpi-share-btn" aria-expanded="false" aria-controls="${mid}" ${a} aria-label="${buttonText}: ${escHTML(label)}">${ICON_SHARE}${buttonText}<span class="kpi-share-chev" aria-hidden="true">▾</span></button>
+      <button type="button" class="kpi-tool kpi-share-btn kpi-share-icon" aria-expanded="false" aria-controls="${mid}" ${a} aria-label="${buttonText}: ${escHTML(label)}" title="${buttonText}">${ICON_SHARE}</button>
       <span class="kpi-share-menu" id="${mid}" hidden>
         <button type="button" class="kpi-menu-item" data-kpi-action="xlsx" ${a}>${ICON_DOWNLOAD}<span><strong>Download Excel</strong><small>${what.xlsx}</small></span></button>
         <button type="button" class="kpi-menu-item" data-kpi-action="pdf" ${a}>${ICON_DOWNLOAD}<span><strong>Download PDF</strong><small>${what.pdf}</small></span></button>
-        <button type="button" class="kpi-menu-item" data-kpi-action="email" ${a}>${ICON_MAIL}<span><strong>Email</strong><small>Excel and PDF attached</small></span></button>
       </span>
     </span>`;
 }
@@ -4555,11 +4566,8 @@ function toggleKpiMenu(btn, focusFirst){
   btn.setAttribute('aria-expanded', String(open));
   menu.hidden = !open;
   if(open){
-    // Build the files now, so Email can open the share menu straight
-    // away when it's chosen (browsers only allow that right after a click).
+    // Get the Excel library and group files started so downloads are quick.
     loadSheetJS().catch(() => {});
-    const k = KPI_BY_ID[btn.dataset.kpiId];
-    if(k) prepareKpiEmailFiles(k).catch(() => {});
     if(btn.dataset.groupScope) prepareGroupFiles(btn.dataset.groupScope).catch(() => {});
     if(focusFirst) menu.querySelector('.kpi-menu-item').focus();
   }
@@ -4647,7 +4655,7 @@ function kpiExportRows(k){
   const series = [];
   if(k.segmentsOnly) (k.segmentSeries || []).forEach(sg => series.push({ label: sg.label, pts: sg.series || [] }));
   else {
-    series.push({ label: kpiAllSegments(k).length ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result', pts: k.series || [] });
+    series.push({ label: kpiAllSegments(k).length ? kpiTotalLabel(k) : 'Result', pts: k.series || [] });
     kpiAllSegments(k).forEach(sg => series.push({ label: sg.label, pts: sg.series }));
   }
   const periods = [];
@@ -4750,7 +4758,7 @@ function kpiLegendItems(k){
     : (k.series || []).some(p => kpiHas(p[c.key])));
   if(k.segmentsOnly) (k.segmentSeries || []).forEach((sg, i) => items.push({ label: sg.label, st: kpiSeriesStyle(i) }));
   else {
-    items.push({ label: kpiAllSegments(k).length ? (k.unit === 'percent' ? 'Overall' : 'Total') : 'Result', st: kpiSeriesStyle(0) });
+    items.push({ label: kpiAllSegments(k).length ? kpiTotalLabel(k) : 'Result', st: kpiSeriesStyle(0) });
     kpiBreakdownLines(k).forEach((sg, n) => items.push({ label: sg.label, st: kpiSeriesStyle(n + 1) }));
     // Only comparisons drawn on the chart.
     comps.forEach(c => items.push({ label: c.label, st: { stroke: c.stroke, dash: c.dash, shape: null } }));
@@ -4904,62 +4912,6 @@ async function writeKpiPdfPages(pdf, k){
   [...new Set(notes)].forEach(n => para(n, 9, slate, 'normal', 2));
 }
 
-// ---- Email ----
-// A link that opens this dashboard on the KPI's own view with that KPI open.
-function kpiDeepLink(k){
-  const base = location.href.split('#')[0];
-  const view = (/#view=([^&]+)/.exec(location.hash) || [])[1];
-  return `${base}#${view ? 'view=' + view + '&' : ''}kpi=${encodeURIComponent(k.id)}`;
-}
-function kpiEmailText(k){
-  const shown = kpiShownUnder(k).map(x => x.name).join(', ');
-  return {
-    subject: `${k.name}: City of Durango Performance Dashboard`,
-    body: `Here is the latest for "${k.name}"${shown ? ` (${shown})` : ''} from the City of Durango Performance Dashboard.\n\n`
-      + `Latest: ${kpiLatestSummary(k)}\n\n`
-      + `The attached files have every period's numbers and the chart. See it on the dashboard:\n${kpiDeepLink(k)}\n`,
-  };
-}
-// The email's files, built once per KPI (when its Share menu opens).
-const kpiEmailFiles = {};
-function prepareKpiEmailFiles(k){
-  if(!kpiEmailFiles[k.id]) kpiEmailFiles[k.id] = Promise.all([buildKpiSpreadsheet(k), buildKpiPdfBlob(k)])
-    .then(([sheet, pdf]) => ({ sheet, pdf, csv: buildKpiCsvFile(k) }))
-    .catch(err => { delete kpiEmailFiles[k.id]; throw err; });
-  return kpiEmailFiles[k.id];
-}
-async function openKpiEmail(k){
-  const files = await prepareKpiEmailFiles(k);
-  const { subject, body } = kpiEmailText(k);
-  await downloadEmlDraft(kpiFileBase(k), subject, body, [files.sheet, files.pdf]);
-}
-// Email: a ready-to-send email file (.eml) with the Excel file and PDF
-// attached. Browsers can't hand attachments to the email app directly, so
-// the file is downloaded; opening it starts a new message in the default
-// email app (Outlook opens it ready to send; Apple Mail shows it as a
-// message to send with Message > Send Again). In Chrome or Edge, "Always
-// open files of this type" makes these open straight away.
-function b64FromBytes(bytes){
-  let bin = '';
-  for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-  return btoa(bin);
-}
-const b64Utf8 = s => b64FromBytes(new TextEncoder().encode(s));
-const wrap76 = s => s.replace(/.{1,76}/g, '$&\r\n');
-async function downloadEmlDraft(baseName, subject, body, files){
-  const boundary = '----=_DurangoKPI_' + Math.random().toString(36).slice(2);
-  const parts = ['X-Unsent: 1', 'To: ', `Subject: =?UTF-8?B?${b64Utf8(subject)}?=`, 'MIME-Version: 1.0',
-    `Content-Type: multipart/mixed; boundary="${boundary}"`, '', `--${boundary}`,
-    'Content-Type: text/plain; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '', wrap76(b64Utf8(body))];
-  for(const f of files){
-    const enc = `=?UTF-8?B?${b64Utf8(f.name)}?=`;
-    parts.push(`--${boundary}`, `Content-Type: ${f.type}; name="${enc}"`, 'Content-Transfer-Encoding: base64',
-      `Content-Disposition: attachment; filename="${enc}"`, '', wrap76(b64FromBytes(new Uint8Array(await f.blob.arrayBuffer()))));
-  }
-  parts.push(`--${boundary}--`, '');
-  downloadBlob(parts.join('\r\n'), baseName + '.eml', 'message/rfc822');
-  showEmailReadyToast();
-}
 // Open the KPI named in the link (…#view=…&kpi=ID): its scoreboard row,
 // or the Program window that holds it.
 // Read once, as the page loads: drawing the first view rewrites the address.
@@ -4991,7 +4943,7 @@ function openKpiFromURL(){
 
 // ---- Sharing a group of KPIs (a Key Service, Objective, Work System or
 // Goal): one Excel file with a summary and every KPI's numbers, one PDF
-// with a summary page and then each KPI's own pages, and an email with both.
+// with a summary page and then each KPI's own pages.
 function groupForScope(scope){
   const [kind, id] = String(scope).split(':');
   let item = null, type = '', services = [];
@@ -5100,22 +5052,6 @@ function prepareGroupFiles(scope){
     .catch(err => { delete groupFiles[scope]; throw err; });
   return groupFiles[scope];
 }
-async function emailGroup(scope){
-  const { g, sheet, pdf } = await prepareGroupFiles(scope);
-  const lines = g.live.map(k => `- ${k.name}: ${kpiLatestSummary(k)}`).join('\n');
-  const subject = `${g.title}: City of Durango Performance Dashboard`;
-  const body = `Here is the latest for ${g.title} (${g.type}) from the City of Durango Performance Dashboard.\n\n${lines}\n\n`
-    + (g.waiting.length ? `Still waiting on data: ${g.waiting.map(k => k.name).join('; ')}.\n\n` : '')
-    + `The Excel file has every KPI's numbers; the PDF has a summary and each KPI's chart and data table.\n\nDashboard: ${location.href}\n`;
-  await downloadEmlDraft(groupFileBase(g), subject, body, [sheet, pdf]);
-}
-function showEmailReadyToast(){
-  const chromium = /Chrome\/|Edg\//.test(navigator.userAgent);
-  showToast('Your email is ready, with the Excel file and PDF attached. <strong>Open the downloaded email file</strong> and it opens in your email app, ready to address and send.'
-    + (chromium ? '<br><small>Tip: to have these open straight away next time, open the downloads list, click ⋮ next to the email file, and choose <strong>Always open files of this type</strong>.</small>' : '')
-    + '<br><small>In Apple Mail, choose Message › Send Again to send it.</small>', { ms: 16000 });
-}
-
 async function runKpiAction(item){
   const k = KPI_BY_ID[item.dataset.kpiId];
   const scope = item.dataset.groupScope;
@@ -5126,15 +5062,16 @@ async function runKpiAction(item){
   closeKpiMenus();
   btn.focus();
   const label = btn.innerHTML;
+  const ariaLabel = btn.getAttribute('aria-label');
   btn.disabled = true;
   btn.setAttribute('aria-busy', 'true');
-  btn.innerHTML = action === 'email' ? 'Preparing email…' : 'Creating file…';
+  btn.innerHTML = '<span class="kpi-share-busy" aria-hidden="true"></span>';
+  btn.setAttribute('aria-label', 'Creating file…');
   try{
     if(scope){
       const files = await prepareGroupFiles(scope);
       if(action === 'xlsx') downloadBlob(files.sheet.blob, files.sheet.name, files.sheet.type);
       else if(action === 'pdf') downloadBlob(files.pdf.blob, files.pdf.name, files.pdf.type);
-      else if(action === 'email') await emailGroup(scope);
     } else if(action === 'xlsx'){
       const f = await buildKpiSpreadsheet(k);
       downloadBlob(f.blob, f.name, f.type);
@@ -5142,8 +5079,6 @@ async function runKpiAction(item){
     } else if(action === 'pdf'){
       const f = await buildKpiPdfBlob(k);
       downloadBlob(f.blob, f.name, f.type);
-    } else if(action === 'email'){
-      await openKpiEmail(k);
     }
   } catch(err){
     console.error(err);
@@ -5152,6 +5087,7 @@ async function runKpiAction(item){
     btn.disabled = false;
     btn.removeAttribute('aria-busy');
     btn.innerHTML = label;
+    btn.setAttribute('aria-label', ariaLabel);
   }
 }
 document.addEventListener('click', e => {
@@ -5190,7 +5126,7 @@ const TOUR_STEPS = [
   { target: null, title: 'See the numbers behind each KPI',
     body: 'Open an Objective to see the Key Services that support it and all of their KPIs at once, or open a Key Service or Program. Each KPI has a chart; hover or tap a point for the exact value, target and breakdown, or select "View data table" for all of the numbers. Measures that are set up but still waiting on data say "Data not yet entered".' },
   { target: '#header-export', title: 'Share and take it with you',
-    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. Each KPI also has its own Share button to download it as Excel or PDF, or email it with the files attached. To share exactly what you are looking at, copy the page address: it updates as you click.' },
+    body: 'Export as a spreadsheet (CSV) or PDF, for all Goals, all Work Systems, or just one Goal or Work System. Each KPI, Key Service, Objective, Work System and Goal also has a Share button to download its data as Excel or PDF. To share exactly what you are looking at, copy the page address: it updates as you click.' },
 ];
 
 let tourStep = 0;
