@@ -2463,7 +2463,7 @@
         "p37"
       ],
       "unit": "number",
-      "decimals": 2,
+      "decimals": 0,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
@@ -3580,17 +3580,116 @@
       "name": "IT Liaison Survey",
       "level": "Key Service",
       "attachTo": "ks7",
-      "unit": "number",
-      "decimals": 0,
+      "unit": "out of 5",
+      "decimals": 2,
       "higherIsBetter": true,
       "compareTo": "target",
       "drivesStatus": true,
+      "frequency": "Every year",
+      "owner": "IT Director",
+      "source": "IT Liaison Feedback Survey (Microsoft Forms)",
+      "description": "Average rating from City department liaisons on four questions about the IT Department, on a 1 to 5 scale: how well IT understands their business needs, how proactive it is, how well its services align with their goals, and how innovative it is.",
+      "footnote": "Overall is the average of all four questions. Responses are grouped by the year they were submitted; three test responses are excluded.",
       "gaugeKeyServices": [
         "ks7"
       ],
       "status": null,
-      "pending": true,
-      "series": []
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [
+        {
+          "period": "2025",
+          "value": 3.83,
+          "status": null,
+          "note": "6 responses"
+        },
+        {
+          "period": "2026",
+          "value": 4.07,
+          "status": null,
+          "note": "Year to date: 17 responses through Sep 22, 2026"
+        }
+      ],
+      "segments": [
+        {
+          "label": "Understands business needs",
+          "value": 4.24
+        },
+        {
+          "label": "Proactive",
+          "value": 4.06
+        },
+        {
+          "label": "Aligned with business goals",
+          "value": 4.24
+        },
+        {
+          "label": "Innovative",
+          "value": 3.76
+        }
+      ],
+      "segmentSeries": [
+        {
+          "label": "Understands business needs",
+          "series": [
+            {
+              "period": "2025",
+              "value": 3.67,
+              "status": null
+            },
+            {
+              "period": "2026",
+              "value": 4.24,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "Proactive",
+          "series": [
+            {
+              "period": "2025",
+              "value": 3.83,
+              "status": null
+            },
+            {
+              "period": "2026",
+              "value": 4.06,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "Aligned with business goals",
+          "series": [
+            {
+              "period": "2025",
+              "value": 4.33,
+              "status": null
+            },
+            {
+              "period": "2026",
+              "value": 4.24,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "Innovative",
+          "series": [
+            {
+              "period": "2025",
+              "value": 3.5,
+              "status": null
+            },
+            {
+              "period": "2026",
+              "value": 3.76,
+              "status": null
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "IT-APPTICKETS",
@@ -3599,12 +3698,87 @@
       "attachTo": "p32",
       "unit": "number",
       "decimals": 0,
-      "higherIsBetter": true,
+      "higherIsBetter": false,
       "compareTo": "target",
       "drivesStatus": false,
+      "frequency": "Every year",
+      "owner": "IT Director",
+      "source": "SysAid",
+      "description": "Number of help desk tickets filed under the Applications category in SysAid each year, split into incidents (something stopped working) and requests (asking for access, installs or changes).",
+      "footnote": "Counts tickets by the year they were opened. Automatic Workflow Processing tickets (P-card and Innoprise account setups) are excluded, and 2023 is left out because only 34 tickets were recorded. Largest SysAid sub-categories for 2025 and 2026: Microsoft Office Issues (453), CitySuite (388), Install/Update Program (325), Teams (162) and Adobe Acrobat (138); about 40% of tickets are filed as Other Issue or Request.",
       "status": null,
-      "pending": true,
-      "series": []
+      "onTrackWithinPct": 5,
+      "offTrackBeyondPct": 15,
+      "series": [
+        {
+          "period": "2024",
+          "value": 1919,
+          "status": null
+        },
+        {
+          "period": "2025",
+          "value": 1710,
+          "status": null
+        },
+        {
+          "period": "2026",
+          "value": 1353,
+          "status": null,
+          "note": "Year to date: tickets opened through Oct 21, 2026"
+        }
+      ],
+      "segments": [
+        {
+          "label": "Incident",
+          "value": 747
+        },
+        {
+          "label": "Request",
+          "value": 606
+        }
+      ],
+      "segmentSeries": [
+        {
+          "label": "Incident",
+          "series": [
+            {
+              "period": "2024",
+              "value": 1456,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 1176,
+              "status": null
+            },
+            {
+              "period": "2026",
+              "value": 747,
+              "status": null
+            }
+          ]
+        },
+        {
+          "label": "Request",
+          "series": [
+            {
+              "period": "2024",
+              "value": 463,
+              "status": null
+            },
+            {
+              "period": "2025",
+              "value": 534,
+              "status": null
+            },
+            {
+              "period": "2026",
+              "value": 606,
+              "status": null
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "IT-ADDRSLA",
